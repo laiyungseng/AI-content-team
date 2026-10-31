@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 02-big-statement v2 — Serif Heavy hook with controlled accent
+   Slots: WATERMARK_WORD (optional), TAG, HEADLINE_BEFORE, ACCENT_WORD, HEADLINE_AFTER, SUBTITLE */
+.page--02 .watermark--statement { font-size: 420px; top: -140px; right: -40px; line-height: 0.78; }
+.page--02 .content {
+  position: absolute;
+  top: 220px;
+  left: 80px;
+  right: 80px;
+  bottom: 200px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.page--02 .eyebrow { margin-bottom: 60px; }
+.page--02 h1 {
+  font-family: var(--font-serif);
+  font-size: 130px;
+  font-weight: 900;
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  color: var(--brand-dark);
+  margin-bottom: 50px;
+}
+.page--02 .accent { color: var(--brand-primary); }
+.page--02 .sub {
+  font-family: var(--font-sans);
+  font-size: 30px;
+  color: var(--brand-body);
+  font-weight: 400;
+  line-height: 1.55;
+  max-width: 800px;
+  padding-left: 24px;
+  border-left: 3px solid var(--brand-primary);
+}
+</style></head>
+<body><div class="page page--02">
+  <span class="watermark watermark--statement">{{WATERMARK_WORD}}</span>
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">{{TAG}}</div>
+    <h1>{{HEADLINE_BEFORE}}<span class="accent">{{ACCENT_WORD}}</span>{{HEADLINE_AFTER}}</h1>
+    <p class="sub">{{SUBTITLE}}</p>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>

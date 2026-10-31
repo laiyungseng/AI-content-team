@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 09-testimonial v2 — Editorial header/footer + serif quote card + author row
+   Slots: TAG, QUOTE, CUSTOMER_NAME, CUSTOMER_ROLE, INITIAL (optional avatar letter), RESULT_NUM, RESULT_LABEL */
+.page--09 { padding: 0; background: var(--brand-light); color: var(--brand-body); }
+.page--09 .content {
+  position: absolute;
+  top: 170px;
+  left: 80px;
+  right: 80px;
+  bottom: 150px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.page--09 .eyebrow { margin-bottom: 28px; }
+.page--09 .card {
+  background: white;
+  border-radius: 24px;
+  padding: 48px 44px;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid rgba(0,0,0,0.1);
+}
+.page--09 .stars {
+  font-size: 32px;
+  color: var(--brand-primary);
+  letter-spacing: 6px;
+  margin-bottom: 24px;
+}
+.page--09 .quote {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--brand-dark);
+  letter-spacing: -0.01em;
+}
+.page--09 .author {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(0,0,0,0.12);
+  margin-top: 40px;
+}
+.page--09 .avatar {
+  width: 72px;
+  height: 72px;
+  background: var(--brand-primary);
+  color: var(--brand-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.page--09 .name {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--brand-dark);
+  line-height: 1.2;
+}
+.page--09 .role {
+  font-size: 20px;
+  color: var(--brand-muted);
+  margin-top: 3px;
+}
+.page--09 .result {
+  margin-left: auto;
+  text-align: right;
+}
+.page--09 .result-num {
+  font-family: var(--font-serif);
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--brand-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.page--09 .result-label {
+  font-size: 16px;
+  color: var(--brand-muted);
+  margin-top: 4px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+</style></head>
+<body><div class="page page--09">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">{{TAG}}</div>
+    <div class="card">
+      <div>
+        <div class="stars">★★★★★</div>
+        <p class="quote">“{{QUOTE}}”</p>
+      </div>
+      <div class="author">
+        <div class="avatar">{{INITIAL}}</div>
+        <div>
+          <div class="name">{{CUSTOMER_NAME}}</div>
+          <div class="role">{{CUSTOMER_ROLE}}</div>
+        </div>
+        <div class="result">
+          <div class="result-num">{{RESULT_NUM}}</div>
+          <div class="result-label">{{RESULT_LABEL}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>

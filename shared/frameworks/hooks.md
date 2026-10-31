@@ -214,6 +214,34 @@ The fastest route to a winning formula is copying a proven style from someone in
 
 This is a library of options to experiment with, not a checklist to complete. Pull the pieces that fit the topic and the format the creator can actually execute.
 
+### Hook types (a label for counting, not a recipe)
+Added 2026-10-31, adapted from the 15 hook types in the UPT course bundle (`ad-copywriter/hook-library.md`, written for long-form ads). The structures above say how a hook is built; the type says what the opening line does to the viewer. Analysts tag every hook with a type so a run can count which types competitors use and which ones win. The key goes in `hookType` in `hooks.json`.
+
+| Key | What the opening does | Fits best |
+|---|---|---|
+| `pain_question` | Asks about a problem the viewer has, so their mind fills in the answer | A strong, felt problem; methods; courses; B2B advice |
+| `shock_number` | Uses a specific figure instead of an adjective, so the viewer weighs cost against gain | Results, return on spend, price, limited discounts |
+| `identity_callout` | Names who it is for ("Business owners, ...") so the viewer thinks "this is me" | B2B, a named role or group |
+| `secret_reveal` | Hints at insider knowledge most people do not have | Courses, expertise, high-price services |
+| `before_after` | Shows the change from one state to another | Results, product comparisons, demos |
+| `authority` | Borrows trust from an expert, an institution or data | Health, property, high-price goods |
+| `time_pressure` | Sets a deadline or a limited number of places | Promotions, flash sales |
+| `story_hook` | Opens a story at an unresolved moment | Case studies, personal brands, long copy |
+| `mistake_accusation` | Says the way the viewer does it today is wrong | Methods, habits, business models |
+| `what_if_scenario` | Paints the future the viewer wants | Side income, starting a business, lifestyle change |
+| `curiosity_gap` | Leaves out the key piece on purpose | Tools, tips, marketing |
+| `empathy` | Says the viewer's private thought out loud | Coaching, communities, support |
+| `warning` | States what staying as they are will cost | Business change, training, urgent services |
+| `social_proof` | Shows that others already use it or gained from it | Software, finance, insurance, courses |
+| `direct_benefit` | States what the viewer gets and nothing else | Templates, tools, bundles, instant fixes |
+| `other` | None of the above fits | Use this rather than force a fit |
+
+Tagging rules:
+- Tag the part of the hook the viewer meets first: the spoken line, else the on-screen text, else the ad headline.
+- One key. Two only when they clearly stack, joined with `+` (`secret_reveal+shock_number`); never more than two.
+- A type is a label. The reusable part of a hook is still its formula with blanks, so write both.
+- The examples in the source were Malaysian Chinese ad copy; the types hold in any language, the example lines do not.
+
 ## 5. The hook checklist
 
 Run this before presenting anything.

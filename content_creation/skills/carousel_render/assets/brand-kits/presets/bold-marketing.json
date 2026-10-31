@@ -1,0 +1,19 @@
+{
+  "name": "Bold Marketing",
+  "slug": "preset-bold-marketing",
+  "handle": "@your.handle",
+  "logo_path": null,
+  "colors": {
+    "primary": "#FFD23F",
+    "dark": "#0F0F0F",
+    "light": "#FFFFFF",
+    "body": "#1A1A1A",
+    "muted": "#737373"
+  },
+  "fonts": {
+    "sans": "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Microsoft JhengHei', -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif",
+    "serif": "'Playfair Display', 'Songti SC', 'STSong', 'SimSun', 'Microsoft YaHei', serif"
+  },
+  "tagline": "Bold, loud, agency feel — 适合 marketer / agency / 教练 IP",
+  "_preset_use_case": "Marketing agency / 教练 IP / Sales / 培训 / 课程 / 高互动 IG"
+}

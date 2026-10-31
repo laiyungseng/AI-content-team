@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 03-title-body — 标题 + 长段文字（v2 — 对齐 cover/cta 的 header/footer 系统）
+   Slots: TAG (optional), TITLE, BODY (支持 <br> 换行 + <strong> 高亮) */
+.page--03 { padding: 0; background: var(--brand-light); color: var(--brand-body); }
+.page--03 .content {
+  position: absolute;
+  top: 220px;
+  left: 90px;
+  right: 90px;
+  bottom: 200px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.page--03 .tag { font-size: 22px; color: var(--brand-primary); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px; }
+.page--03 .divider { width: 80px; height: 4px; background: var(--brand-primary); margin-bottom: 48px; border: none; }
+.page--03 h2 { font-family: var(--font-serif); font-size: 80px; font-weight: 900; line-height: 1.15; color: var(--brand-dark); margin: 0 0 56px 0; max-width: 880px; padding-right: 20px; }
+.page--03 .body { font-size: 34px; line-height: 1.55; color: var(--brand-body); max-width: 880px; font-weight: 400; margin: 0; }
+.page--03 .body strong {
+  font-weight: 700;
+  color: var(--brand-primary);
+  background: none;
+  padding: 0;
+  border-bottom: 2px solid var(--brand-primary);
+  padding-bottom: 3px;
+}
+</style></head>
+<body><div class="page page--03 page--light">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="tag">{{TAG}}</div>
+    <hr class="divider">
+    <h2>{{TITLE}}</h2>
+    <p class="body">{{BODY}}</p>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 05-checklist v2 — Accent BG + editorial header/footer + serif title
+   Slots: TAG (default "SAVE THIS"), TITLE, ITEM_1..ITEM_6, ITEM_1_NOTE..ITEM_6_NOTE */
+.page--05 { padding: 0; background: var(--brand-primary); color: var(--brand-dark); }
+/* Corner brackets on primary bg → use dark ink so they read */
+.page--05 .corner-tl, .page--05 .corner-br {
+  border-color: var(--brand-dark);
+}
+.page--05 .header-bar .handle,
+.page--05 .header-bar .page-num { color: var(--brand-dark); }
+.page--05 .footer-bar { background: var(--brand-primary); color: var(--brand-dark); }
+.page--05 .footer-bar::before { background: rgba(0,0,0,0.15); }
+.page--05 .footer-bar::after { background: linear-gradient(to top, var(--brand-primary), rgba(0,0,0,0)); }
+.page--05 .content {
+  position: absolute;
+  top: 170px;
+  left: 80px;
+  right: 80px;
+  bottom: 150px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+.page--05 .tag-pill {
+  display: inline-flex;
+  align-self: flex-start;
+  background: var(--brand-dark);
+  color: var(--brand-primary);
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.page--05 h2 {
+  font-family: var(--font-serif);
+  font-size: 76px;
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--brand-dark);
+  margin-bottom: 40px;
+  letter-spacing: -0.02em;
+}
+.page--05 .list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+.page--05 .item {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  background: var(--brand-light);
+  padding: 18px 28px;
+  border-radius: 16px;
+  border: 2px solid var(--brand-dark);
+}
+.page--05 .item:has(.text:empty) { display: none; }
+.page--05 .check {
+  width: 44px;
+  height: 44px;
+  background: var(--brand-dark);
+  color: var(--brand-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.page--05 .text {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--brand-dark);
+  line-height: 1.25;
+}
+.page--05 .text .note {
+  display: block;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--brand-muted);
+  margin-top: 4px;
+}
+</style></head>
+<body><div class="page page--05">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="tag-pill">{{TAG}}</div>
+    <h2>{{TITLE}}</h2>
+    <div class="list">
+      <div class="item"><div class="check">✓</div><div class="text">{{ITEM_1}}<span class="note">{{ITEM_1_NOTE}}</span></div></div>
+      <div class="item"><div class="check">✓</div><div class="text">{{ITEM_2}}<span class="note">{{ITEM_2_NOTE}}</span></div></div>
+      <div class="item"><div class="check">✓</div><div class="text">{{ITEM_3}}<span class="note">{{ITEM_3_NOTE}}</span></div></div>
+      <div class="item"><div class="check">✓</div><div class="text">{{ITEM_4}}<span class="note">{{ITEM_4_NOTE}}</span></div></div>
+      <div class="item"><div class="check">✓</div><div class="text">{{ITEM_5}}<span class="note">{{ITEM_5_NOTE}}</span></div></div>
+      <div class="item"><div class="check">✓</div><div class="text">{{ITEM_6}}<span class="note">{{ITEM_6_NOTE}}</span></div></div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>

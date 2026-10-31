@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 08-comparison v2 — Editorial 2-col A vs B with header/footer, warm palette lock
+   Slots: TAG, TITLE, LEFT_LABEL/HEADER/BODY, RIGHT_LABEL/HEADER/BODY */
+.page--08 { padding: 0; background: var(--brand-light); color: var(--brand-dark); }
+.page--08 .content {
+  position: absolute;
+  top: 170px;
+  left: 60px;
+  right: 60px;
+  bottom: 150px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+.page--08 .eyebrow { margin: 0 20px 28px; }
+.page--08 h2 {
+  font-family: var(--font-serif);
+  font-size: 62px;
+  font-weight: 900;
+  text-align: center;
+  margin: 0 0 40px 0;
+  color: var(--brand-dark);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.page--08 .vs-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 18px;
+  align-items: stretch;
+  flex: 1;
+}
+.page--08 .col {
+  padding: 40px 32px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.page--08 .col.left {
+  background: white;
+  border: 1.5px solid rgba(0,0,0,0.15);
+}
+.page--08 .col.right {
+  background: var(--brand-dark);
+  color: white;
+  border: 1.5px solid var(--brand-dark);
+}
+.page--08 .vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--brand-primary);
+  letter-spacing: -0.05em;
+}
+.page--08 .icon {
+  font-size: 44px;
+  font-weight: 900;
+  margin-bottom: 14px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page--08 .col.left .icon { background: rgba(217,102,63,0.12); color: var(--brand-primary); }
+.page--08 .col.right .icon { background: var(--brand-primary); color: var(--brand-dark); }
+.page--08 .label {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  color: var(--brand-muted);
+}
+.page--08 .col.right .label { color: rgba(255,255,255,0.6); }
+.page--08 .header {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 18px;
+  color: var(--brand-dark);
+}
+.page--08 .col.right .header { color: white; }
+.page--08 .body {
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--brand-body);
+}
+.page--08 .col.right .body { color: rgba(255,255,255,0.85); }
+</style></head>
+<body><div class="page page--08">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">{{TAG}}</div>
+    <h2>{{TITLE}}</h2>
+    <div class="vs-row">
+      <div class="col left">
+        <div class="icon">✕</div>
+        <div class="label">{{LEFT_LABEL}}</div>
+        <div class="header">{{LEFT_HEADER}}</div>
+        <div class="body">{{LEFT_BODY}}</div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="col right">
+        <div class="icon">✓</div>
+        <div class="label">{{RIGHT_LABEL}}</div>
+        <div class="header">{{RIGHT_HEADER}}</div>
+        <div class="body">{{RIGHT_BODY}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>

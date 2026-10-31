@@ -22,7 +22,8 @@ For items the analyzer marks Copy or Adapt (and a sample of the weakest), identi
 1. For each item, note the hook in the four component buckets: spoken, text, visual, audio. Only record what you can actually see or read; write "not visible from the data" for the rest.
 2. Name the structure (a formula with blanks, e.g. "[surprising number] + [what it replaces]"), not the wording.
 3. Score the dimensions in `hook_analysis.md` briefly (low / medium / high) and give one reason.
-4. Write `hooks.json`: `[{id, spoken, text, visual, audio, formula, whyItStopsScroll, howToRebuild}]`. The analyzer copies `formula`, `whyItStopsScroll` and `howToRebuild` into `verdicts.json` fields `hook`, `whyItWorks`, `howToUse`.
+3b. Tag a `hookType` from the list in `shared/frameworks/hooks.md` ("Hook types"): one key, or two joined by `+` when they clearly stack; `other` when none fits. Every hook gets one.
+4. Write `hooks.json`: `[{id, spoken, text, visual, audio, hookType, formula, whyItStopsScroll, howToRebuild}]`. The analyzer copies `hookType`, `formula`, `whyItStopsScroll` and `howToRebuild` into `verdicts.json` fields `hookType`, `hook`, `whyItWorks`, `howToUse`.
 5. For ads, use the ad copy, headline and creative; say so when the first seconds of a video ad cannot be judged.
 
 ## Expected output format

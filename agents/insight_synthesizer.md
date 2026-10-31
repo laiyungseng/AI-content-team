@@ -25,6 +25,8 @@ Turn the analysis into reusable strategic intelligence: what competitors do bett
 4. Strategy: 3 to 5 items, each with "Do next", respecting 70% proven / 20% adjacent / 10% experimental and tagging Educate / Engage / Promote.
 5. Positioning: statement, gaps competitors leave, what to avoid.
 6. Headline paragraph ending in "Do next: ...", and `postCounts` quoting the counts behind the claims.
+6b. **Winning hooks** (when the run has Meta ads): run `build_report.py winning <run>`, read `analysis/winning_ads.json`, and write up to 10 `winningHooks` entries per `comparison_method.md`.
+6c. **Devil's Advocate**, written last: 3 to 5 `devilsAdvocate` items per `comparison_method.md`.
 7. **Proposed lessons** (for the orchestrator to promote after approval): list candidate memory blocks with evidence (post counts, runs), result, confidence. Do not write to `memory/**` yourself.
 
 ## Expected output format

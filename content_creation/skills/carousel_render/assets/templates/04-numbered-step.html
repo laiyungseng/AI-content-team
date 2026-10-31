@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 04-numbered-step v2 — Big serif numerals + hairline rows + sans body
+   Slots: TAG, TITLE, STEP_1_TITLE/STEP_1_DESC ... STEP_5_TITLE/STEP_5_DESC */
+.page--04 .content {
+  position: absolute;
+  top: 170px;
+  left: 80px;
+  right: 80px;
+  bottom: 150px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+.page--04 .eyebrow { margin-bottom: 32px; }
+.page--04 h2 {
+  font-family: var(--font-serif);
+  font-size: 68px;
+  font-weight: 900;
+  line-height: 1.08;
+  color: var(--brand-dark);
+  margin-bottom: 16px;
+}
+.page--04 .divider { width: 120px; height: 4px; margin: 0 0 32px; }
+.page--04 .steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  justify-content: flex-start;
+}
+.page--04 .step {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 24px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(0,0,0,0.12);
+  align-items: baseline;
+}
+.page--04 .step:last-child { border-bottom: 1px solid rgba(0,0,0,0.12); }
+.page--04 .step:has(.s-title:empty) { display: none; }
+.page--04 .num {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 76px;
+  line-height: 0.9;
+  color: var(--brand-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.page--04 .s-title {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--brand-dark);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+.page--04 .s-desc {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--brand-body);
+  line-height: 1.45;
+}
+</style></head>
+<body><div class="page page--04">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">{{TAG}}</div>
+    <h2>{{TITLE}}</h2>
+    <hr class="divider">
+    <div class="steps">
+      <div class="step"><div class="num">01</div><div><div class="s-title">{{STEP_1_TITLE}}</div><div class="s-desc">{{STEP_1_DESC}}</div></div></div>
+      <div class="step"><div class="num">02</div><div><div class="s-title">{{STEP_2_TITLE}}</div><div class="s-desc">{{STEP_2_DESC}}</div></div></div>
+      <div class="step"><div class="num">03</div><div><div class="s-title">{{STEP_3_TITLE}}</div><div class="s-desc">{{STEP_3_DESC}}</div></div></div>
+      <div class="step"><div class="num">04</div><div><div class="s-title">{{STEP_4_TITLE}}</div><div class="s-desc">{{STEP_4_DESC}}</div></div></div>
+      <div class="step"><div class="num">05</div><div><div class="s-title">{{STEP_5_TITLE}}</div><div class="s-desc">{{STEP_5_DESC}}</div></div></div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>

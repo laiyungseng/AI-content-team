@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 06-stat-cards v2 — Editorial header/footer + 2×2 stat grid + serif title
+   Slots: TAG, TITLE, STAT_1_NUM/STAT_1_LABEL .. STAT_4_NUM/STAT_4_LABEL */
+.page--06 { padding: 0; background: var(--brand-light); color: var(--brand-dark); }
+.page--06 .content {
+  position: absolute;
+  top: 170px;
+  left: 80px;
+  right: 80px;
+  bottom: 150px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+.page--06 .eyebrow { margin-bottom: 32px; }
+.page--06 h2 {
+  font-family: var(--font-serif);
+  font-size: 68px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--brand-dark);
+  margin-bottom: 48px;
+  letter-spacing: -0.02em;
+  max-width: 900px;
+}
+.page--06 .stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  flex: 1;
+}
+.page--06 .stat {
+  background: white;
+  padding: 44px 40px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  container-type: inline-size;
+  overflow: hidden;
+}
+.page--06 .stat:nth-child(2) {
+  background: var(--brand-dark);
+  color: white;
+  border-color: var(--brand-dark);
+}
+.page--06 .stat:nth-child(2) .stat-num { color: var(--brand-primary); }
+.page--06 .stat:nth-child(2) .stat-label { color: rgba(255,255,255,0.85); }
+.page--06 .stat:has(.stat-num:empty) { display: none; }
+.page--06 .stat-num {
+  font-family: var(--font-serif);
+  font-size: clamp(72px, 30cqi, 130px);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--brand-primary);
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.page--06 .stat-label {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--brand-body);
+  line-height: 1.3;
+}
+</style></head>
+<body><div class="page page--06">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">{{TAG}}</div>
+    <h2>{{TITLE}}</h2>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">{{STAT_1_NUM}}</div><div class="stat-label">{{STAT_1_LABEL}}</div></div>
+      <div class="stat"><div class="stat-num">{{STAT_2_NUM}}</div><div class="stat-label">{{STAT_2_LABEL}}</div></div>
+      <div class="stat"><div class="stat-num">{{STAT_3_NUM}}</div><div class="stat-label">{{STAT_3_LABEL}}</div></div>
+      <div class="stat"><div class="stat-num">{{STAT_4_NUM}}</div><div class="stat-label">{{STAT_4_LABEL}}</div></div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>

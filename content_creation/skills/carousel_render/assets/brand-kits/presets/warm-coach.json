@@ -1,0 +1,19 @@
+{
+  "name": "Warm Coach",
+  "slug": "preset-warm-coach",
+  "handle": "@your.handle",
+  "logo_path": null,
+  "colors": {
+    "primary": "#D97757",
+    "dark": "#1A1A1A",
+    "light": "#F7F4ED",
+    "body": "#2F2F2E",
+    "muted": "#8C8A85"
+  },
+  "fonts": {
+    "sans": "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Microsoft JhengHei', -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif",
+    "serif": "'Playfair Display', 'Songti SC', 'STSong', 'SimSun', 'Microsoft YaHei', serif"
+  },
+  "tagline": "暖色 + 米白 — 适合教练 / 个人 IP / 心理 / 育儿",
+  "_preset_use_case": "教练 / 个人 IP / 心理咨询 / 育儿 / 健康 / 生活方式"
+}

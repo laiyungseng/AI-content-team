@@ -31,7 +31,7 @@ Folders named `_template` are copy sources; never write project data into them.
 ## Routing
 | Request | Route |
 |---|---|
-| "update sources", "add a competitor", "show my URLs" | `source-manager` skill (`sources.md` is the only place research reads URLs from) |
+| "update sources", "add a competitor", "show my URLs", "find competitors" | `source-manager` skill (`sources.md` is the only place research reads URLs from; discovery only suggests, the user ticks Active) |
 | "research competitors", "run analysis", "refresh intelligence" | `competitor-intelligence` skill, driven by the orchestrator through the Phase 1 agents |
 | Strategy / content / publish | Production pipeline, blocked until an approved intelligence run exists (`runs/index.md`) |
 
@@ -72,11 +72,11 @@ When a task needs code, first look here. If you must write new code, save it in 
 | `.claude/skills/business-onboarding/scripts/init_project.py` | Copy `_template` folders into a new project in all six places |
 | `.claude/skills/business-onboarding/scripts/render_brand_files.py` | Turn interview answers (JSON) into `brand/[project]/*.md` |
 | `.claude/skills/artifact-presentation-setup/scripts/build_artifact.py` | Combine template + data + theme into a single HTML artifact file |
-| `.claude/skills/source-manager/scripts/sources.py` | `read` / `write` / `status` / `targets` / `build` for `sources.md` and its editor page |
+| `.claude/skills/source-manager/scripts/sources.py` | `read` / `write` / `status` / `targets` / `build` / `suggest` for `sources.md` and its editor page |
 | `.claude/skills/competitor-intelligence/scripts/run.py` | `init` a dated run folder, `approve` it |
 | `.claude/skills/competitor-intelligence/scripts/collect.py` | Actor inputs (`plan`), field check (`check`), image download (`media`); Apify itself runs via MCP |
 | `.claude/skills/competitor-intelligence/scripts/normalise.py` | Raw actor output -> `items.tsv`; `tag` topics; `stats` baseline |
-| `.claude/skills/competitor-intelligence/scripts/build_report.py` | `select` items, `build` the 2-page report |
+| `.claude/skills/competitor-intelligence/scripts/build_report.py` | `select` items, `winning` Meta ads by copies x days running, `build` the 2-page report |
 | `.claude/skills/competitor-intelligence/scripts/to_radar_tsv.py`, `to_perf_tsv.py` | Adapters from `items.tsv` to the radar / performance dashboard inputs |
 | `.claude/skills/competitor-intelligence/scripts/radar_build.py`, `perf_build.py` | Copied dashboard builders (optional extra pages) |
 | `.claude/skills/competitor-intelligence/scripts/make_test_fixtures.py` | Fake raw data to test a run folder (delete the run afterwards) |

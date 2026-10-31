@@ -48,6 +48,11 @@ h2 { font-size: 16px; margin: 26px 0 4px; font-weight: 600; }
 .badge { display: inline-block; border-radius: 4px; padding: 1px 8px; font-size: 12px; font-weight: 600; }
 .badge.adapt { background: var(--adapt-bg); color: var(--adapt); } .badge.copy { background: var(--copy-bg); color: var(--copy); } .badge.ignore { background: var(--ignore-bg); color: var(--ignore); }
 .badge.flag { background: var(--warn-bg); color: var(--warn); }
+.badge.type { background: var(--ignore-bg); color: var(--fg); font-weight: 500; }
+.reuse { font-weight: 600; } .reuse.yes { color: var(--copy); } .reuse.partly { color: var(--warn); } .reuse.no { color: var(--muted); }
+.da { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.da > div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.da p { margin: 0 0 8px; overflow-wrap: anywhere; } .da p:last-child { margin-bottom: 0; } .da b { display: block; font: 500 11.5px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 .cap { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .reason { margin: 0; overflow-wrap: anywhere; }
 details summary { cursor: pointer; color: var(--accent); font-size: 12.5px; }
@@ -102,8 +107,18 @@ button.act.primary { background: var(--accent); color: var(--accent-fg); border-
     <div class="tbl"><table><thead><tr><th>Area</th><th>Ours</th><th>Theirs</th><th>Stronger</th><th>Why</th><th>How we do it</th></tr></thead><tbody id="rows"></tbody></table></div>
     <h2>Strategy</h2>
     <div class="strat" id="strategy"></div>
+    <section id="winSec" hidden>
+      <h2>Winning hooks in Meta ads</h2>
+      <p class="lead">Ranked by number of copies times days running. The Ad Library shows no spend or results, so this is a sign an ad worked, not proof.</p>
+      <div class="tbl"><table><thead><tr><th>Hook</th><th>Advertiser</th><th>Scale</th><th>Hook type</th><th>Can we use it?</th><th>Why</th></tr></thead><tbody id="winRows"></tbody></table></div>
+    </section>
     <h2>Positioning</h2>
     <div class="callout" id="positioning"></div>
+    <section id="daSec" hidden>
+      <h2>Where this data could mislead us</h2>
+      <p class="lead">The same findings read from the other side: how a newcomer would misread them and what to do about it.</p>
+      <div class="da" id="da"></div>
+    </section>
     <h2>Our baseline</h2>
     <div id="ours" class="lead"></div>
   </main>
@@ -148,14 +163,14 @@ function card(c) {
   return el("article", { class: "card" },
     el("div", { class: "thumb" }, c.image ? el("img", { src: c.image, alt: "", loading: "lazy" }) : "no image"),
     el("div", { class: "body" },
-      el("div", { class: "meta" }, el("span", { class: "badge " + c.verdict }, "Suggested: " + LABEL[c.verdict]), c.anomaly ? el("span", { class: "badge flag" }, "one-off, check first") : "",
+      el("div", { class: "meta" }, el("span", { class: "badge " + c.verdict }, "Suggested: " + LABEL[c.verdict]), c.anomaly ? el("span", { class: "badge flag" }, "one-off, check first") : "", c.hookTypeLabel ? el("span", { class: "badge type" }, c.hookTypeLabel) : "",
         el("span", {}, el("b", {}, c.account), " | " + PLAT[c.platform])),
       metaLine(c),
       c.ratio != null ? el("div", { class: "meta" }, el("b", {}, ratioText(c))) : "",
       el("p", { class: "reason" }, c.reason),
       el("div", { class: "cap" }, c.caption),
       (c.hook || c.why || c.how) ? el("details", {}, el("summary", {}, "Hook, why it works, how to use it"),
-        c.hook ? el("p", {}, el("b", {}, "Hook: "), c.hook) : "", c.why ? el("p", {}, el("b", {}, "Why it works: "), c.why) : "", c.how ? el("p", {}, el("b", {}, "How to use it: "), c.how) : "",
+        c.hookTypeLabel ? el("p", {}, el("b", {}, "Hook type: "), c.hookTypeLabel) : "", c.hook ? el("p", {}, el("b", {}, "Hook: "), c.hook) : "", c.why ? el("p", {}, el("b", {}, "Why it works: "), c.why) : "", c.how ? el("p", {}, el("b", {}, "How to use it: "), c.how) : "",
         el("p", { class: "state" }, "confidence: " + c.confidence)) : "",
       c.permalink ? el("a", { href: c.permalink, target: "_blank", rel: "noopener" }, "Open original") : "",
       dec));
@@ -189,6 +204,17 @@ function renderPage2() {
     el("td", {}, el("span", { class: "who " + r.stronger }, { ours: "Ours", theirs: "Theirs", similar: "Similar", unclear: "Unclear" }[r.stronger])), el("td", {}, r.why), el("td", {}, r.how))));
   const s = $("strategy");
   c.strategy.forEach((x) => s.append(el("div", {}, el("h3", {}, x.title), el("p", {}, x.detail), el("p", { class: "do" }, "Do next: " + x.doNext))));
+  if (c.winningHooks && c.winningHooks.length) {
+    $("winSec").hidden = false;
+    const REUSE = { yes: "Yes", partly: "Partly", no: "No" };
+    c.winningHooks.forEach((w) => $("winRows").append(el("tr", {}, el("td", {}, w.hook), el("td", {}, w.source), el("td", {}, w.scale),
+      el("td", {}, w.hookTypeLabel || w.hookType), el("td", {}, el("span", { class: "reuse " + w.reuse }, REUSE[w.reuse] || w.reuse)), el("td", {}, w.why))));
+  }
+  if (c.devilsAdvocate && c.devilsAdvocate.length) {
+    $("daSec").hidden = false;
+    c.devilsAdvocate.forEach((d) => $("da").append(el("div", {}, el("p", {}, el("b", {}, "A newcomer would read it as"), d.misread),
+      el("p", {}, el("b", {}, "What the data supports"), d.truth), el("p", { class: "do" }, el("b", {}, "So we should"), d.adjust))));
+  }
   const p = c.positioning, pe = $("positioning");
   pe.append(el("p", {}, p.statement));
   if (p.gaps && p.gaps.length) pe.append(el("strong", {}, "Gaps competitors leave"), el("ul", { class: "plain" }, p.gaps.map((g) => el("li", {}, g))));

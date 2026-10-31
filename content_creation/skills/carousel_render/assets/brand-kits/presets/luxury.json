@@ -1,0 +1,19 @@
+{
+  "name": "Luxury",
+  "slug": "preset-luxury",
+  "handle": "@your.handle",
+  "logo_path": null,
+  "colors": {
+    "primary": "#D4AF37",
+    "dark": "#000000",
+    "light": "#F8F5F0",
+    "body": "#1A1A1A",
+    "muted": "#8C7A5D"
+  },
+  "fonts": {
+    "sans": "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Microsoft JhengHei', -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif",
+    "serif": "'Playfair Display', 'Songti SC', 'STSong', 'SimSun', 'Microsoft YaHei', serif"
+  },
+  "tagline": "Black + gold premium — 适合高端服务 / 投资 / 高客单",
+  "_preset_use_case": "高端服务 / 投资 / 私人银行 / 房产 / 律师 / 奢侈品"
+}
