@@ -5,7 +5,7 @@ A multi-agent content system that works as a **continuous learning loop**, not a
 
 ## First run
 Competitor **intelligence** can run without a brand guideline (onboarding was deferred by the user on 2026-10-31; test on the `demo` project).
-**Production** (strategy, content, publishing) needs both an approved intelligence run and a brand guideline. If `brand/` has no project folder besides `_template`, run `business-onboarding` before production work, and do not push it earlier unless the user asks. The build plan and progress are in `docs/plans/2026-10-31_architecture-and-skill-merge.md`.
+**Production** (strategy, content, publishing) needs both an approved intelligence run and a brand guideline. If `brand/` has no project folder besides `_template`, run `business-onboarding` before production work, and do not push it earlier unless the user asks. The build plan and progress are in `docs/plans/2026-10-31_remaining-work.md`.
 
 ## Two goals
 1. **Content Intelligence**: analyse our own and competitor content, find winning/weak patterns, hooks, gaps, opportunities.
