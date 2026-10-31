@@ -1,17 +1,17 @@
 ---
 type: methodology
 name: competitor_analysis
-status: stub
+status: active
+replaced_by: .claude/skills/competitor-intelligence/references/verdict_rules.md
+updated: 2026-10-31
 ---
 # competitor_analysis
 
-**Purpose:** How to break a single piece of content into topic, structure, value, emotion, CTA and differentiation.
+How to judge a single competitor item and sort it into Adapt / Copy / Ignore.
 
-## Process
-_TODO_
+This is a pointer, not a method of its own. The competitor-intelligence skill owns this step; read:
+- `.claude/skills/competitor-intelligence/references/verdict_rules.md`
+- `competitor_analysis/skills/content_scoring.md` and `competitor_analysis/skills/hook_analysis.md`
+- `shared/frameworks/writing_insights.md`
 
-## Output schema
-_TODO_
-
-## Good / bad examples
-_TODO_
+Keep this file so the workspace scaffold does not recreate it as a stub.

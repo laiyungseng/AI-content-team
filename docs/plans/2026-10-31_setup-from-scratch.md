@@ -63,10 +63,10 @@ State is written to `state/installation_status.md` (tools table + phase table).
 **Connector tiers:** Intelligence MVP = Apify, Perplexity; + nanobanana for images; + Zernio for publishing; NotebookLM, Notion, Figma optional.
 
 ## 6. Build order and checklist
-- [ ] 1. `.gitignore`, `.mcp.json`, launchers
-- [ ] 2. `setup.py` (check / install / python / scaffold / smoke / all) and `smoke_test.py`; remove the replaced `.ps1` scripts
-- [ ] 3. `installation-setup/SKILL.md`, `references/connectors.md`, `references/manual_install.md` (per OS), evals; `CLAUDE.md` table
-- [ ] 4. Test: fresh clone into an empty temp folder, run the launcher, smoke test passes
-- [ ] 5. `README.md` beginner install guide
+- [x] 1. `.gitignore`, `.mcp.json`, launchers
+- [x] 2. `setup.py` (check / install / python / scaffold / smoke / all) and `smoke_test.py`; remove the replaced `.ps1` scripts
+- [x] 3. `installation-setup/SKILL.md`, `references/connectors.md`, `references/manual_install.md` (per OS), evals; `CLAUDE.md` table
+- [x] 4. Test: fresh clone into an empty temp folder, run the launcher, smoke test passes (Windows: setup.ps1 and setup.sh via Git Bash pass; long grader filenames shortened after a "Filename too long" checkout failure)
+- [x] 5. `README.md` beginner install guide
 - [ ] 6. `git init`, first commit, push to the GitHub repo
 - [ ] 7. Later, user: run the guide on a second PC (macOS path untested until then)
