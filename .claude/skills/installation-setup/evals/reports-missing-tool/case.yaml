@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: reports-missing-tool
+expected_outcome: |
+  Runs the environment check, reports ffmpeg as missing (or whichever tool is missing), and asks before installing anything.

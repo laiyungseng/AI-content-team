@@ -1,0 +1,15 @@
+{
+  "project": "sample_project",
+  "title": "Sample Co Brand Guideline",
+  "brand": {"name": "Sample Co", "tagline": "Example data", "summary": "Sample Co helps small service businesses stop re-typing work by automating CRM updates with voice agents."},
+  "positioning": {"statement": "The simplest way for small teams to stop doing CRM data entry.", "differentiators": ["Set up in a week, not a quarter", "Works with the CRM you already have", "Priced per team, not per seat"]},
+  "audience": [
+    {"name": "SME owner", "description": "Runs a 5-20 person service business and still checks the CRM personally.", "pains": ["Staff time lost to data entry", "Forecasts nobody trusts"], "desires": ["More selling time", "Clean pipeline data"]}
+  ],
+  "voice": {"traits": ["Plain-spoken", "Practical", "Dry humour"], "do": ["Use real numbers", "Talk about the owner's week"], "dont": ["Use AI buzzwords", "Promise guaranteed revenue"], "sample_lines": ["Your CRM should not need a night shift."]},
+  "products": [{"name": "Voice logging agent", "description": "Writes call records into your CRM during the call.", "price": "From $199 / month"}],
+  "offers": [{"name": "Free automation audit", "description": "30-minute review of where your team re-types data.", "cta": "DM AUDIT"}],
+  "palette": [{"name": "Signal teal", "hex": "#0B7A83", "role": "Primary"}, {"name": "Ink", "hex": "#12202B", "role": "Text"}, {"name": "Paper", "hex": "#F4F6F8", "role": "Background"}, {"name": "Amber", "hex": "#E3A008", "role": "Highlight"}],
+  "fonts": [{"role": "Headings", "name": "Bricolage Grotesque", "sample": "Stop typing. Start selling."}, {"role": "Body", "name": "Instrument Sans", "sample": "A voice agent writes the record while you talk."}],
+  "prohibited": ["Guaranteed revenue or ROI claims", "Naming competitors", "Medical or legal advice"]
+}

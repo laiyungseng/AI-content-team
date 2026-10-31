@@ -1,0 +1,16 @@
+{
+  "brand": {"name": "Sample Co", "tagline": "Stop typing. Start selling.", "summary": "One paragraph describing the business, who it serves and why it exists."},
+  "positioning": {"statement": "The only ___ that ___.", "differentiators": ["Reason 1", "Reason 2"]},
+  "audience": [
+    {"name": "SME owner", "description": "Who they are and what they are trying to solve.", "pains": ["Pain 1"], "desires": ["Want 1"]}
+  ],
+  "voice": {"traits": ["warm", "direct"], "do": ["Use real numbers"], "dont": ["Use buzzwords"], "sample_lines": ["A line that sounds exactly like the brand."]},
+  "products": [{"name": "Product", "description": "What it is.", "price": "From $99"}],
+  "offers": [{"name": "Free audit", "description": "What the lead magnet is.", "cta": "DM AUDIT"}],
+  "palette": [{"name": "Primary", "hex": "#0B7A83", "role": "Primary"}],
+  "fonts": [{"role": "Headings", "name": "Bricolage Grotesque", "sample": "Sample heading"}],
+  "prohibited": ["Guaranteed results"],
+  "goals": ["20 enquiries per month within 3 months"],
+  "platforms": ["Instagram (priority)", "LinkedIn"],
+  "competitors": [{"name": "Competitor A", "handle": "@competitora", "platform": "instagram"}]
+}

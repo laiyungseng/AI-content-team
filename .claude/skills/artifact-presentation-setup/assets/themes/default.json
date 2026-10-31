@@ -1,0 +1,39 @@
+{
+  "name": "default",
+  "description": "Cool-neutral workspace look: blue-grey paper, ink text, teal accent. Replace with a user reference theme in brand/<project>/assets/artifact_theme.json.",
+  "fonts_url": "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
+  "fonts": {
+    "display": "'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif",
+    "body": "'Instrument Sans', 'Segoe UI', system-ui, sans-serif",
+    "mono": "'JetBrains Mono', Consolas, 'Courier New', monospace"
+  },
+  "radius": "10px",
+  "light": {
+    "bg": "#F4F6F8",
+    "surface": "#FFFFFF",
+    "surface-2": "#EBEFF2",
+    "fg": "#12202B",
+    "muted": "#556674",
+    "line": "#D9E0E6",
+    "accent": "#0B7A83",
+    "accent-fg": "#FFFFFF",
+    "good": "#18794E",
+    "warn": "#9A6700",
+    "bad": "#C0392B",
+    "info": "#2F5DA8"
+  },
+  "dark": {
+    "bg": "#0D1418",
+    "surface": "#141D23",
+    "surface-2": "#1B272F",
+    "fg": "#E6EDF1",
+    "muted": "#8FA2AE",
+    "line": "#263640",
+    "accent": "#4CC9C0",
+    "accent-fg": "#06201F",
+    "good": "#4CC38A",
+    "warn": "#E3B341",
+    "bad": "#F0776B",
+    "info": "#7AA7E8"
+  }
+}

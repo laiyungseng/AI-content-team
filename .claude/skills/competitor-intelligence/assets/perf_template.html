@@ -1,0 +1,1158 @@
+<title>Content Performance</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --grad-a:#0a1b33; --grad-b:#175577; --grad-c:#2bab9e;
+  --card-bg:#f9f7f2; --card-bg-alt:#ffffff;
+  --ink:#141f38; --ink-soft:#525f7a; --ink-faint:#7c879e;
+  --hairline:#e3ddd0;
+  --hero-bg:#0e2340; --hero-text:#f5f7fb; --hero-text-soft:#aebbd4;
+  --med-bg:#cfe0e9; --med-bg-2:#bcd3e0; --med-text:#132038;
+  --ig:#b5456b; --tt:#15a0a8;
+  --t-case:#d4691f; --t-brand:#1a6fa8; --t-tut:#2f8f6e; --t-bts:#a63e78; --t-show:#8a7a1f; --t-unk:#7c879e;
+  --good:#2f8f5e; --warn:#b9791f; --bad:#b5484a;
+  --shadow: 0 18px 40px -18px rgba(10,20,40,0.35), 0 4px 14px -6px rgba(10,20,40,0.18);
+  --shadow-sm: 0 6px 18px -10px rgba(10,20,40,0.28);
+  --radius-lg: 22px; --radius-md:16px; --radius-sm:10px;
+  --font-display:'Fraunces', Georgia, serif;
+  --font-head:'Archivo', 'Segoe UI', sans-serif;
+  --font-body:'IBM Plex Sans', 'Segoe UI', sans-serif;
+}
+
+*{box-sizing:border-box;}
+body{
+  background: linear-gradient(135deg, var(--grad-a) 0%, var(--grad-b) 55%, var(--grad-c) 100%) fixed;
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.5;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;}
+.wrap{max-width:1240px; margin:0 auto; padding:32px 20px 80px;}
+h1,h2,h3,h4{margin:0; text-wrap:balance;}
+::selection{background:var(--t-case); color:#fff;}
+a{color:inherit;}
+button{font-family:inherit;}
+.tabular{font-variant-numeric:tabular-nums;}
+
+/* ============ GENERIC CARD ============ */
+.card{
+  background:var(--card-bg);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);
+  padding:28px 30px;
+}
+.card--tight{padding:20px 22px;}
+.card-alt{background:var(--card-bg-alt);}
+
+.eyebrow{
+  font-family:var(--font-head); font-weight:700; font-size:11px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--ink-faint);
+}
+.section-title{
+  font-family:var(--font-display); font-weight:700; font-size:26px; letter-spacing:-0.01em;
+  color:var(--ink); margin-bottom:4px;
+}
+.section-sub{ color:var(--ink-soft); font-size:14px; margin-bottom:18px; }
+.section-block{ margin-top:34px; }
+.section-block:first-child{ margin-top:0; }
+
+/* ============ HEADER ============ */
+.masthead{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;
+}
+.masthead h1{
+  font-family:var(--font-display); font-weight:800; font-size:38px; color:var(--ink); letter-spacing:-0.02em;
+}
+.masthead .handles{ font-family:var(--font-head); font-size:13px; font-weight:600; color:var(--ink-soft); margin-top:6px; letter-spacing:0.02em;}
+.handles .dot{ color: var(--ink-faint); margin: 0 8px;}
+.pulled-row{ display:flex; gap:22px; margin-top:14px; flex-wrap:wrap;}
+.pulled-chip{ font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:7px;}
+.pulled-chip .sw{ width:8px; height:8px; border-radius:50%; display:inline-block;}
+.headline-card{
+  background:var(--hero-bg); color:var(--hero-text); border-radius:var(--radius-lg);
+  padding:26px 30px; box-shadow:var(--shadow); margin-top:20px;
+}
+.headline-card .hc-eyebrow{
+  font-family:var(--font-head); font-weight:700; font-size:11px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--hero-text-soft);
+}
+.headline-card .hc-body{
+  font-family:var(--font-display); font-weight:600; font-size:19px; line-height:1.45;
+  margin-top:10px; text-wrap:pretty;
+}
+.headline-card .hc-scope{ font-size:12.5px; color:var(--hero-text-soft); margin-top:12px; }
+.snapshot-note{
+  font-size:12.5px; color:var(--ink-soft); background:var(--card-bg-alt); border:1px solid var(--hairline);
+  border-radius:var(--radius-sm); padding:12px 16px; max-width:330px; line-height:1.45;
+}
+.snapshot-note b{ color:var(--ink); font-weight:600; }
+
+/* ============ FILTER BAR ============ */
+.filterbar{
+  display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.tabs{ display:flex; gap:4px; background:rgba(20,31,56,0.06); padding:4px; border-radius:999px;}
+.tab{
+  border:none; background:transparent; padding:10px 20px; border-radius:999px; cursor:pointer;
+  font-family:var(--font-head); font-weight:700; font-size:13.5px; color:var(--ink-soft); letter-spacing:0.01em;
+}
+.tab.active{ background:var(--hero-bg); color:var(--hero-text); }
+.range-group{ display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.chip{
+  border:1px solid var(--hairline); background:var(--card-bg-alt); padding:9px 16px; border-radius:999px;
+  font-family:var(--font-head); font-weight:600; font-size:13px; color:var(--ink-soft); cursor:pointer;
+}
+.chip.active{ background:var(--ink); color:#fff; border-color:var(--ink);}
+.custom-dates{ display:none; align-items:center; gap:8px; }
+.custom-dates.show{ display:flex; }
+.custom-dates input{
+  font-family:var(--font-body); font-size:13px; padding:7px 10px; border-radius:8px; border:1px solid var(--hairline);
+  background:var(--card-bg-alt); color:var(--ink);
+}
+.view-summary{
+  margin-top:16px; font-size:13.5px; color:var(--ink-soft); border-top:1px solid var(--hairline); padding-top:14px;
+}
+.view-summary b{ color:var(--ink); font-weight:700;}
+
+/* ============ STAT TILES ============ */
+.stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:16px;}
+.stat-tile{ background:var(--card-bg-alt); border-radius:var(--radius-md); padding:18px 20px; box-shadow:var(--shadow-sm);}
+.stat-tile .label{ font-family:var(--font-head); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint);}
+.stat-tile .value{ font-family:var(--font-display); font-weight:700; font-size:32px; margin-top:8px; color:var(--ink);}
+.stat-tile .sub{ font-size:12.5px; color:var(--ink-soft); margin-top:4px;}
+
+/* ============ SPOTLIGHT CARDS (hero / secondary) ============ */
+.spot-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.spot-grid.single{ grid-template-columns:1fr; }
+@media (max-width:760px){ .spot-grid{ grid-template-columns:1fr; } }
+.spot-card{
+  border-radius:var(--radius-md); padding:24px 26px; display:flex; flex-direction:column; gap:12px;
+  box-shadow:var(--shadow-sm);
+}
+.spot-card.hero{ background:var(--hero-bg); color:var(--hero-text); }
+.spot-card.secondary{ background:var(--med-bg); color:var(--med-text); }
+.spot-card .sc-eyebrow{ font-family:var(--font-head); font-weight:700; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; opacity:0.72;}
+.spot-card.hero .sc-eyebrow{ color:var(--hero-text-soft); }
+.spot-card.secondary .sc-eyebrow{ color:#2c4258; }
+.spot-card .sc-headline{ font-family:var(--font-display); font-weight:700; font-size:21px; line-height:1.25;}
+.spot-card .sc-desc{ font-size:13.5px; line-height:1.55; opacity:0.92;}
+.spot-card .sc-div{ height:1px; background:currentColor; opacity:0.18; margin:2px 0;}
+.spot-card .sc-metric-label{ font-family:var(--font-head); font-weight:700; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; opacity:0.7;}
+.spot-card .sc-metric-value{ font-family:var(--font-display); font-weight:800; font-size:38px; line-height:1;}
+.spot-card .sc-context{ font-size:13px; opacity:0.88;}
+.spot-card .sc-quote{ font-style:italic; font-size:13.5px; line-height:1.5; opacity:0.95; border-left:2px solid currentColor; padding-left:12px; margin-top:2px;}
+.spot-card .sc-quote .stat{ font-style:normal; font-weight:700; display:block; margin-top:4px; font-size:12.5px; opacity:0.85;}
+.spot-card a.sc-link{ font-size:12.5px; text-decoration:underline; opacity:0.8; align-self:flex-start;}
+
+/* ============ QUADRANT GRID ============ */
+.quad-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media (max-width:760px){ .quad-grid{ grid-template-columns:1fr; } }
+.spot-card.clickable{ cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; }
+.spot-card.clickable:hover{ transform:translateY(-2px); box-shadow:var(--shadow); }
+.spot-card .sc-expand{ font-family:var(--font-head); font-weight:700; font-size:11.5px; letter-spacing:0.04em; opacity:0.85; display:flex; align-items:center; gap:5px; margin-top:-2px;}
+
+/* ============ MODAL ============ */
+.modal-overlay{ display:none; position:fixed; inset:0; background:rgba(9,16,32,0.55); z-index:100; align-items:flex-start; justify-content:center; padding:6vh 20px; overflow-y:auto; }
+.modal-overlay.show{ display:flex; }
+.modal-box{ background:var(--card-bg); border-radius:var(--radius-lg); box-shadow:var(--shadow); max-width:640px; width:100%; padding:30px 32px 26px; position:relative; }
+.modal-close{ position:absolute; top:18px; right:20px; background:none; border:none; font-family:var(--font-head); font-weight:700; font-size:13px; color:var(--ink-faint); cursor:pointer; padding:6px 8px; }
+.modal-close:hover{ color:var(--ink); }
+.modal-eyebrow{ font-family:var(--font-head); font-weight:700; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-faint); }
+.modal-title{ font-family:var(--font-display); font-weight:700; font-size:23px; color:var(--ink); margin-top:6px; text-wrap:balance; }
+.modal-sub{ font-size:13.5px; color:var(--ink-soft); margin-top:6px; margin-bottom:6px; }
+.modal-list{ margin-top:14px; display:flex; flex-direction:column; }
+.modal-post{ display:flex; gap:14px; align-items:baseline; padding:13px 0; border-top:1px solid var(--hairline); }
+.modal-post:first-child{ border-top:none; }
+.modal-post .mp-meta{ flex:none; width:88px; font-size:12px; color:var(--ink-faint); }
+.modal-post .mp-body{ flex:1; min-width:0; }
+.modal-post .mp-cap{ color:var(--ink); font-size:13.5px; line-height:1.4; text-decoration:none; }
+.modal-post .mp-cap:hover{ text-decoration:underline; }
+.modal-post .mp-tags{ margin-top:4px; font-size:11.5px; color:var(--ink-soft); }
+.modal-post .mp-views{ flex:none; text-align:right; font-family:var(--font-display); font-weight:700; font-size:16px; color:var(--ink); min-width:76px; }
+.modal-post .mp-views .sub{ display:block; font-family:var(--font-body); font-weight:400; font-size:11px; color:var(--ink-faint); margin-top:2px; }
+
+/* ============ HIT RATE ============ */
+.hitrate-row{ display:flex; gap:28px; align-items:stretch; flex-wrap:wrap; }
+.hitrate-box{ flex:1; min-width:180px; background:var(--card-bg-alt); border-radius:var(--radius-md); padding:20px 22px; box-shadow:var(--shadow-sm);}
+.hitrate-box .label{ font-family:var(--font-head); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint);}
+.hitrate-box .big{ font-family:var(--font-display); font-weight:800; font-size:34px; margin-top:8px;}
+.hitrate-arrow{ display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:22px; color:var(--ink-faint); min-width:36px;}
+.takeaway{
+  margin-top:16px; padding-top:14px; border-top:1px solid var(--hairline); font-size:13.5px; color:var(--ink-soft);
+}
+.takeaway b{ color:var(--ink); }
+.note-empty{ font-size:13.5px; color:var(--ink-faint); font-style:italic; padding:6px 0;}
+
+/* ============ LENGTH BUCKETS ============ */
+.bucket-row{ display:flex; gap:14px; flex-wrap:wrap; }
+.bucket{ flex:1; min-width:150px; background:var(--card-bg-alt); border-radius:var(--radius-md); padding:16px 18px; box-shadow:var(--shadow-sm);}
+.bucket .label{ font-family:var(--font-head); font-size:11.5px; font-weight:700; color:var(--ink-soft);}
+.bucket .val{ font-family:var(--font-display); font-weight:700; font-size:26px; margin-top:6px;}
+.bucket .val.best{ color:var(--good); }
+.bucket .n{ font-size:12px; color:var(--ink-faint); margin-top:2px;}
+
+/* ============ BAR CHART ============ */
+.chart-scroll{ overflow-x:auto; padding-bottom:6px; }
+.chart-svg-wrap{ min-width:100%; }
+.bar-tooltip{
+  position:absolute; background:var(--hero-bg); color:var(--hero-text); font-size:12px; padding:8px 11px;
+  border-radius:8px; pointer-events:none; box-shadow:var(--shadow-sm); max-width:240px; line-height:1.4; z-index:5;
+  transform:translate(-50%,-100%); margin-top:-10px;
+}
+.legend-row{ display:flex; gap:18px; align-items:center; margin-top:10px; font-size:12px; color:var(--ink-soft); flex-wrap:wrap;}
+.legend-row .item{ display:flex; align-items:center; gap:6px;}
+.legend-row .sw{ width:10px; height:10px; border-radius:3px; display:inline-block;}
+.bar{ width:28px; flex:none; border-radius:6px 6px 0 0; position:relative; min-height:2px; cursor:pointer; transition:opacity .12s; }
+.bar:hover{ opacity:0.82; }
+.bar .hitdot{ position:absolute; top:-9px; left:50%; transform:translateX(-50%); width:6px; height:6px; border-radius:50%; background:var(--good); }
+
+
+/* ============ TABLE ============ */
+.table-scroll{ overflow-x:auto; }
+table.data-table{ width:100%; border-collapse:collapse; font-size:13.5px; min-width:640px;}
+table.data-table th{
+  font-family:var(--font-head); font-weight:700; font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--ink-faint); text-align:left; padding:0 12px 10px; cursor:pointer; user-select:none; white-space:nowrap;
+}
+table.data-table th .arrow{ opacity:0.5; margin-left:3px; font-size:10px;}
+table.data-table th.active{ color:var(--ink); }
+table.data-table td{ padding:11px 12px; border-top:1px solid var(--hairline); vertical-align:top; }
+table.data-table td.num{ text-align:right; font-variant-numeric:tabular-nums; }
+table.data-table tr.top-row td.bold-cell{ font-weight:700; color:var(--ink); }
+table.data-table .cap-cell{ max-width:280px; }
+table.data-table .cap-text{ display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:280px;}
+table.data-table select.topic-select{
+  font-family:var(--font-body); font-size:12.5px; padding:5px 8px; border-radius:7px; border:1px solid var(--hairline);
+  background:var(--card-bg-alt); color:var(--ink); max-width:170px;
+}
+.topic-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px;}
+.pager{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; font-size:13px; color:var(--ink-soft);}
+.pager button{
+  border:1px solid var(--hairline); background:var(--card-bg-alt); border-radius:8px; padding:7px 14px; cursor:pointer;
+  font-family:var(--font-head); font-weight:600; font-size:12.5px; color:var(--ink);
+}
+.pager button:disabled{ opacity:0.4; cursor:default; }
+
+/* ============ TOPIC SUMMARY TABLE + CARDS ============ */
+.topic-summary-table{ width:100%; border-collapse:collapse; font-size:13.5px; margin-bottom:26px;}
+.topic-summary-table th{
+  font-family:var(--font-head); font-weight:700; font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--ink-faint); text-align:left; padding:0 12px 10px;
+}
+.topic-summary-table td{ padding:11px 12px; border-top:1px solid var(--hairline); }
+.topic-summary-table td.num{ text-align:right; font-variant-numeric:tabular-nums; }
+.topic-summary-table tr.top-row td{ font-weight:700; color:var(--ink); }
+.topic-cards-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:18px;}
+
+/* ============ ALL TAB COMPARE ============ */
+.compare-bar-tile{ background:var(--card-bg-alt); border-radius:var(--radius-md); padding:18px 20px; box-shadow:var(--shadow-sm);}
+.compare-bar-tile .label{ font-family:var(--font-head); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:12px;}
+.compare-row{ display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+.compare-row:last-child{ margin-bottom:0; }
+.compare-row .plabel{ width:64px; font-family:var(--font-head); font-weight:700; font-size:12px; flex:none;}
+.compare-row .track{ flex:1; background:var(--hairline); border-radius:6px; height:14px; overflow:hidden;}
+.compare-row .fill{ height:100%; border-radius:6px; }
+.compare-row .pval{ width:70px; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; font-size:13px; flex:none;}
+
+.footnote{ font-size:11.5px; color:rgba(255,255,255,0.65); margin-top:26px; text-align:center; }
+</style>
+
+<div class="wrap" id="app"></div>
+<div id="tooltip-root"></div>
+<div class="modal-overlay" id="modal-root" onclick="if(event.target===this) closeModal()">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<script>
+/* __SEED_POSTS_JSON__  <-- replace with the "posts" array from
+   posts.json. This is the whole dataset: the page is a static snapshot
+   with no store and no fetch, so what lands here is what it shows. */
+const SEED_POSTS = [];
+
+/* __TOPIC_META__  <-- replace with the same keys as TOPICS in
+   posts.json, keeping "uncategorized". The --t-* variables in :root are
+   validated CVD-safe categorical colors; reuse them rather than picking
+   new hexes. */
+const TOPIC_META = {
+  case_studies: { label:"Case Studies: Others Using AI", color:"var(--t-case)",
+    description:"Viral breakdowns of public figures and brands using AI. You analyze someone else's win and hand over the takeaway." },
+  brand_demos: { label:"Brand & Client AI Demos", color:"var(--t-brand)",
+    description:"Work you personally built for a named brand or client, shown as a before/after or live demo." },
+  tutorials: { label:"AI Tool & Technique Tutorials", color:"var(--t-tut)",
+    description:"Step-by-step how-tos on a specific AI tool or workflow." },
+  bts: { label:"Behind-the-Scenes & Business Building", color:"var(--t-bts)",
+    description:"Personal, in-progress stories about building the account owner's business." },
+  showcase: { label:"Creative Showcase & Commentary", color:"var(--t-show)",
+    description:"Pure creative demonstrations and quick-take commentary not tied to a client or a tutorial." },
+  uncategorized: { label:"Uncategorized", color:"var(--t-unk)",
+    description:"Posts that don't fit any of the themes above. Reassign from the table below." },
+};
+
+/* __PROFILE_HANDLES__  <-- the only place handles/URLs are defined;
+   the masthead reads them from here. */
+const PLATFORM_META = {
+  instagram: { label:"Instagram", color:"var(--ig)", handle:"@your_instagram_handle" },
+  tiktok: { label:"TikTok", color:"var(--tt)", handle:"@your_tiktok_handle" },
+};
+
+const PROFILES = {
+  instagram: "https://www.instagram.com/your_instagram_handle/",
+  tiktok: "https://www.tiktok.com/@your_tiktok_handle",
+};
+
+/* __PULL_META__  <-- the window chosen in step 0, and when the pull ran.
+   PULL_WINDOW_DAYS is the default view and the widest chip offered: a
+   chip wider than the pull would render an empty stretch of calendar,
+   which reads as the account going quiet. */
+const PULL_WINDOW_DAYS = 30;
+const PULLED_AT = "2026-01-01T00:00:00.000Z";
+
+/* __INSIGHTS__  <-- written at build time by reading the actual captions,
+   not generated by this page. Every string here is scoped to the FULL
+   pulled window: the page shows it only when the viewer is on that
+   window, and falls back to the computed line when they narrow the
+   range, so an authored sentence can never sit next to numbers that
+   contradict it. Leave any string empty ("") to use the fallback.
+
+   headline  - what to do next week, as one short paragraph.
+   quadrants - why the posts in THAT bucket landed there, from their
+               captions. Written per platform, per bucket.
+   topics    - why the top topic wins on that platform.
+
+   Ground every claim in something visible on this page. If you cannot
+   point at the posts that support a sentence, cut the sentence. */
+const INSIGHTS = {
+  headline: "",
+  quadrants: {
+    instagram: { both:"", reach_only:"", eng_only:"", neither:"" },
+    tiktok:    { both:"", reach_only:"", eng_only:"", neither:"" },
+  },
+  topics: { instagram:"", tiktok:"" },
+};
+</script>
+<script>
+/* ====================================================================
+   STATE
+   ==================================================================== */
+let DATA = { posts: SEED_POSTS.map(p=>({...p})) };
+let filter = { platform:'all', range:String(PULL_WINDOW_DAYS), customStart:null, customEnd:null };
+let sortState = { instagram:{col:'date',dir:'desc'}, tiktok:{col:'date',dir:'desc'} };
+let pageState = { instagram:1, tiktok:1 };
+let quadCache = {};
+
+/* ====================================================================
+   UTILITIES
+   ==================================================================== */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtNum(n){ if(n==null||isNaN(n)) return '-'; return Math.round(n).toLocaleString('en-US'); }
+function fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmtDateShort(ts){ const d=new Date(ts); return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function fmtDur(sec){ if(sec==null) return '-'; const s=Math.round(sec); return s+'s'; }
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); d.setHours(0,0,0,0); return d; }
+function median(arr){
+  if(!arr || !arr.length) return null;
+  const s=[...arr].sort((a,b)=>a-b); const mid=Math.floor(s.length/2);
+  return s.length%2 ? s[mid] : (s[mid-1]+s[mid])/2;
+}
+function richEng(p){ return p.likes + p.comments + (p.shares||0) + (p.saves||0); }
+function coreEng(p){ return p.likes + p.comments; }
+// Instagram returns no view count for photo and carousel posts. Those posts
+// have no reach to measure, so they never enter anything built on views
+// (typical views, scores, hit rate, quadrants, length, bars, topics). They
+// still count as posts and stay in the table. Counting them as 0 views
+// dragged the typical post down and inflated every video's score.
+function hasViews(p){ return typeof p.views === 'number' && isFinite(p.views); }
+function withViews(posts){ return posts.filter(hasViews); }
+function topicMeta(key){ return TOPIC_META[key] || TOPIC_META.uncategorized; }
+function platMeta(key){ return PLATFORM_META[key]; }
+
+// The range chips offered: every standard window that fits inside what was
+// actually pulled, plus custom. Offering a wider one would render an empty
+// stretch of calendar as if the account had gone quiet.
+function rangeOptions(){
+  return [7,30,90].filter(d => d <= PULL_WINDOW_DAYS);
+}
+function computeRange(){
+  const now = new Date();
+  const preset = parseInt(filter.range, 10);
+  if(!isNaN(preset)){ return { start: daysAgo(preset), end: now }; }
+  // custom
+  let start = filter.customStart ? new Date(filter.customStart+'T00:00:00') : daysAgo(PULL_WINDOW_DAYS);
+  let end = filter.customEnd ? new Date(filter.customEnd+'T23:59:59') : now;
+  if(start > end){ const t=start; start=end; end=t; }
+  return { start, end };
+}
+function priorRange(start,end){
+  const len = end.getTime()-start.getTime();
+  return { start: new Date(start.getTime()-len), end: new Date(start.getTime()-1) };
+}
+function inRange(ts, start, end){
+  const t = new Date(ts).getTime();
+  return t >= start.getTime() && t <= end.getTime();
+}
+function postsForPlatform(platform){
+  return DATA.posts.filter(p => platform==='all' ? true : p.platform===platform);
+}
+function postsInRange(platform, start, end){
+  return postsForPlatform(platform).filter(p => inRange(p.timestamp, start, end));
+}
+// stable, date-filter-independent baseline per platform
+function baselineFor(platform){
+  const allPosts = DATA.posts.filter(p=>p.platform===platform);
+  const all = withViews(allPosts);
+  const medianViews = median(all.map(p=>p.views));
+  const medianEngRich = median(all.map(p=> p.views>0 ? richEng(p)/p.views : 0));
+  const medianEngCore = median(all.map(p=> p.views>0 ? coreEng(p)/p.views : 0));
+  return { medianViews, medianEngRich, medianEngCore, count: allPosts.length, scoredCount: all.length };
+}
+function outlierScore(p, medianViews){
+  if(!medianViews || !hasViews(p)) return null;
+  return p.views / medianViews;
+}
+function fmtX(n){
+  if(n==null) return '-';
+  return (Math.round(n*10)/10).toLocaleString('en-US') + 'x';
+}
+function truncate(s, n){ s=s||''; return s.length>n ? s.slice(0,n-1)+'…' : s; }
+
+// Authored insights describe the full pulled window. Once the viewer
+// narrows the range, the posts on screen are a subset the sentence was
+// never written about, so the computed fallback takes over.
+function fullWindow(){ return filter.range === String(PULL_WINDOW_DAYS); }
+function authored(str){ return (fullWindow() && str && str.trim()) ? str.trim() : null; }
+function firstLine(s){ return (s||'').split('\n').filter(Boolean)[0] || ''; }
+
+/* ====================================================================
+   HEADER + FILTER BAR
+   ==================================================================== */
+function renderHeader(){
+  const pulled = fmtDate(PULLED_AT);
+  const igCount = DATA.posts.filter(p=>p.platform==='instagram').length;
+  const ttCount = DATA.posts.filter(p=>p.platform==='tiktok').length;
+  return `
+  <div class="card masthead">
+    <div>
+      <h1>Content Performance</h1>
+      <div class="handles">${esc(PLATFORM_META.instagram.handle)} <span class="dot">&middot;</span> ${esc(PLATFORM_META.tiktok.handle)}</div>
+      <div class="pulled-row">
+        <div class="pulled-chip"><span class="sw" style="background:var(--ig)"></span>Instagram: ${igCount} post${igCount===1?'':'s'}</div>
+        <div class="pulled-chip"><span class="sw" style="background:var(--tt)"></span>TikTok: ${ttCount} post${ttCount===1?'':'s'}</div>
+      </div>
+    </div>
+    <div class="snapshot-note">
+      Snapshot pulled <b>${esc(pulled)}</b>, covering the <b>${PULL_WINDOW_DAYS} days</b> before that.
+      These numbers do not update on their own - ask Claude to rebuild the dashboard for fresh ones.
+    </div>
+  </div>`;
+}
+
+function renderFilterBar(){
+  const tabs = ['all','instagram','tiktok'].map(p => {
+    const label = p==='all' ? 'All' : platMeta(p).label;
+    return `<button class="tab ${filter.platform===p?'active':''}" onclick="setPlatform('${p}')">${label}</button>`;
+  }).join('');
+  const ranges = rangeOptions().map(d=>[String(d), d+' days'])
+    .concat([['custom','Custom']]).map(([v,l])=>
+      `<button class="chip ${filter.range===v?'active':''}" onclick="setRange('${v}')">${l}</button>`
+    ).join('');
+
+  const {start,end} = computeRange();
+  const posts = postsInRange(filter.platform, start, end);
+  const rangeLabel = fmtDate(start) + ' – ' + fmtDate(end);
+  const platLabel = filter.platform==='all' ? 'All platforms' : platMeta(filter.platform).label;
+
+  const todayStr = new Date().toISOString().slice(0,10);
+  const cs = filter.customStart || daysAgoStr(PULL_WINDOW_DAYS);
+  const ce = filter.customEnd || todayStr;
+
+  return `
+  <div class="card card--tight" style="margin-top:20px;">
+    <div class="filterbar">
+      <div class="tabs">${tabs}</div>
+      <div class="range-group">
+        ${ranges}
+        <div class="custom-dates ${filter.range==='custom'?'show':''}">
+          <input type="date" id="customStart" value="${esc(cs)}" onchange="setCustomDate('start',this.value)">
+          <span style="color:var(--ink-faint)">to</span>
+          <input type="date" id="customEnd" value="${esc(ce)}" onchange="setCustomDate('end',this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="view-summary">Showing <b>${posts.length}</b> post${posts.length===1?'':'s'} &middot; <b>${platLabel}</b> &middot; ${esc(rangeLabel)}</div>
+  </div>`;
+}
+function daysAgoStr(n){ const d=daysAgo(n); return d.toISOString().slice(0,10); }
+
+function setPlatform(p){ filter.platform=p; pageState.instagram=1; pageState.tiktok=1; render(); }
+function setRange(r){
+  filter.range=r;
+  if(r==='custom' && !filter.customStart){
+    filter.customStart = daysAgoStr(PULL_WINDOW_DAYS);
+    filter.customEnd = new Date().toISOString().slice(0,10);
+  }
+  render();
+}
+function setCustomDate(which, val){
+  if(which==='start') filter.customStart = val; else filter.customEnd = val;
+  render();
+}
+/* ====================================================================
+   SPOTLIGHT CARD (shared component)
+   ==================================================================== */
+function spotCard(cfg){
+  // cfg: {variant:'hero'|'secondary', eyebrow, headline, desc, metricLabel, metricValue, context, quote, quoteStat, link}
+  return `
+  <div class="spot-card ${cfg.variant}">
+    <div class="sc-eyebrow">${esc(cfg.eyebrow)}</div>
+    <div class="sc-headline">${cfg.headline}</div>
+    ${cfg.desc? `<div class="sc-desc">${cfg.desc}</div>`:''}
+    <div class="sc-div"></div>
+    <div class="sc-metric-label">${esc(cfg.metricLabel)}</div>
+    <div class="sc-metric-value">${cfg.metricValue}</div>
+    ${cfg.context? `<div class="sc-context">${cfg.context}</div>`:''}
+    ${cfg.quote? `<div class="sc-quote">"${esc(cfg.quote)}"${cfg.quoteStat?`<span class="stat">${cfg.quoteStat}</span>`:''}</div>`:''}
+    ${cfg.link? `<a class="sc-link" href="${esc(cfg.link)}" target="_blank" rel="noopener">View post &rarr;</a>`:''}
+    ${cfg.extra? cfg.extra : ''}
+  </div>`;
+}
+
+/* ====================================================================
+   MODAL (generic) - used to drill into a group of posts
+   ==================================================================== */
+function openModal(html){
+  document.getElementById('modal-box').innerHTML = html;
+  document.getElementById('modal-root').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('modal-root').classList.remove('show');
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+function postListModal(cfg){
+  // cfg: {eyebrow, title, sub, posts: [...]} - posts sorted however caller wants
+  const rows = cfg.posts.map(p=>`
+    <div class="modal-post">
+      <div class="mp-meta">${fmtDateShort(p.timestamp)}</div>
+      <div class="mp-body">
+        <a class="mp-cap" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(truncate(firstLine(p.caption),90))}</a>
+        <div class="mp-tags">${topicMeta(p.topic).label}${p.durationSec!=null? ' &middot; '+fmtDur(p.durationSec):''}</div>
+      </div>
+      <div class="mp-views">${fmtNum(p.views)}<span class="sub">views</span></div>
+    </div>`).join('');
+  openModal(`
+    <button class="modal-close" onclick="closeModal()">Close &times;</button>
+    <div class="modal-eyebrow">${esc(cfg.eyebrow)}</div>
+    <div class="modal-title">${esc(cfg.title)}</div>
+    ${cfg.sub? `<div class="modal-sub">${cfg.sub}</div>`:''}
+    <div class="modal-list">${rows || '<div class="note-empty">No posts in this group.</div>'}</div>
+  `);
+}
+
+/* ====================================================================
+   STAT TILES
+   ==================================================================== */
+function renderStatTiles(platform, posts, baseline){
+  const tiles = [];
+  const vids = withViews(posts);
+  const noViews = posts.length - vids.length;
+  tiles.push({label:'Posts in view', value: posts.length, sub: `${baseline.count} total pulled${noViews? `, ${noViews} without a view count` : ''}`});
+  const mv = median(vids.map(p=>p.views));
+  tiles.push({label:'Median views', value: fmtNum(mv), sub: mv!=null? `typical (all-time): ${fmtNum(baseline.medianViews)}` : 'no posts in view'});
+  const engVals = vids.map(p=> p.views>0? richEng(p)/p.views*1000 : null).filter(v=>v!=null);
+  const me = median(engVals);
+  tiles.push({label: platform==='instagram' ? 'Median engagement' : 'Median engagement', value: me!=null? Math.round(me)+' / 1,000 views' : '-',
+    sub: platform==='instagram' ? 'likes + comments' : 'likes + comments + shares + saves'});
+  if(platform==='tiktok'){
+    const sv = median(posts.map(p=>p.shares).filter(v=>v!=null));
+    const sav = median(posts.map(p=>p.saves).filter(v=>v!=null));
+    tiles.push({label:'Median shares', value: sv!=null? fmtNum(sv): '-'});
+    tiles.push({label:'Median saves', value: sav!=null? fmtNum(sav): '-'});
+  }
+  return `<div class="stat-grid">${tiles.map(t=>`
+    <div class="stat-tile">
+      <div class="label">${esc(t.label)}</div>
+      <div class="value tabular">${t.value}</div>
+      ${t.sub? `<div class="sub">${esc(t.sub)}</div>`:''}
+    </div>`).join('')}</div>`;
+}
+
+/* ====================================================================
+   BEST / WORST POST
+   ==================================================================== */
+function renderBestWorst(platform, posts, baseline){
+  if(posts.length < 2){
+    return `<div class="note-empty">Not enough posts in this period to compare a best and weakest post yet.</div>`;
+  }
+  const withScore = posts.map(p=>({...p, score: outlierScore(p, baseline.medianViews)}));
+  const sorted = [...withScore].sort((a,b)=>b.score-a.score);
+  const best = sorted[0], worst = sorted[sorted.length-1];
+  const bestCard = spotCard({
+    variant:'hero', eyebrow:'Best post this period',
+    headline: esc(truncate(firstLine(best.caption),90)),
+    desc: `${fmtDate(best.timestamp)} &middot; ${fmtNum(best.views)} views &middot; ${topicMeta(best.topic).label}`,
+    metricLabel:'Times above typical', metricValue: fmtX(best.score),
+    context: `A typical ${platMeta(platform).label} post gets ${fmtNum(baseline.medianViews)} views. This one got ${fmtNum(best.views)}.`,
+    link: best.url
+  });
+  const worstCard = spotCard({
+    variant:'secondary', eyebrow:'Weakest post this period',
+    headline: esc(truncate(firstLine(worst.caption),90)),
+    desc: `${fmtDate(worst.timestamp)} &middot; ${fmtNum(worst.views)} views &middot; ${topicMeta(worst.topic).label}`,
+    metricLabel: worst.score<1?'Times below typical':'Times above typical',
+    metricValue: fmtX(worst.score<1 ? 1/worst.score : worst.score),
+    context: `A typical ${platMeta(platform).label} post gets ${fmtNum(baseline.medianViews)} views. This one got ${fmtNum(worst.views)}.`,
+    link: worst.url
+  });
+  return `<div class="spot-grid">${bestCard}${worstCard}</div>`;
+}
+
+/* ====================================================================
+   REACH vs ENGAGEMENT QUADRANTS
+   ==================================================================== */
+function renderQuadrants(platform, posts, baseline){
+  if(posts.length < 3){
+    return `<div class="note-empty">Not enough posts in this period to break down reach vs. engagement yet.</div>`;
+  }
+  const withEng = posts.map(p=>({...p, engRate: p.views>0? richEng(p)/p.views : 0}));
+  const buckets = {both:[], reach_only:[], eng_only:[], neither:[]};
+  withEng.forEach(p=>{
+    const goodReach = p.views >= baseline.medianViews;
+    const goodEng = p.engRate >= baseline.medianEngRich;
+    if(goodReach && goodEng) buckets.both.push(p);
+    else if(goodReach) buckets.reach_only.push(p);
+    else if(goodEng) buckets.eng_only.push(p);
+    else buckets.neither.push(p);
+  });
+  const defs = [
+    {key:'both', variant:'hero', eyebrow:'Good reach + good engagement', title:'Keep making this',
+     advice:'Working on every axis. This is your template. Do more of exactly this.'},
+    {key:'reach_only', variant:'secondary', eyebrow:'Good reach, low engagement', title:'Seen, not felt',
+     advice:'Gets pushed to people but does not move them to act. Tighten the hook or the ask.'},
+    {key:'eng_only', variant:'secondary', eyebrow:'Good engagement, low reach', title:'Loved, not seen',
+     advice:'The people who see it respond, but the algorithm just is not pushing it. Try a stronger opening 3 seconds or a different post time.'},
+    {key:'neither', variant:'secondary', eyebrow:'Low reach + low engagement', title:'Neither landed',
+     advice:'Not working on any axis. Deprioritize this style unless there is a non-metrics reason to keep it.'},
+  ];
+  quadCache = { platform, baseline, buckets, defs };
+  const written = (INSIGHTS.quadrants && INSIGHTS.quadrants[platform]) || {};
+  const cards = defs.map(d=>{
+    const items = buckets[d.key];
+    const example = items.length? [...items].sort((a,b)=>b.views-a.views)[0] : null;
+    const card = spotCard({
+      variant: d.variant, eyebrow: d.eyebrow, headline: `${items.length} post${items.length===1?'':'s'}: ${d.title}`,
+      desc: items.length ? (authored(written[d.key]) || d.advice) : d.advice,
+      metricLabel:'Example', metricValue: example? fmtNum(example.views)+' views' : '-',
+      quote: example? truncate(firstLine(example.caption),100) : null,
+      quoteStat: example? fmtDate(example.timestamp) : null,
+      extra: items.length? `<div class="sc-expand">See all ${items.length} post${items.length===1?'':'s'} &rarr;</div>` : null
+    });
+    if(!items.length) return card;
+    // make the whole card clickable to drill into every post in this bucket
+    return card.replace('class="spot-card', 'onclick="openQuadModal(\''+d.key+'\')" class="spot-card clickable');
+  });
+  return `<div class="quad-grid">${cards.join('')}</div>`;
+}
+function openQuadModal(key){
+  const {platform, baseline, buckets, defs} = quadCache;
+  const d = defs.find(x=>x.key===key);
+  const items = [...(buckets[key]||[])].sort((a,b)=>b.views-a.views);
+  postListModal({
+    eyebrow: `${platMeta(platform).label} · ${d.eyebrow}`,
+    title: `${d.title}`,
+    sub: `${d.advice} Reach threshold: ${fmtNum(baseline.medianViews)} views. Engagement threshold: ${Math.round(baseline.medianEngRich*1000)} / 1,000 views.`,
+    posts: items
+  });
+}
+/* ====================================================================
+   HIT RATE vs PERIOD BEFORE
+   ==================================================================== */
+function renderHitRate(platform, start, end, baseline){
+  const prior = priorRange(start,end);
+  const curPosts = withViews(postsInRange(platform, start, end));
+  const priorPosts = withViews(postsInRange(platform, prior.start, prior.end));
+  if(!baseline.medianViews){
+    return `<div class="note-empty">Not enough posts pulled yet to define a "typical" post.</div>`;
+  }
+  const threshold = baseline.medianViews * 2;
+  if(curPosts.length===0){
+    return `<div class="note-empty">No posts in the current period to measure a hit rate.</div>`;
+  }
+  const curHits = curPosts.filter(p=>p.views>=threshold).length;
+  const curRate = curHits/curPosts.length;
+  let priorHtml, takeaway;
+  if(priorPosts.length===0){
+    priorHtml = `<div class="hitrate-box"><div class="label">Period before</div><div class="big" style="color:var(--ink-faint); font-size:20px;">No posts to compare</div></div>`;
+    takeaway = `This period: <b>${curHits} of ${curPosts.length}</b> posts (${Math.round(curRate*100)} out of every 100) hit at least ${fmtX(2)} the typical ${platMeta(platform).label} post (${fmtNum(baseline.medianViews)} views). There were no posts in the pulled window before this period to compare against - narrow the date range, or pull a longer window next time.`;
+  } else {
+    const priorHits = priorPosts.filter(p=>p.views>=threshold).length;
+    const priorRate = priorHits/priorPosts.length;
+    priorHtml = `<div class="hitrate-box"><div class="label">Period before</div><div class="big tabular">${priorHits} / ${priorPosts.length}</div></div>`;
+    const dir = curRate > priorRate ? 'up' : (curRate < priorRate ? 'down' : 'flat');
+    const dirText = dir==='up' ? 'more posts are popping off than before' : (dir==='down' ? 'fewer posts are popping off than before' : 'no real difference from before');
+    takeaway = `<b>${curHits} of ${curPosts.length}</b> posts this period hit at least ${fmtX(2)} the typical post, versus <b>${priorHits} of ${priorPosts.length}</b> the period before. ${dirText}. ${dir==='up' ? 'Whatever changed recently, keep doing it.' : (dir==='down' ? 'Worth a look at what shifted in your topics or posting rhythm.' : 'Do next: no change needed here.')}`;
+  }
+  return `
+  <div class="hitrate-row">
+    <div class="hitrate-box"><div class="label">This period</div><div class="big tabular">${curHits} / ${curPosts.length}</div></div>
+    <div class="hitrate-arrow">&rarr;</div>
+    ${priorHtml}
+  </div>
+  <div class="takeaway">${takeaway}</div>`;
+}
+
+/* ====================================================================
+   VIDEO LENGTH EFFECT
+   ==================================================================== */
+function renderLengthBuckets(posts){
+  const withDur = posts.filter(p=>p.durationSec!=null);
+  if(withDur.length < 3){
+    return `<div class="note-empty">Not enough posts with duration data in this period to see a length effect yet.</div>`;
+  }
+  const defs = [
+    {key:'short', label:'Under 45s', test:d=>d<45},
+    {key:'mid', label:'45–70s', test:d=>d>=45 && d<=70},
+    {key:'long', label:'Over 70s', test:d=>d>70},
+  ];
+  const rows = defs.map(d=>{
+    const items = withDur.filter(p=>d.test(p.durationSec));
+    if(!items.length) return null;
+    return { ...d, n: items.length, med: median(items.map(p=>p.views)) };
+  }).filter(Boolean);
+  if(rows.length < 2){
+    return `<div class="note-empty">All posts in this period cluster around the same length. Not enough spread to compare.</div>`;
+  }
+  const best = rows.reduce((a,b)=> b.med>a.med? b:a);
+  const worstMed = Math.min(...rows.map(r=>r.med));
+  const bestMed = best.med;
+  const ratio = worstMed>0 ? bestMed/worstMed : null;
+  const html = `<div class="bucket-row">${rows.map(r=>`
+    <div class="bucket">
+      <div class="label">${r.label}</div>
+      <div class="val tabular ${r.key===best.key?'best':''}">${fmtNum(r.med)}</div>
+      <div class="n">median views &middot; ${r.n} post${r.n===1?'':'s'}</div>
+    </div>`).join('')}</div>`;
+  let takeaway;
+  if(ratio!=null && ratio >= 1.4){
+    takeaway = `Posts running <b>${best.label}</b> get the most views here, about ${fmtX(ratio)} the weakest length bucket. Do next: default new posts to that length unless the topic needs otherwise.`;
+  } else {
+    takeaway = `Length is not doing much here. The buckets land within range of each other. Do next: no real difference, so pick length based on the content, not the algorithm.`;
+  }
+  return html + `<div class="takeaway">${takeaway}</div>`;
+}
+/* ====================================================================
+   PERFORMANCE BAR CHART (one bar per post, chronological)
+   ==================================================================== */
+function renderBarChart(platform, posts, baseline){
+  if(posts.length===0) return `<div class="note-empty">No posts in this period.</div>`;
+  const sorted = [...posts].sort((a,b)=> new Date(a.timestamp)-new Date(b.timestamp));
+  const maxViews = Math.max(...sorted.map(p=>p.views), baseline.medianViews||0) * 1.12;
+  const medianPct = baseline.medianViews ? (baseline.medianViews/maxViews*100) : null;
+  const color = platMeta(platform).color;
+  const bars = sorted.map((p,i)=>{
+    const pct = Math.max((p.views/maxViews*100), 1.5);
+    const isHit = baseline.medianViews && p.views >= baseline.medianViews*2;
+    return `<div class="bar" data-idx="${i}" style="height:${pct}%; background:${color};"
+      onmouseenter="showBarTip(event,'${platform}',${i})" onmouseleave="hideBarTip()" onmousemove="moveBarTip(event)">
+      ${isHit? '<span class="hitdot"></span>':''}
+    </div>`;
+  }).join('');
+  window.__chartData = window.__chartData || {};
+  window.__chartData[platform] = sorted;
+  return `
+    <div class="chart-scroll">
+      <div class="chart-svg-wrap" style="position:relative; min-width:${Math.max(sorted.length*36+40,300)}px;">
+        <div class="chart-bars" style="display:flex; align-items:flex-end; gap:8px; height:200px; position:relative; padding-top:22px;">
+          ${medianPct!=null? `<div style="position:absolute; left:0; right:0; bottom:${medianPct}%; border-top:2px dashed var(--ink-faint); z-index:1;"></div>
+          <div style="position:absolute; right:0; bottom:calc(${medianPct}% + 4px); font-size:10.5px; color:var(--ink-faint); font-family:var(--font-head); font-weight:700;">MEDIAN &middot; ${fmtNum(baseline.medianViews)}</div>`:''}
+          ${bars}
+        </div>
+        <div style="display:flex; gap:8px; margin-top:6px;">
+          ${sorted.map(p=>`<div style="width:28px; flex:none; font-size:9.5px; color:var(--ink-faint); text-align:center; writing-mode:vertical-rl; height:34px;">${fmtDateShort(p.timestamp)}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="item"><span class="sw" style="background:${color}"></span>${platMeta(platform).label} post</div>
+      <div class="item"><span class="sw" style="background:var(--good)"></span>Hit (2x+ typical)</div>
+      <div class="item">- - - median</div>
+    </div>`;
+}
+function showBarTip(evt, platform, idx){
+  const p = window.__chartData[platform][idx];
+  const tip = document.getElementById('tooltip-root');
+  tip.innerHTML = `<div class="bar-tooltip" id="liveTip">
+    <b>${fmtDate(p.timestamp)}</b><br>${esc(truncate(firstLine(p.caption),70))}<br>
+    ${fmtNum(p.views)} views &middot; ${fmtNum(p.likes)} likes</div>`;
+  moveBarTip(evt);
+}
+function moveBarTip(evt){
+  const el = document.getElementById('liveTip');
+  if(!el) return;
+  el.style.left = evt.pageX + 'px';
+  el.style.top = evt.pageY + 'px';
+}
+function hideBarTip(){ document.getElementById('tooltip-root').innerHTML=''; }
+
+/* ====================================================================
+   SORTABLE / PAGINATED TABLE
+   ==================================================================== */
+const TABLE_COLS_COMMON = [
+  {key:'date', label:'Date', numeric:false},
+  {key:'caption', label:'Caption', numeric:false},
+  {key:'views', label:'Views', numeric:true},
+  {key:'likes', label:'Likes', numeric:true},
+  {key:'comments', label:'Comments', numeric:true},
+];
+const TABLE_COLS_TT_EXTRA = [
+  {key:'shares', label:'Shares', numeric:true},
+  {key:'saves', label:'Saves', numeric:true},
+];
+const TABLE_COLS_TAIL = [
+  {key:'duration', label:'Duration', numeric:true},
+  {key:'outlier', label:'Outlier', numeric:true},
+  {key:'topic', label:'Topic', numeric:false},
+];
+function tableCols(platform){
+  return platform==='tiktok' ? [...TABLE_COLS_COMMON, ...TABLE_COLS_TT_EXTRA, ...TABLE_COLS_TAIL] : [...TABLE_COLS_COMMON, ...TABLE_COLS_TAIL];
+}
+function sortVal(p, col, baseline){
+  switch(col){
+    case 'date': return new Date(p.timestamp).getTime();
+    case 'caption': return firstLine(p.caption).toLowerCase();
+    case 'views': return p.views;
+    case 'likes': return p.likes;
+    case 'comments': return p.comments;
+    case 'shares': return p.shares||0;
+    case 'saves': return p.saves||0;
+    case 'duration': return p.durationSec||0;
+    case 'outlier': return outlierScore(p, baseline.medianViews)||0;
+    case 'topic': return topicMeta(p.topic).label;
+    default: return 0;
+  }
+}
+function renderTable(platform, posts, baseline){
+  if(posts.length===0) return `<div class="note-empty">No posts in this period.</div>`;
+  const st = sortState[platform];
+  const cols = tableCols(platform);
+  const sorted = [...posts].sort((a,b)=>{
+    const av=sortVal(a,st.col,baseline), bv=sortVal(b,st.col,baseline);
+    let cmp = av<bv?-1:(av>bv?1:0);
+    return st.dir==='asc'?cmp:-cmp;
+  });
+  const pageSize=10;
+  const totalPages = Math.max(1,Math.ceil(sorted.length/pageSize));
+  if(pageState[platform] > totalPages) pageState[platform]=totalPages;
+  const pg = pageState[platform];
+  const pageItems = sorted.slice((pg-1)*pageSize, pg*pageSize);
+  const bestId = posts.length? [...posts].sort((a,b)=> (outlierScore(b,baseline.medianViews)||0)-(outlierScore(a,baseline.medianViews)||0))[0].id : null;
+
+  const head = cols.map(c=>`<th class="${st.col===c.key?'active':''}" onclick="sortTable('${platform}','${c.key}')">${c.label}${st.col===c.key? `<span class="arrow">${st.dir==='asc'?'&uarr;':'&darr;'}</span>`:''}</th>`).join('');
+  const rows = pageItems.map(p=>{
+    const isTop = p.id===bestId;
+    const tm = topicMeta(p.topic);
+    const cells = cols.map(c=>{
+      const boldClass = isTop && (c.key==='views'||c.key==='outlier') ? 'bold-cell':'';
+      switch(c.key){
+        case 'date': return `<td>${fmtDateShort(p.timestamp)}</td>`;
+        case 'caption': return `<td class="cap-cell"><a href="${esc(p.url)}" target="_blank" rel="noopener" class="cap-text" title="${esc(firstLine(p.caption))}">${esc(truncate(firstLine(p.caption),56))}</a></td>`;
+        case 'views': return `<td class="num ${boldClass}">${fmtNum(p.views)}</td>`;
+        case 'likes': return `<td class="num">${fmtNum(p.likes)}</td>`;
+        case 'comments': return `<td class="num">${fmtNum(p.comments)}</td>`;
+        case 'shares': return `<td class="num">${p.shares!=null?fmtNum(p.shares):'-'}</td>`;
+        case 'saves': return `<td class="num">${p.saves!=null?fmtNum(p.saves):'-'}</td>`;
+        case 'duration': return `<td class="num">${fmtDur(p.durationSec)}</td>`;
+        case 'outlier': return `<td class="num ${boldClass}">${fmtX(outlierScore(p,baseline.medianViews))}</td>`;
+        case 'topic': return `<td><select class="topic-select" onchange="reassignTopic('${p.id}',this.value)">
+            ${Object.keys(TOPIC_META).map(k=>`<option value="${k}" ${p.topic===k?'selected':''}>${TOPIC_META[k].label}</option>`).join('')}
+          </select></td>`;
+        default: return '<td></td>';
+      }
+    }).join('');
+    return `<tr class="${isTop?'top-row':''}">${cells}</tr>`;
+  }).join('');
+
+  return `
+    <div class="table-scroll">
+      <table class="data-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
+    </div>
+    <div class="pager">
+      <span>Page ${pg} of ${totalPages} &middot; ${sorted.length} post${sorted.length===1?'':'s'}</span>
+      <div>
+        <button ${pg<=1?'disabled':''} onclick="changePage('${platform}',-1)">&larr; Prev</button>
+        <button ${pg>=totalPages?'disabled':''} onclick="changePage('${platform}',1)">Next &rarr;</button>
+      </div>
+    </div>`;
+}
+function sortTable(platform, col){
+  const st = sortState[platform];
+  if(st.col===col) st.dir = st.dir==='asc'?'desc':'asc';
+  else { st.col=col; st.dir = (col==='caption'||col==='topic') ? 'asc':'desc'; }
+  pageState[platform]=1;
+  render();
+}
+function changePage(platform, delta){ pageState[platform]+=delta; render(); }
+function reassignTopic(postId, newTopic){
+  const p = DATA.posts.find(x=>x.id===postId);
+  // Session-only: this page stores nothing, so a reassignment lasts until
+  // reload. It is here so the reader can sanity-check a mis-tagged post on
+  // the spot; to make it stick, tell Claude and have the dashboard rebuilt.
+  if(p){ p.topic = newTopic; render(); }
+}
+/* ====================================================================
+   PERFORMANCE BY TOPIC
+   ==================================================================== */
+function topicContextText(topicKey, topicPosts, allPostsInView, groupCounts){
+  const sortedAll = [...allPostsInView].sort((a,b)=>b.views-a.views);
+  const top2Ids = sortedAll.slice(0,2).map(p=>p.id);
+  const topicIds = new Set(topicPosts.map(p=>p.id));
+  const overlap = top2Ids.filter(id=>topicIds.has(id)).length;
+  const avgOutlier = topicPosts.reduce((s,p)=>s+p._outlier,0)/topicPosts.length;
+  const maxCount = Math.max(...Object.values(groupCounts));
+  if(overlap===2) return 'Home to your two biggest posts this period.';
+  if(overlap===1) return 'Home to your single biggest post this period.';
+  if(groupCounts[topicKey]===maxCount && maxCount>=3) return 'Your most-used topic this period. High volume.';
+  if(avgOutlier < 0.8) return `${topicPosts.length} post${topicPosts.length===1?'':'s'} here, running below your typical post. A candidate to post less of.`;
+  if(avgOutlier > 1.3) return `Small sample so far (${topicPosts.length} post${topicPosts.length===1?'':'s'}), but consistently outperforming. Worth doing more of.`;
+  return `${topicPosts.length} post${topicPosts.length===1?'':'s'} in this theme this period, performing about like your typical post.`;
+}
+
+function renderTopicSection(platform, posts, baseline){
+  if(posts.length===0) return `<div class="note-empty">No posts in this period to group by topic.</div>`;
+  const withOutlier = posts.map(p=>({...p, _outlier: outlierScore(p, baseline.medianViews)||0}));
+  const groups = {};
+  withOutlier.forEach(p=>{ (groups[p.topic] = groups[p.topic]||[]).push(p); });
+  const groupCounts = {}; Object.keys(groups).forEach(k=>groupCounts[k]=groups[k].length);
+
+  const rows = Object.keys(groups).map(key=>{
+    const items = groups[key];
+    const avgViews = items.reduce((s,p)=>s+p.views,0)/items.length;
+    const avgOutlier = items.reduce((s,p)=>s+p._outlier,0)/items.length;
+    return { key, items, count: items.length, avgViews, avgOutlier };
+  }).sort((a,b)=>b.avgOutlier-a.avgOutlier);
+
+  const topKey = rows[0].key;
+  const summaryRows = rows.map(r=>`
+    <tr class="${r.key===topKey?'top-row':''}">
+      <td><span class="topic-dot" style="background:${topicMeta(r.key).color}"></span>${topicMeta(r.key).label}</td>
+      <td class="num">${r.count}</td>
+      <td class="num">${fmtNum(r.avgViews)}</td>
+      <td class="num">${fmtX(r.avgOutlier)}</td>
+    </tr>`).join('');
+  const summaryTable = `
+    <table class="topic-summary-table">
+      <thead><tr><th>Topic</th><th style="text-align:right">Posts</th><th style="text-align:right">Avg views</th><th style="text-align:right">Avg outlier</th></tr></thead>
+      <tbody>${summaryRows}</tbody>
+    </table>`;
+
+  const cards = rows.map((r,i)=>{
+    const isHero = r.key===topKey;
+    const standout = [...r.items].sort((a,b)=>b.views-a.views)[0];
+    const context = topicContextText(r.key, r.items, withOutlier, groupCounts);
+    return spotCard({
+      variant: isHero?'hero':'secondary',
+      eyebrow: `TOPIC ${String(i+1).padStart(2,'0')}`,
+      headline: topicMeta(r.key).label,
+      desc: topicMeta(r.key).description,
+      metricLabel: 'Avg outlier score', metricValue: fmtX(r.avgOutlier),
+      context: `${r.count} post${r.count===1?'':'s'} &middot; ${context}`,
+      quote: truncate(firstLine(standout.caption),90),
+      quoteStat: `${fmtNum(standout.views)} views`,
+      link: standout.url
+    });
+  }).join('');
+
+  const note = authored(INSIGHTS.topics && INSIGHTS.topics[platform]);
+  const noteHtml = note ? `<div class="takeaway">${note}</div>` : '';
+  return `${summaryTable}${noteHtml}<div class="topic-cards-grid">${cards}</div>`;
+}
+/* ====================================================================
+   ALL TAB (head-to-head comparison)
+   ==================================================================== */
+function compareBar(igVal, ttVal, fmt){
+  const max = Math.max(igVal||0, ttVal||0, 0.0001);
+  return `
+    <div class="compare-row">
+      <div class="plabel" style="color:var(--ig)">Instagram</div>
+      <div class="track"><div class="fill" style="width:${(igVal||0)/max*100}%; background:var(--ig)"></div></div>
+      <div class="pval">${fmt(igVal)}</div>
+    </div>
+    <div class="compare-row">
+      <div class="plabel" style="color:var(--tt)">TikTok</div>
+      <div class="track"><div class="fill" style="width:${(ttVal||0)/max*100}%; background:var(--tt)"></div></div>
+      <div class="pval">${fmt(ttVal)}</div>
+    </div>`;
+}
+function renderAllTab(){
+  const {start,end} = computeRange();
+  const igPosts = postsInRange('instagram', start, end);
+  const ttPosts = postsInRange('tiktok', start, end);
+  const igBase = baselineFor('instagram'), ttBase = baselineFor('tiktok');
+
+  const igScored = withViews(igPosts), ttScored = withViews(ttPosts);
+  const igMedViews = median(igScored.map(p=>p.views));
+  const ttMedViews = median(ttScored.map(p=>p.views));
+  const igCoreEng = median(igScored.map(p=> p.views>0? coreEng(p)/p.views*1000 : null).filter(v=>v!=null));
+  const ttCoreEng = median(ttScored.map(p=> p.views>0? coreEng(p)/p.views*1000 : null).filter(v=>v!=null));
+
+  const tiles = `
+    <div class="stat-grid">
+      <div class="compare-bar-tile"><div class="label">Posts in view</div>${compareBar(igPosts.length, ttPosts.length, v=>fmtNum(v))}</div>
+      <div class="compare-bar-tile"><div class="label">Median views</div>${compareBar(igMedViews, ttMedViews, v=>v==null?'-':fmtNum(v))}</div>
+      <div class="compare-bar-tile"><div class="label">Core engagement / 1,000 views</div>${compareBar(igCoreEng, ttCoreEng, v=>v==null?'-':Math.round(v))}</div>
+    </div>`;
+
+  let perfCallout;
+  if(igMedViews==null || ttMedViews==null){
+    perfCallout = `<div class="note-empty">Not enough posts on both platforms in this period to say which performs better.</div>`;
+  } else {
+    const winner = igMedViews>ttMedViews?'Instagram':'TikTok';
+    const ratio = Math.max(igMedViews,ttMedViews)/Math.max(1,Math.min(igMedViews,ttMedViews));
+    perfCallout = `<div class="takeaway"><b>${winner}</b> is your stronger platform by views right now. Its typical post gets about ${fmtX(ratio)} the views of your typical post on the other platform. Do next: when you have one idea and time to post it once, ${winner} is where it is more likely to travel.</div>`;
+  }
+
+  const totalPosts = igPosts.length+ttPosts.length;
+  let concentration;
+  if(totalPosts===0){
+    concentration = `<div class="note-empty">No posts in this period to compare posting volume.</div>`;
+  } else {
+    const igShare = Math.round(igPosts.length/totalPosts*100);
+    const ttShare = 100-igShare;
+    const dominant = igShare>ttShare?'Instagram':(ttShare>igShare?'TikTok':null);
+    concentration = `<div class="takeaway">${dominant? `Your posting is concentrated on <b>${dominant}</b> (${dominant==='Instagram'?igShare:ttShare} out of every 100 posts this period). ${dominant==='TikTok' && igPosts.length<3 ? 'Instagram is being under-served. Even reposting your best TikTok ideas there would close the gap.' : 'Keep an eye on whether the quieter platform still deserves the time it is not getting.'}` : `Posting is evenly split between platforms this period.`}</div>`;
+  }
+
+  let engGap;
+  if(igCoreEng==null || ttCoreEng==null){
+    engGap = `<div class="note-empty">Not enough posts on both platforms to compare engagement.</div>`;
+  } else {
+    const diff = Math.abs(igCoreEng-ttCoreEng);
+    const higher = igCoreEng>ttCoreEng?'Instagram':'TikTok';
+    engGap = diff<3 ? `<div class="takeaway">Core engagement (likes + comments per 1,000 views, the only metrics both platforms report) is about the same on both platforms. Do next: no real difference here.</div>`
+      : `<div class="takeaway"><b>${higher}</b> converts views into likes and comments better: ${Math.round(igCoreEng)} vs ${Math.round(ttCoreEng)} per 1,000 views (likes + comments only, so the comparison is fair). Do next: if you are choosing where to spend extra editing time on the same idea, ${higher} rewards it more.</div>`;
+  }
+
+  function bestPostCard(platform, posts, baseline){
+    if(!posts.length) return spotCard({variant:'secondary', eyebrow:platMeta(platform).label, headline:'No posts with a view count in this period', metricLabel:'-', metricValue:'-'});
+    const best = [...posts].sort((a,b)=>(outlierScore(b,baseline.medianViews)||0)-(outlierScore(a,baseline.medianViews)||0))[0];
+    return spotCard({
+      variant:'secondary', eyebrow:`Best on ${platMeta(platform).label}`,
+      headline: esc(truncate(firstLine(best.caption),80)),
+      desc: `${fmtDate(best.timestamp)} &middot; ${topicMeta(best.topic).label}`,
+      metricLabel:'Times above typical', metricValue: fmtX(outlierScore(best,baseline.medianViews)),
+      context: `${fmtNum(best.views)} views`,
+      link: best.url
+    });
+  }
+  const bestCards = `<div class="spot-grid">${bestPostCard('instagram',igScored,igBase)}${bestPostCard('tiktok',ttScored,ttBase)}</div>`;
+
+  return `
+    <div class="section-block">
+      <div class="card">
+        <div class="section-title">Platform comparison</div>
+        <div class="section-sub">Instagram vs. TikTok, head-to-head for the period in view.</div>
+        ${tiles}
+      </div>
+    </div>
+    <div class="section-block"><div class="card"><div class="section-title">Which platform is performing better</div>${perfCallout}</div></div>
+    <div class="section-block"><div class="card"><div class="section-title">Where your content is concentrated</div>${concentration}</div></div>
+    <div class="section-block"><div class="card"><div class="section-title">The engagement gap</div>${engGap}</div></div>
+    <div class="section-block"><div class="card"><div class="section-title">Best post per platform</div>${bestCards}</div></div>
+  `;
+}
+/* ====================================================================
+   SINGLE PLATFORM TAB
+   ==================================================================== */
+function renderPlatformTab(platform){
+  const {start,end} = computeRange();
+  const posts = postsInRange(platform, start, end);
+  const scored = withViews(posts);
+  const baseline = baselineFor(platform);
+  const noViews = posts.length - scored.length;
+  const noViewsNote = noViews ? `<div class="takeaway">${noViews} of these ${posts.length} posts ${noViews===1?'is a photo or carousel':'are photos or carousels'}. ${platMeta(platform).label} does not report views for ${noViews===1?'that format':'those'}, so ${noViews===1?'it is':'they are'} left out of every view-based number below and only ${noViews===1?'appears':'appear'} in the All posts table.</div>` : '';
+  return `
+    <div class="section-block"><div class="card">
+      <div class="section-title">Summary</div>
+      <div class="section-sub">${platMeta(platform).label} performance for the period in view.</div>
+      ${renderStatTiles(platform, posts, baseline)}
+      ${noViewsNote}
+    </div></div>
+
+    <div class="section-block"><div class="card">
+      <div class="section-title">Best &amp; weakest post</div>
+      <div class="section-sub">Measured against the typical (median) post on ${platMeta(platform).label}, all-time.</div>
+      ${renderBestWorst(platform, scored, baseline)}
+    </div></div>
+
+    <div class="section-block"><div class="card">
+      <div class="section-title">Reach vs. engagement</div>
+      <div class="section-sub">Which posts got seen, which got felt, and what to do about each.</div>
+      ${renderQuadrants(platform, scored, baseline)}
+    </div></div>
+
+    <div class="section-block"><div class="card">
+      <div class="section-title">Hit rate</div>
+      <div class="section-sub">Posts reaching at least 2x the typical post, this period vs. the period before.</div>
+      ${renderHitRate(platform, start, end, baseline)}
+    </div></div>
+
+    <div class="section-block"><div class="card">
+      <div class="section-title">Does video length matter?</div>
+      <div class="section-sub">Median views by video length, for posts in the current view.</div>
+      ${renderLengthBuckets(scored)}
+    </div></div>
+
+    <div class="section-block"><div class="card">
+      <div class="section-title">Performance over time</div>
+      <div class="section-sub">One bar per post with a view count, in order posted.</div>
+      ${renderBarChart(platform, scored, baseline)}
+    </div></div>
+
+    <div class="section-block"><div class="card">
+      <div class="section-title">Performance by topic</div>
+      <div class="section-sub">Posts grouped by what they are actually about.</div>
+      ${renderTopicSection(platform, scored, baseline)}
+    </div></div>
+
+    <div class="section-block"><div class="card">
+      <div class="section-title">All posts</div>
+      <div class="section-sub">Sortable. Reassign a post's topic if it was mis-tagged.</div>
+      ${renderTable(platform, posts, baseline)}
+    </div></div>
+  `;
+}
+
+/* ====================================================================
+   MAIN RENDER
+   ==================================================================== */
+// The one authored paragraph that reads the whole account at once. Like
+// every authored string it is scoped to the full window, so narrowing the
+// range hides it rather than letting it describe posts that are no longer
+// on screen.
+function renderHeadline(){
+  const text = authored(INSIGHTS.headline);
+  if(!text) return '';
+  return `
+  <div class="headline-card">
+    <div class="hc-eyebrow">What to do next</div>
+    <div class="hc-body">${text}</div>
+    <div class="hc-scope">Written against all ${DATA.posts.length} posts in the ${PULL_WINDOW_DAYS}-day window, at the time of the pull.</div>
+  </div>`;
+}
+
+function render(){
+  const app = document.getElementById('app');
+  const body = filter.platform==='all' ? renderAllTab() : renderPlatformTab(filter.platform);
+  app.innerHTML = renderHeader() + renderFilterBar() + renderHeadline() + body + `<div class="footnote">Data via Apify &middot; Instagram views = video play count &middot; TikTok views = play count</div>`;
+}
+/* ====================================================================
+   BOOT
+   This page is a static snapshot: everything it needs is in SEED_POSTS,
+   so booting is just a render. No capabilities are declared, nothing is
+   stored, nothing is fetched.
+   ==================================================================== */
+render();
+</script>

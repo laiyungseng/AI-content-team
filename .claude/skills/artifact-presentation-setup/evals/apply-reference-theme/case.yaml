@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: apply-reference-theme
+expected_outcome: |
+  Creates brand/sample_project/assets/artifact_theme.json with light and dark palettes derived from navy and gold, and rebuilds a page with it; does not edit template HTML for colours.

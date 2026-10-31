@@ -1,0 +1,13 @@
+{
+  "title": "November Publishing Schedule",
+  "subtitle": "Example data",
+  "project": "sample_project",
+  "items": [
+    {"id": "C001", "date": "2026-11-02", "platform": "Instagram", "format": "Reel", "campaign": "CRM Launch", "stage": "Awareness", "status": "Approved", "title": "1 day a week. Gone.", "next": "C002"},
+    {"id": "C002", "date": "2026-11-04", "platform": "Instagram", "format": "Carousel", "campaign": "CRM Launch", "stage": "Problem", "status": "Draft", "title": "3 signs of CRM overload", "previous": "C001", "next": "C003"},
+    {"id": "C003", "date": "2026-11-06", "platform": "Instagram", "format": "Static", "campaign": "CRM Launch", "stage": "Proof", "status": "Planned", "title": "Before and after week", "previous": "C002", "next": "C004"},
+    {"id": "C004", "date": "2026-11-09", "platform": "Instagram", "format": "Reel", "campaign": "CRM Launch", "stage": "Offer", "status": "Idea", "title": "Free automation audit", "previous": "C003"},
+    {"id": "C005", "date": "2026-11-11", "platform": "LinkedIn", "format": "Carousel", "campaign": "Authority", "stage": "Education", "status": "Brief Ready", "title": "What a voice agent can log", "next": "C006"},
+    {"id": "C006", "date": "2026-11-18", "platform": "LinkedIn", "format": "Static", "campaign": "Authority", "stage": "Proof", "status": "Planned", "title": "Client result: 11 hours back", "previous": "C005"}
+  ]
+}

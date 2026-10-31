@@ -1,0 +1,27 @@
+---
+type: memory
+status: active
+kind: winning_patterns
+---
+# Winning Patterns
+
+> Memory holds **validated** findings only. Raw observations stay in `competitor_analysis/projects/[project]/runs/`.
+> A block needs evidence (post count), a result and a confidence level. Weak or single-run findings stay in `experiments.md`.
+> Never keep one giant file: add blocks here, split by platform if a file passes ~300 lines.
+
+## Block format (copy per pattern)
+```markdown
+### PAT-001 <short name>
+- platform: instagram | tiktok | xhs | meta
+- pattern: <what exactly repeats: hook type, format, topic, length, CTA>
+- evidence: <N posts across M accounts; ratio to own typical; link run ids>
+- our validation: <our posts using it + result, or "none yet">
+- result: <what happened / expected effect, with numbers>
+- confidence: low           # low (<5 posts or 1 run) | medium (5-15 posts or 2 runs) | high (15+ posts, our own validation)
+- source: [[run-YYYY-MM-DD_HHMM]] , [[INS-###]]
+- first seen: YYYY-MM-DD   last confirmed: YYYY-MM-DD
+- do next: <one action>
+```
+
+## Patterns
+(none yet)

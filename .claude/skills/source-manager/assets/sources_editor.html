@@ -1,0 +1,165 @@
+<title>Research Sources</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: sticky toolbar (Competitors/Ours switch, save state), platform settings strip, one table per platform, topics table at the end. */
+:root {
+  --bg: #f4f6f7; --panel: #ffffff; --fg: #1b2428; --muted: #5d6b72; --line: #d9e0e3;
+  --accent: #0b6b6b; --accent-fg: #ffffff; --ok: #1f7a4d; --warn: #9a6200; --off: #8a979d; --danger: #b3261e;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12181b; --panel: #1a2226; --fg: #e6ecee; --muted: #93a2a9; --line: #2c383d;
+    --accent: #4cc0bd; --accent-fg: #0a1415; --ok: #5fcf95; --warn: #e0aa4a; --off: #6c7b82; --danger: #ff8a80; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12181b; --panel: #1a2226; --fg: #e6ecee; --muted: #93a2a9; --line: #2c383d;
+  --accent: #4cc0bd; --accent-fg: #0a1415; --ok: #5fcf95; --warn: #e0aa4a; --off: #6c7b82; --danger: #ff8a80; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); margin: 0;
+  padding-block: 0 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 980px; margin: 0 auto; }
+header.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding: 14px 0 10px; border-bottom: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+h1 { font-size: 18px; margin: 0; font-weight: 600; letter-spacing: -.01em; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--panel); }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 7px 14px; font: inherit; font-weight: 500; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+.status { font: 12px var(--mono); color: var(--muted); }
+.status[data-s="saved"] { color: var(--ok); } .status[data-s="saving"] { color: var(--warn); } .status[data-s="local"], .status[data-s="error"] { color: var(--danger); }
+.hint { color: var(--muted); margin: 14px 0 0; max-width: 68ch; }
+section.plat { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin-top: 16px; }
+section.plat > .head { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+section.plat h2 { font-size: 15px; margin: 0; font-weight: 600; min-width: 90px; }
+section.plat.disabled h2 { color: var(--off); }
+.tog { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.set { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12.5px; }
+.count { margin-left: auto; font: 12px var(--mono); color: var(--muted); }
+.disabled-note { padding: 8px 14px; font-size: 12.5px; color: var(--warn); border-bottom: 1px solid var(--line); }
+input[type=text], input[type=number], select { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 5px; padding: 5px 8px; min-width: 0; }
+input[type=number] { width: 64px; } select { padding: 5px 4px; }
+input[type=text]:focus-visible, input[type=number]:focus-visible, select:focus-visible, button:focus-visible, input[type=checkbox]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 620px; }
+th { text-align: left; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 8px 14px; }
+td { padding: 6px 14px; border-top: 1px solid var(--line); vertical-align: middle; }
+td input[type=text] { width: 100%; } td.url input { font-family: var(--mono); font-size: 12.5px; }
+tr.inactive td input[type=text] { color: var(--off); }
+td.act, th.act { text-align: center; width: 70px; } td.rm { width: 44px; text-align: right; }
+.empty { padding: 14px; color: var(--muted); font-size: 13px; }
+button.ghost { background: transparent; border: 1px solid var(--line); color: var(--fg); border-radius: 5px; padding: 5px 10px; font: inherit; cursor: pointer; }
+button.ghost:hover { border-color: var(--accent); color: var(--accent); }
+button.x { border: 0; background: transparent; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+button.x:hover { color: var(--danger); }
+.add { padding: 10px 14px; border-top: 1px solid var(--line); }
+.foot { margin-top: 22px; color: var(--muted); font-size: 12.5px; max-width: 72ch; }
+.foot code { font-family: var(--mono); }
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <h1>Research Sources</h1>
+    <div class="seg" role="group" aria-label="Whose accounts">
+      <button id="tab-competitors" aria-pressed="true" type="button">Competitors</button>
+      <button id="tab-ours" aria-pressed="false" type="button">Ours</button>
+    </div>
+    <span class="status" id="status" data-s="local" role="status">loading</span>
+  </header>
+  <p class="hint" id="hint"></p>
+  <div id="plats"></div>
+  <section class="plat" id="topics-box">
+    <div class="head"><h2>Topics</h2><span class="set">Shared taxonomy, 4 to 6 topics, stable between runs</span><span class="count" id="topic-count"></span></div>
+    <div class="tbl"><table><thead><tr><th style="width:180px">Key</th><th>Label</th><th></th></tr></thead><tbody id="topics"></tbody></table></div>
+    <div class="add"><button class="ghost" id="add-topic" type="button">Add topic</button></div>
+  </section>
+  <p class="foot">Changes save to this page as you type. They reach <code>sources.md</code> when you tell Claude "sync sources"; Claude also syncs at the start of every research run. A URL is only researched when its platform is switched on <em>and</em> its row is ticked Active.</p>
+</div>
+
+<script>
+const SEED = __SOURCES_JSON__;
+const PLAT = { meta: "Meta", instagram: "Instagram", tiktok: "TikTok", xhs: "XHS" };
+const KIND = { meta: "Ad Library ads", instagram: "organic posts", tiktok: "organic posts", xhs: "organic posts" };
+const TYPES = { meta: ["page", "profile"], instagram: ["profile"], tiktok: ["profile"], xhs: ["profile"] };
+const $ = (id) => document.getElementById(id);
+let state = JSON.parse(JSON.stringify(SEED)); delete state.sha256;
+let owner = "competitors", ref = null, timer = null, writing = false, dirty = false, canWrite = true, dbOn = false;
+
+function setStatus(s, text) { const el = $("status"); el.dataset.s = s; el.textContent = text; }
+function el(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  Object.entries(props || {}).forEach(([k, v]) => { if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else if (v !== false && v != null) e.setAttribute(k, v === true ? "" : v); });
+  kids.flat().forEach((k) => e.append(k)); return e;
+}
+function changed() {
+  dirty = true;
+  if (!ref) { setStatus("local", "not saved: shared storage unavailable"); return; }
+  setStatus("saving", "saving...");
+  clearTimeout(timer); timer = setTimeout(flush, 700);
+}
+async function flush() {
+  if (writing || !ref) { if (writing) timer = setTimeout(flush, 300); return; }
+  writing = true; dirty = false;
+  try { await ref.set({ state, baseSha: SEED.sha256 || "", editedAt: new Date().toISOString() }); setStatus(dirty ? "saving" : "saved", dirty ? "saving..." : "saved " + new Date().toLocaleTimeString()); }
+  catch (e) { setStatus("error", e && e.code === "permission_denied" ? "view only: you cannot edit" : "save failed, will retry on next change"); }
+  writing = false; if (dirty) { clearTimeout(timer); timer = setTimeout(flush, 300); }
+}
+function render() {
+  $("tab-competitors").setAttribute("aria-pressed", owner === "competitors");
+  $("tab-ours").setAttribute("aria-pressed", owner === "ours");
+  $("hint").textContent = owner === "competitors"
+    ? "Accounts we study. Their posts are sorted into Adapt, Copy or Ignore."
+    : "Our own accounts. They form the baseline the competitors are compared against.";
+  const box = $("plats"); box.replaceChildren();
+  state.platforms.forEach((p) => {
+    const rows = state[owner][p.key];
+    const active = rows.filter((r) => r.active).length;
+    const head = el("div", { class: "head" },
+      el("h2", {}, PLAT[p.key]),
+      el("label", { class: "tog" }, el("input", { type: "checkbox", id: "en-" + p.key, checked: p.enabled, "aria-label": PLAT[p.key] + " enabled", onchange: (e) => { p.enabled = e.target.checked; changed(); render(); } }), "Research this platform"),
+      el("span", { class: "set" }, "Max posts", el("input", { type: "number", min: 1, max: 200, id: "mp-" + p.key, value: p.maxPosts, "aria-label": PLAT[p.key] + " max posts", onchange: (e) => { p.maxPosts = Math.max(1, parseInt(e.target.value, 10) || p.maxPosts); changed(); } })),
+      el("span", { class: "set" }, "Range", el("select", { id: "rg-" + p.key, "aria-label": PLAT[p.key] + " date range", onchange: (e) => { p.range = e.target.value; changed(); } },
+        ["7d", "30d", "90d"].map((v) => el("option", { value: v, selected: v === p.range }, v)))),
+      el("span", { class: "count" }, KIND[p.key] + " | " + active + " of " + rows.length + " active"));
+    const body = rows.length
+      ? el("div", { class: "tbl" }, el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Name"), el("th", {}, "URL"), el("th", {}, "Type"), el("th", { class: "act" }, "Active"), el("th", {}))),
+          el("tbody", {}, rows.map((r, i) => el("tr", { class: r.active ? "" : "inactive" },
+            el("td", {}, el("input", { type: "text", value: r.name, "aria-label": "Name", onchange: (e) => { r.name = e.target.value.trim(); changed(); } })),
+            el("td", { class: "url" }, el("input", { type: "text", value: r.url, "aria-label": "URL", onchange: (e) => { r.url = e.target.value.trim(); changed(); } })),
+            el("td", {}, el("select", { "aria-label": "Profile or page", onchange: (e) => { r.type = e.target.value; changed(); } }, TYPES[p.key].map((t) => el("option", { value: t, selected: t === r.type }, t)))),
+            el("td", { class: "act" }, el("input", { type: "checkbox", checked: r.active, "aria-label": "Active", onchange: (e) => { r.active = e.target.checked; changed(); render(); } })),
+            el("td", { class: "rm" }, el("button", { class: "x", type: "button", "aria-label": "Remove " + (r.name || "row"), onclick: () => { rows.splice(i, 1); changed(); render(); } }, "×")))))))
+      : el("div", { class: "empty" }, "No " + owner + " accounts on " + PLAT[p.key] + " yet.");
+    const add = el("div", { class: "add" }, el("button", { class: "ghost", type: "button", id: "add-" + p.key, onclick: () => { rows.push({ name: "", url: "", type: TYPES[p.key][0], active: true }); changed(); render(); const inp = document.querySelectorAll("#plats section")[state.platforms.indexOf(p)].querySelectorAll("tbody tr:last-child input[type=text]")[0]; inp && inp.focus(); } }, "Add " + (owner === "ours" ? "our account" : "competitor")));
+    box.append(el("section", { class: "plat" + (p.enabled ? "" : " disabled") }, head, p.enabled ? "" : el("div", { class: "disabled-note" }, "Switched off: these rows are kept but not researched."), body, add));
+  });
+  const tb = $("topics"); tb.replaceChildren();
+  state.topics.forEach((t, i) => tb.append(el("tr", {},
+    el("td", {}, el("input", { type: "text", value: t.key, "aria-label": "Topic key", onchange: (e) => { t.key = e.target.value.trim().toLowerCase().replace(/[^a-z0-9_]+/g, "_"); e.target.value = t.key; changed(); } })),
+    el("td", {}, el("input", { type: "text", value: t.label, "aria-label": "Topic label", onchange: (e) => { t.label = e.target.value.trim(); changed(); } })),
+    el("td", { class: "rm" }, el("button", { class: "x", type: "button", "aria-label": "Remove topic", onclick: () => { state.topics.splice(i, 1); changed(); render(); } }, "×")))));
+  if (!state.topics.length) tb.append(el("tr", {}, el("td", { colspan: 3, class: "empty" }, "No topics yet. Add 4 to 6 so every post is tagged the same way across runs.")));
+  const n = state.topics.length; $("topic-count").textContent = n + " topics" + (n && (n < 4 || n > 6) ? " (aim for 4 to 6)" : "");
+}
+$("tab-competitors").addEventListener("click", () => { owner = "competitors"; render(); });
+$("tab-ours").addEventListener("click", () => { owner = "ours"; render(); });
+$("add-topic").addEventListener("click", () => { state.topics.push({ key: "", label: "" }); changed(); render(); const rows = $("topics").querySelectorAll("tr"); rows[rows.length - 1].querySelector("input").focus(); });
+render(); setStatus("local", "loading shared storage");
+
+(async () => {
+  const timeout = setTimeout(() => { if (!dbOn) setStatus("local", "shared storage unavailable: edits are not saved"); }, 10000);
+  let db = null; try { db = window.claude && (await window.claude.use("db")); } catch (e) { db = null; }
+  if (!db) { clearTimeout(timeout); setStatus("local", "shared storage unavailable: edits are not saved"); return; }
+  ref = db.doc("sources/state"); dbOn = true; clearTimeout(timeout);
+  ref.onSnapshot((snap) => {
+    if (writing || dirty) return;
+    if (snap.exists) { const d = snap.data(); if (d && d.state) { state = JSON.parse(JSON.stringify(d.state)); render(); } setStatus("saved", "saved " + (d.editedAt ? new Date(d.editedAt).toLocaleTimeString() : "")); }
+    else setStatus("saved", "matches sources.md");
+  }, () => setStatus("error", "storage error: reload the page"));
+})();
+</script>

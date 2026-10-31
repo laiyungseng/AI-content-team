@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: starts-with-examples-then-one-question
+expected_outcome: |
+  Runs/handles the environment check, asks for examples to study (website, social accounts, best posts), then starts the interview asking exactly one question at a time.

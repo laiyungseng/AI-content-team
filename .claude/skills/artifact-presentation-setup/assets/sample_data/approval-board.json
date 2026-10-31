@@ -1,0 +1,19 @@
+{
+  "title": "Week 1 Content Briefs",
+  "subtitle": "Example data - approve, request changes or reject each brief",
+  "project": "sample_project",
+  "instructions": "Check each brief against the strategy. Approve what is ready, and leave a note on anything that needs work.",
+  "items": [
+    {"id": "C001", "title": "Why manual CRM updates cost you a day a week", "type": "Reel brief", "status": "Brief Ready",
+     "meta": {"Platform": "Instagram", "Publish": "2026-11-02", "Stage": "Awareness"},
+     "summary": "Cost-of-inaction hook aimed at SME owners whose staff re-type call notes into the CRM.",
+     "sections": [{"label": "Hook pattern", "body": "Cost of inaction: put a weekly hour figure on the problem."}, {"label": "Core message", "body": "Repetitive CRM admin can be automated."}, {"label": "CTA", "body": "Comment \"CRM\" to receive the automation checklist."}]},
+    {"id": "C002", "title": "Three signs your CRM is eating your team's time", "type": "Carousel brief", "status": "Brief Ready",
+     "meta": {"Platform": "Instagram", "Publish": "2026-11-04", "Stage": "Problem"},
+     "summary": "Educational carousel; each slide names one symptom, last slide invites a self-audit.",
+     "sections": [{"label": "Core message", "body": "Symptoms are visible before the cost is."}]},
+    {"id": "C003", "title": "Our customers' before/after week", "type": "Static brief", "status": "Idea",
+     "meta": {"Platform": "Instagram", "Publish": "2026-11-06", "Stage": "Proof"},
+     "summary": "Single-image proof post with one number and one quote."}
+  ]
+}

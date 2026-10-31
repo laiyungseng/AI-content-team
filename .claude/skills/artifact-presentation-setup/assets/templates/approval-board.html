@@ -1,0 +1,78 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--__FONTS__-->
+<style>
+/*__THEME__*/
+/*__SHARED_CSS__*/
+.intro { max-width: 70ch; color: var(--muted); }
+.item { padding: 16px 18px; }
+.item-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.item-head h3 { font-size: 17px; flex: 1 1 200px; min-width: 0; }
+.metas { display: flex; gap: 6px 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 6px; }
+.metas b { color: var(--fg); font-weight: 600; }
+.summary { margin-top: 10px; max-width: 75ch; }
+details.more { margin-top: 10px; }
+details.more summary { cursor: pointer; font-weight: 600; color: var(--accent); font-size: 13px; }
+.sec { margin-top: 12px; }
+.sec .lbl { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+.sec .bd { white-space: pre-wrap; max-width: 75ch; }
+.empty { text-align: center; padding: 36px 16px; color: var(--muted); }
+</style>
+<div id="app"></div>
+<script type="application/json" id="data">__DATA__</script>
+<script>
+/*__SHARED_JS__*/
+(function () {
+  const items = DATA.items || [];
+  const app = document.getElementById('app');
+  const filters = [['all', 'All'], ['pending', 'Pending'], ['approve', 'Approved'], ['revise', 'Changes requested'], ['reject', 'Rejected']];
+  let filter = 'all';
+
+  const cards = items.map((it) => {
+    const metas = Object.entries(it.meta || {}).map(([k, v]) => h('span', null, k + ': ', h('b', null, v)));
+    const card = h('article', { class: 'card item', id: 'item-' + it.id },
+      h('div', { class: 'item-head' },
+        h('span', { class: 'mono muted' }, it.id),
+        h('h3', null, it.title || it.id),
+        it.type ? h('span', { class: 'badge info' }, it.type) : null,
+        it.status ? badge(it.status) : null),
+      metas.length ? h('div', { class: 'metas' }, metas) : null,
+      it.summary ? h('p', { class: 'summary' }, it.summary) : null,
+      (it.sections || []).length ? h('details', { class: 'more', open: (it.sections || []).length <= 2 ? true : null },
+        h('summary', null, 'Full details'),
+        (it.sections || []).map((s) => h('div', { class: 'sec' }, h('div', { class: 'lbl' }, s.label), h('div', { class: 'bd' }, s.body)))) : null,
+      decisionWidget(it));
+    return { it, card };
+  });
+
+  const chipEls = filters.map(([k, label]) => h('button', { class: 'chip', type: 'button', 'aria-pressed': String(k === filter),
+    onclick: () => { filter = k; apply(); } }, label));
+  const list = h('div', { class: 'stack' }, cards.map((c) => c.card));
+  const empty = h('div', { class: 'card empty', hidden: true }, 'Nothing in this filter.');
+
+  function apply() {
+    chipEls.forEach((c, i) => c.setAttribute('aria-pressed', String(filters[i][0] === filter)));
+    let shown = 0;
+    cards.forEach(({ it, card }) => {
+      const d = (Decisions.get(it.id) || {}).decision;
+      const ok = filter === 'all' || (filter === 'pending' ? !d : d === filter);
+      card.hidden = !ok; if (ok) shown++;
+    });
+    empty.hidden = shown > 0;
+  }
+
+  const copyBtn = h('button', { class: 'btn primary', type: 'button',
+    onclick: () => copyText(Decisions.summary(items, DATA.title), 'Summary copied') }, 'Copy summary');
+
+  app.append(
+    chrome(DATA.title, DATA.subtitle),
+    h('main', { class: 'wrap stack', style: 'margin-top:20px' },
+      DATA.instructions ? h('p', { class: 'intro' }, DATA.instructions) : null,
+      h('div', { class: 'chips', role: 'group', 'aria-label': 'Filter by decision' }, chipEls),
+      list, empty,
+      h('div', { class: 'savebar' }, progressBar(items), saveStatus(), copyBtn)));
+
+  Decisions.onChange(apply);
+  Decisions.init();
+})();
+</script>

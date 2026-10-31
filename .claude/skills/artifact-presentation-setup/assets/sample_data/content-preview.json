@@ -1,0 +1,29 @@
+{
+  "title": "Week 1 Drafts",
+  "subtitle": "Example data - preview each draft the way it will appear",
+  "project": "sample_project",
+  "items": [
+    {"id": "C001", "format": "reel", "platform": "Instagram", "title": "Manual CRM updates cost a day a week", "status": "Review", "date": "2026-11-02", "campaign_stage": "Awareness",
+     "hook": "Your team spends one full day a week re-typing call notes.",
+     "caption": "One day a week. Across 5 people that is 250 working days a year. Comment \"CRM\" and we will send the automation checklist.",
+     "cta": "Comment \"CRM\" for the checklist", "rationale": "Cost-of-inaction hooks beat generic education in the competitor set (see PAT-0041).",
+     "review": {"score": 88, "notes": "Strong hook; tighten the proof scene."},
+     "reel": {"scenes": [
+       {"time": "0-3s", "seconds": 3, "label": "Hook", "onscreen": "1 day a week. Gone.", "visual": "Founder at desk, typing into a CRM", "voiceover": "Your team loses a full day every week to CRM typing."},
+       {"time": "3-10s", "seconds": 7, "label": "Problem", "onscreen": "Re-typing call notes", "visual": "Screen recording of copy-paste", "voiceover": "Every call gets typed twice: once in notes, once in the CRM."},
+       {"time": "10-30s", "seconds": 20, "label": "Value", "onscreen": "Auto-logged in seconds", "visual": "Voice agent logging a call", "voiceover": "A voice agent writes the record while the call is happening."},
+       {"time": "30-45s", "seconds": 15, "label": "Proof", "onscreen": "5 people x 1 day = 250 days", "visual": "Simple counter animation", "voiceover": "For a team of five, that is 250 working days a year."},
+       {"time": "45-60s", "seconds": 15, "label": "CTA", "onscreen": "Comment CRM", "visual": "Logo and comment prompt", "voiceover": "Comment CRM and I will send the checklist."}]}},
+    {"id": "C002", "format": "carousel", "platform": "Instagram", "title": "3 signs your CRM is eating your time", "status": "Draft", "date": "2026-11-04", "campaign_stage": "Problem",
+     "hook": "Is your CRM helping, or is your team feeding it?", "caption": "Three quick checks you can run in 5 minutes.", "cta": "Save this and run the check on Monday",
+     "carousel": {"slides": [
+       {"headline": "Is your CRM helping, or is your team feeding it?", "body": "3 signs to check today"},
+       {"headline": "1. Notes live in two places", "body": "Calls are noted in a notebook, then re-typed."},
+       {"headline": "2. Records are always a day late", "body": "Pipeline reviews start with 'let me update that'."},
+       {"headline": "3. Nobody trusts the numbers", "body": "Forecasts are rebuilt by hand every week."},
+       {"headline": "Run the 5-minute check", "body": "Save this post and try it Monday."}]}},
+    {"id": "C003", "format": "static", "platform": "Instagram", "title": "Before and after week", "status": "Idea", "date": "2026-11-06", "campaign_stage": "Proof",
+     "hook": "11 hours back", "caption": "What one client did with the time they got back.", "cta": "DM us AUDIT",
+     "static": {"headline": "11 hours back every week", "support": "\"We stopped typing and started selling.\" - Client, 8 staff", "concept": "Split layout: cluttered desk left, calendar with open slots right. Brand teal as the highlight."}}
+  ]
+}

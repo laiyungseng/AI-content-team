@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: converts-answers-to-brand-files
+expected_outcome: |
+  Creates the project folders (init_project.py), renders brand files with render_brand_files.py into brand/penang_cakes/, and presents the guideline for approval through artifact-presentation-setup.

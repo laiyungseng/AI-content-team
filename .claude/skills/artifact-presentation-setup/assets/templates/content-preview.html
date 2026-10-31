@@ -1,0 +1,127 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--__FONTS__-->
+<style>
+/*__THEME__*/
+/*__SHARED_CSS__*/
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 18px; margin-top: 20px; align-items: start; }
+@media (max-width: 820px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.picker { display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 820px) { .picker { flex-direction: row; overflow-x: auto; padding-bottom: 4px; } .pick { flex: 0 0 200px; } }
+.pick { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; cursor: pointer; display: flex; flex-direction: column; gap: 3px; }
+.pick[aria-current="true"] { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.pick .t { font-weight: 600; font-size: 14px; }
+.pick .m { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.stage { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 22px; padding: 18px; }
+@media (max-width: 760px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+.device { width: 100%; max-width: 300px; margin-inline: auto; background: var(--surface-2); border: 1px solid var(--line); border-radius: 26px; padding: 10px; }
+.screen { border-radius: 18px; background: color-mix(in srgb, var(--accent) 16%, var(--surface)); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: 22px 18px; text-align: left; }
+.screen.r916 { aspect-ratio: 9 / 16; }
+.screen.r45 { aspect-ratio: 4 / 5; }
+.screen.r11 { aspect-ratio: 1 / 1; }
+.screen .tag { position: absolute; top: 12px; left: 14px; right: 14px; display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.screen .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 5vw, 26px); line-height: 1.12; text-wrap: balance; overflow-wrap: anywhere; }
+.screen .small { margin-top: 12px; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.timeline { display: flex; gap: 3px; margin-top: 12px; }
+.seg { border: 0; background: var(--surface-2); border-radius: 5px; height: 30px; cursor: pointer; font-size: 11px; color: var(--muted); font-weight: 600; min-width: 0; overflow: hidden; padding: 0 4px; }
+.seg[aria-current="true"] { background: var(--accent); color: var(--accent-fg); }
+.nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 12px; }
+.dots { display: flex; gap: 5px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--accent); }
+.facts { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.facts .lbl { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+.facts .bd { white-space: pre-wrap; max-width: 65ch; overflow-wrap: anywhere; }
+.scene-detail { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.scene-detail div + div { margin-top: 4px; }
+</style>
+<div id="app"></div>
+<script type="application/json" id="data">__DATA__</script>
+<script>
+/*__SHARED_JS__*/
+(function () {
+  const items = DATA.items || [];
+  const app = document.getElementById('app');
+  const main = h('div', { class: 'card', style: 'min-width:0' });
+  const picker = h('div', { class: 'picker' });
+  let current = 0;
+
+  function lbl(label, text) { return text ? h('div', null, h('div', { class: 'lbl' }, label), h('div', { class: 'bd' }, text)) : null; }
+
+  function reelView(it) {
+    const scenes = (it.reel && it.reel.scenes) || [];
+    let idx = 0;
+    const screen = h('div', { class: 'screen r916' });
+    const detail = h('div', { class: 'scene-detail' });
+    const tl = h('div', { class: 'timeline', role: 'group', 'aria-label': 'Scenes' });
+    const segs = scenes.map((s, i) => h('button', { class: 'seg', type: 'button', style: 'flex:' + (s.seconds || 5) + ' 1 0', title: s.label,
+      onclick: () => { idx = i; paint(); } }, s.time || s.label));
+    segs.forEach((b) => tl.append(b));
+    function paint() {
+      const s = scenes[idx] || {};
+      segs.forEach((b, i) => b.setAttribute('aria-current', String(i === idx)));
+      screen.replaceChildren(
+        h('div', { class: 'tag' }, h('span', null, s.label || ''), h('span', null, s.time || '')),
+        h('div', { class: 'big' }, s.onscreen || s.label || ''));
+      detail.replaceChildren(
+        s.visual ? h('div', null, h('b', null, 'Visual: '), s.visual) : null,
+        s.voiceover ? h('div', null, h('b', null, 'Voiceover: '), s.voiceover) : null);
+    }
+    paint();
+    return h('div', null, h('div', { class: 'device' }, screen), scenes.length ? tl : null, detail);
+  }
+
+  function carouselView(it) {
+    const slides = (it.carousel && it.carousel.slides) || [];
+    let idx = 0;
+    const screen = h('div', { class: 'screen r45' });
+    const dots = h('div', { class: 'dots' }, slides.map(() => h('i')));
+    const prev = h('button', { class: 'btn sm', type: 'button', 'aria-label': 'Previous slide', onclick: () => { idx = Math.max(0, idx - 1); paint(); } }, 'Prev');
+    const next = h('button', { class: 'btn sm', type: 'button', 'aria-label': 'Next slide', onclick: () => { idx = Math.min(slides.length - 1, idx + 1); paint(); } }, 'Next');
+    function paint() {
+      const s = slides[idx] || {};
+      screen.replaceChildren(
+        h('div', { class: 'tag' }, h('span', null, 'Slide ' + (idx + 1) + ' / ' + slides.length), h('span', null, it.platform || '')),
+        h('div', { class: 'big' }, s.headline), s.body ? h('div', { class: 'small' }, s.body) : null);
+      [...dots.children].forEach((d, i) => d.classList.toggle('on', i === idx));
+      prev.disabled = idx === 0; next.disabled = idx === slides.length - 1;
+    }
+    paint();
+    return h('div', null, h('div', { class: 'device' }, screen), h('div', { class: 'nav' }, prev, dots, next));
+  }
+
+  function staticView(it) {
+    const s = it.static || {};
+    return h('div', null, h('div', { class: 'device' },
+      h('div', { class: 'screen r11' },
+        h('div', { class: 'tag' }, h('span', null, it.format || 'static'), h('span', null, it.platform || '')),
+        h('div', { class: 'big' }, s.headline), s.support ? h('div', { class: 'small' }, s.support) : null)));
+  }
+
+  function show(i) {
+    current = i;
+    [...picker.children].forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
+    const it = items[i];
+    const preview = it.format === 'reel' ? reelView(it) : it.format === 'carousel' ? carouselView(it) : staticView(it);
+    const facts = h('div', { class: 'facts' },
+      h('div', { class: 'row' }, h('h2', { style: 'font-size:22px;flex:1 1 200px' }, it.title || it.id), it.status ? badge(it.status) : null),
+      h('div', { class: 'row muted', style: 'font-size:13px' }, h('span', { class: 'mono' }, it.id), it.platform, it.format, it.date, it.campaign_stage ? 'Stage: ' + it.campaign_stage : null),
+      lbl('Hook', it.hook), lbl('Caption', it.caption), lbl('CTA', it.cta),
+      lbl('Design concept', it.static && it.static.concept), lbl('Why it should work', it.rationale),
+      it.review ? lbl('Review score', it.review.score + '/100' + (it.review.notes ? ' - ' + it.review.notes : '')) : null,
+      decisionWidget(it));
+    main.replaceChildren(h('div', { class: 'stage' }, preview, facts));
+  }
+
+  items.forEach((it, i) => picker.append(h('button', { class: 'pick', type: 'button', onclick: () => show(i) },
+    h('span', { class: 't' }, it.title || it.id),
+    h('span', { class: 'm' }, h('span', { class: 'mono' }, it.id), it.format, it.status ? badge(it.status) : null))));
+
+  app.append(chrome(DATA.title, DATA.subtitle),
+    h('main', { class: 'wrap' }, h('div', { class: 'layout' }, picker, main),
+      h('div', { class: 'savebar' }, progressBar(items), saveStatus(),
+        h('button', { class: 'btn primary', type: 'button', onclick: () => copyText(Decisions.summary(items, DATA.title), 'Summary copied') }, 'Copy summary'))));
+  if (items.length) show(0); else main.append(h('div', { class: 'pad muted' }, 'No content items yet.'));
+  Decisions.init();
+})();
+</script>

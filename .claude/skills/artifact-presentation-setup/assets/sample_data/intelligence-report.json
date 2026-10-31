@@ -1,0 +1,37 @@
+{
+  "title": "Competitor Intelligence Report",
+  "subtitle": "Example data",
+  "period": "Oct 2026",
+  "project": "sample_project",
+  "summary": [
+    "Hooks that name a financial consequence beat generic education posts by 42% on engagement (18 posts across 4 competitors).",
+    "Carousels carry the most saves; reels carry the most reach but fewer saves.",
+    "Nobody in the set covers the integration-setup journey, which is a gap we can own."
+  ],
+  "chart": {"title": "Engagement rate vs account median, by hook type", "unit": "%", "baseline_label": "Account median",
+    "series": [
+      {"label": "Financial consequence", "value": 6.8, "baseline": 4.8},
+      {"label": "Contrarian claim", "value": 5.9, "baseline": 4.8},
+      {"label": "How-to", "value": 4.4, "baseline": 4.8},
+      {"label": "Generic tips", "value": 3.1, "baseline": 4.8}]},
+  "patterns": {
+    "winning": [
+      {"id": "PAT-0041", "pattern": "Financial consequence hooks", "evidence": "18 posts, 4 accounts", "confidence": "High", "lift": "+42%", "detail": "State the weekly or yearly cost in the first 3 seconds."},
+      {"id": "PAT-0052", "pattern": "Before/after proof with one number", "evidence": "9 posts", "confidence": "Medium", "lift": "+21%"}],
+    "weak": [
+      {"id": "PAT-0007", "pattern": "Generic productivity tips", "evidence": "14 posts, below median in 12", "confidence": "High", "lift": "-35%"}]
+  },
+  "hooks": [
+    {"id": "H-014", "formula": "[Number] a week. Gone.", "example": "1 day a week. Gone.", "score": 86, "source": "Competitor A"},
+    {"id": "H-021", "formula": "Stop doing [task]. Do this instead.", "example": "Stop typing call notes.", "score": 74, "source": "Competitor C"},
+    {"id": "H-009", "formula": "Everyone says [belief]. It is backwards.", "example": "Everyone says more leads fix sales. It is backwards.", "score": 69, "source": "Competitor B"}
+  ],
+  "gaps": [
+    {"title": "Setup journey content", "detail": "No competitor shows what week one of setup looks like.", "opportunity": "A 3-part carousel series."},
+    {"title": "Cost calculators", "detail": "Cost-of-inaction is claimed but never shown with the reader's own numbers.", "opportunity": "Interactive calculator lead magnet."}
+  ],
+  "recommendations": [
+    {"title": "Make 40% of next month cost-of-inaction content", "detail": "Anchor on PAT-0041 and test two new number formats.", "priority": "High"},
+    {"title": "Run one carousel series on the setup journey", "detail": "Fills the competitor gap and suits the save-heavy format.", "priority": "Medium"}
+  ]
+}

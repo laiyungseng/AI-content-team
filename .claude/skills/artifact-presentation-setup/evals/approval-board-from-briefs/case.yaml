@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: approval-board-from-briefs
+expected_outcome: |
+  Builds data JSON, runs build_artifact.py with the approval-board template, and publishes (or prepares) an interactive page with approve / request changes / reject per item.

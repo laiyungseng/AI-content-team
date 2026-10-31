@@ -1,0 +1,1225 @@
+<title>Competitor Content Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --grad-a:#0a1830;
+    --grad-b:#123a63;
+    --grad-c:#1c8f8a;
+    --grad-d:#2fc3ad;
+    --ink:#0f1e35;
+    --ink-soft:#4c5d76;
+    --ink-faint:#9aa6ba;
+    --card:#fbfaf6;
+    --card-line:rgba(15,30,53,0.1);
+    --hero-bg:#0d2038;
+    --hero-text:#f3f7fb;
+    --hero-text-soft:#b9c8dd;
+    --mid-blue:#dcebf5;
+    --mid-blue-ink:#12233f;
+    --mid-blue-line:rgba(18,35,63,0.14);
+    --teal:#0f9c8f;
+    --teal-dark:#0a7268;
+    --amber:#a8632a;
+    --good:#2c8563;
+    --bad:#b4523f;
+    --chip:#eef1ea;
+    --shadow: 0 24px 48px -28px rgba(6,14,28,0.55), 0 2px 8px -2px rgba(6,14,28,0.25);
+    --radius: 22px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 85% 90%, rgba(47,195,173,0.35), transparent 55%),
+      linear-gradient(135deg, var(--grad-a) 0%, var(--grad-b) 45%, var(--grad-c) 78%, var(--grad-d) 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+    margin:0;
+  }
+  .num{ font-family:'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace; font-variant-numeric:tabular-nums; }
+  .wrap{ max-width:1320px; margin:0 auto; padding:20px 20px 80px; }
+  a{ color:inherit; }
+  button{ font-family:inherit; }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky; top:14px; z-index:40;
+    background:rgba(10,20,38,0.72);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:20px;
+    padding:16px 22px;
+    color:#eef3f9;
+    box-shadow:var(--shadow);
+    margin-bottom:16px;
+  }
+  .topbar-row{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .set-id{ display:flex; align-items:center; gap:12px; }
+  .avatar-stack{ display:flex; }
+  .avatar{
+    width:40px; height:40px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; font-size:16px; color:#fff;
+    flex-shrink:0; border:2px solid rgba(10,20,38,0.9);
+  }
+  .avatar-stack .avatar:not(:first-child){ margin-left:-12px; }
+  .set-id .name-row{ display:flex; align-items:center; gap:6px; font-weight:600; font-size:15.5px; }
+  .verified-badge{
+    width:14px;height:14px;border-radius:50%;background:var(--teal);
+    display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;flex-shrink:0;
+  }
+  .mine-badge{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; background:var(--teal); color:#fff; padding:2px 7px; border-radius:20px; }
+  .set-id .meta{ color:#a9b8cc; font-size:12.5px; margin-top:2px; }
+  .topbar-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .pulled-tag{ font-size:12px; color:#9fb0c6; }
+
+  .filter-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.1); }
+  .seg{ display:flex; background:rgba(255,255,255,0.08); border-radius:11px; padding:3px; gap:2px; flex-wrap:wrap; }
+  .seg button{
+    background:transparent; border:none; color:#c3d1e3; padding:7px 14px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  .seg button.active{ background:#fff; color:var(--ink); }
+  .date-inputs{ display:flex; align-items:center; gap:6px; }
+  .date-inputs input{
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.16); color:#eef3f9;
+    border-radius:9px; padding:6px 9px; font-size:12.5px; font-family:inherit;
+  }
+  .date-inputs input::-webkit-calendar-picker-indicator{ filter:invert(1); }
+  .scope-line{ font-size:12.5px; color:#a9b8cc; margin-left:auto; }
+  .scope-line b{ color:#e7edf5; font-weight:600; }
+  .filter-label{ font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#8fa0b8; margin-right:2px; }
+
+  .status-banner{
+    margin-top:12px; padding:10px 14px; border-radius:12px; background:rgba(180,82,63,0.16); border:1px solid rgba(180,82,63,0.3);
+    color:#ffe6df; font-size:12.5px; line-height:1.6;
+  }
+  .status-banner b{ font-weight:700; }
+
+  /* ---------- tabs ---------- */
+  .tabs{ display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; overflow-x:auto; padding-bottom:2px; }
+  .tab-btn{
+    background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.18);
+    padding:10px 18px; border-radius:13px; font-weight:600; font-size:13.5px; cursor:pointer; white-space:nowrap; flex-shrink:0;
+  }
+  .tab-btn.active{ background:var(--card); color:var(--ink); border-color:transparent; }
+  .tab-btn .plat-dot{ display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; vertical-align:1px; }
+
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:28px 30px; margin-bottom:22px;
+  }
+  .card-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+  .card-head h2{ font-size:22px; }
+  .card-sub{ color:var(--ink-soft); font-size:13.5px; max-width:62ch; }
+  .eyebrow{ text-transform:uppercase; letter-spacing:0.09em; font-size:11px; font-weight:700; color:var(--teal-dark); }
+
+  .grid-tiles{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+  .tile{ background:#fff; border:1px solid var(--card-line); border-radius:16px; padding:16px 18px; }
+  .tile .eyebrow{ display:block; margin-bottom:8px; }
+  .tile .big{ font-size:28px; font-weight:600; line-height:1; }
+  .tile .sub{ margin-top:6px; font-size:12.5px; color:var(--ink-soft); }
+  .trend-up{ color:var(--good); font-weight:600; }
+  .trend-down{ color:var(--bad); font-weight:600; }
+
+  /* ---------- best/weak post row ---------- */
+  .post-pair{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:720px){ .post-pair{ grid-template-columns:1fr; } }
+  .post-card{ border-radius:16px; padding:18px 20px; border:1px solid var(--card-line); background:#fff; }
+  .post-card.weak{ background:#fff8f6; border-color:rgba(180,82,63,0.25); }
+  .post-card .tag{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; }
+  .post-card.best .tag{ color:var(--good); }
+  .post-card.weak .tag{ color:var(--bad); }
+  .post-card .cap{ font-size:14.5px; margin:10px 0 12px; line-height:1.5; }
+  .post-card .stats{ display:flex; gap:18px; font-size:13px; color:var(--ink-soft); flex-wrap:wrap; }
+  .post-card .stats b{ color:var(--ink); }
+  .callout{
+    margin-top:14px; padding:14px 16px; border-radius:14px; background:var(--mid-blue); color:var(--mid-blue-ink); font-size:13.5px; line-height:1.55;
+  }
+  .callout b{ font-weight:700; }
+  .callout.note{ background:#f1eee7; color:#5c5138; }
+
+  /* ---------- quadrant ---------- */
+  .quad-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  @media(max-width:720px){ .quad-grid{ grid-template-columns:1fr; } }
+  .quad-card{ border-radius:16px; padding:16px 18px; border:1px solid var(--card-line); }
+  .quad-card h4{ font-size:15px; margin-bottom:4px; }
+  .quad-card .count{ font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; margin:4px 0 8px; }
+  .quad-card p{ font-size:12.8px; color:var(--ink-soft); margin:0 0 8px; line-height:1.5; }
+  .quad-card .ex{ font-size:12.3px; font-style:italic; color:var(--ink); border-top:1px dashed var(--card-line); padding-top:8px; margin-top:6px; }
+  .quad-both{ background:#eefaf5; }
+  .quad-reach{ background:#eef4fb; }
+  .quad-eng{ background:#fdf6ec; }
+  .quad-neither{ background:#f6f4f0; }
+
+  /* ---------- duration table ---------- */
+  .dur-bars{ display:flex; flex-direction:column; gap:10px; }
+  .dur-row{ display:grid; grid-template-columns:90px 1fr 80px 90px; align-items:center; gap:12px; font-size:13px; }
+  .dur-row .label{ font-weight:600; }
+  .dur-track{ height:10px; background:var(--chip); border-radius:6px; overflow:hidden; }
+  .dur-fill{ height:100%; background:linear-gradient(90deg, var(--teal-dark), var(--teal)); border-radius:6px; }
+  .dur-row .n{ color:var(--ink-soft); font-size:12px; text-align:right; }
+
+  /* ---------- bar chart ---------- */
+  .chart-wrap{ overflow-x:auto; padding-bottom:6px; }
+  .chart-legend{ display:flex; gap:18px; font-size:12px; color:var(--ink-soft); margin-bottom:10px; flex-wrap:wrap; }
+  .chart-legend .sw{ display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px; }
+  svg text{ font-family:'IBM Plex Mono', monospace; }
+  .bar{ cursor:pointer; }
+  .bar-tooltip{
+    position:absolute; pointer-events:none; background:var(--ink); color:#fff; font-size:12px;
+    padding:8px 10px; border-radius:9px; line-height:1.5; max-width:240px; box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    transform:translate(-50%,-100%); opacity:0; transition:opacity .1s; z-index:50;
+  }
+
+  /* ---------- table ---------- */
+  .table-scroll{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; min-width:760px; }
+  thead th{
+    font-family:'Fraunces',serif; font-weight:700; text-align:left; font-size:12.5px;
+    text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft);
+    padding:10px 12px; border-bottom:2px solid var(--card-line); cursor:pointer; white-space:nowrap;
+  }
+  thead th.no-sort{ cursor:default; }
+  thead th.num-col, td.num-col{ text-align:right; }
+  thead th .arrow{ opacity:0.4; margin-left:3px; }
+  thead th.sorted .arrow{ opacity:1; color:var(--teal-dark); }
+  tbody td{ padding:11px 12px; border-bottom:1px solid var(--card-line); font-size:13.5px; vertical-align:top; }
+  tbody tr:hover{ background:#f8faf9; }
+  tbody tr.top-row td{ font-weight:700; }
+  .cap-cell{ max-width:340px; }
+  .cap-cell a{ text-decoration:none; }
+  .cap-cell a:hover{ text-decoration:underline; }
+  .type-pill{ display:inline-block; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:2px 8px; border-radius:20px; }
+  .type-pill.Video{ background:#e4f4f1; color:var(--teal-dark); }
+  .type-pill.Sidecar{ background:#f1eee7; color:#7a6a4f; }
+  .type-pill.Photo{ background:#f1eee7; color:#7a6a4f; }
+  .plat-pill{ display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:20px; color:#fff; }
+  .plat-pill.Instagram{ background:#c2367a; }
+  .plat-pill.TikTok{ background:#111; }
+  .na{ color:var(--ink-faint); font-style:italic; }
+  .table-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:14px; font-size:13px; color:var(--ink-soft); }
+  .pager{ display:flex; gap:6px; }
+  .pager button{ background:#fff; border:1px solid var(--card-line); border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:13px; }
+  .pager button:disabled{ opacity:0.4; cursor:not-allowed; }
+  .pager button.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+
+  /* ---------- topic cards ---------- */
+  .topic-summary-table{ margin-bottom:24px; }
+  .topic-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; }
+  .topic-card{ border-radius:18px; padding:20px; display:flex; flex-direction:column; gap:10px; }
+  .topic-card.hero{ background:var(--hero-bg); color:var(--hero-text); grid-column:1/-1; }
+  .topic-card.hero .eyebrow{ color:#7fd9cb; }
+  .topic-card.hero .metric-label{ color:var(--hero-text-soft); }
+  .topic-card.hero .divider{ border-color:rgba(255,255,255,0.18); }
+  .topic-card.hero .sup{ color:var(--hero-text-soft); }
+  .topic-card:not(.hero){ background:var(--mid-blue); color:var(--mid-blue-ink); }
+  .topic-card:not(.hero) .eyebrow{ color:var(--teal-dark); }
+  .topic-card .headline{ font-size:19px; }
+  .topic-card.hero .headline{ font-size:24px; }
+  .topic-card .desc{ font-size:13.3px; line-height:1.55; opacity:0.92; }
+  .topic-card .divider{ border:none; border-top:1px solid var(--mid-blue-line); margin:2px 0; }
+  .topic-card .metric-label{ font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); font-weight:700; }
+  .topic-card .metric-value{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:30px; line-height:1; margin-top:2px; }
+  .topic-card .sup{ font-size:12.3px; color:var(--ink-soft); }
+  .topic-card .quote{ font-size:12.6px; font-style:italic; line-height:1.5; }
+  .topic-card .quote .stat{ font-style:normal; font-weight:700; }
+
+  /* ---------- group sections (proven/owned/whitespace/saturated) ---------- */
+  .group-block{ margin-bottom:22px; }
+  .group-block:last-child{ margin-bottom:0; }
+  .group-block h3{ font-size:16px; margin-bottom:4px; }
+  .group-block .group-desc{ font-size:12.8px; color:var(--ink-soft); margin-bottom:10px; }
+  .group-items{ display:flex; flex-direction:column; gap:8px; }
+  .group-item{ background:#fff; border:1px solid var(--card-line); border-radius:12px; padding:12px 14px; font-size:13px; line-height:1.55; }
+  .group-item b{ font-weight:700; }
+  .group-item .do-next{ display:block; margin-top:4px; color:var(--teal-dark); font-weight:600; }
+  .empty-note{ font-size:12.8px; color:var(--ink-faint); font-style:italic; }
+
+  /* ---------- playbook ---------- */
+  .play-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .play-card{ border-radius:18px; padding:20px 22px; display:flex; flex-direction:column; gap:10px; }
+  .play-card.hero{ background:var(--hero-bg); color:var(--hero-text); grid-column:1/-1; }
+  .play-card:not(.hero){ background:var(--mid-blue); color:var(--mid-blue-ink); }
+  .play-card .num-badge{ font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; opacity:0.7; }
+  .play-card h4{ font-size:17px; }
+  .play-card p{ margin:0; font-size:13.4px; line-height:1.55; }
+  .play-card .evidence{ font-size:12.6px; font-style:italic; border-top:1px solid rgba(0,0,0,0.08); padding-top:8px; margin-top:2px; }
+  .play-card.hero .evidence{ border-top-color:rgba(255,255,255,0.18); }
+  .play-card .stop{ font-size:12.6px; font-weight:600; }
+  .play-card .stop span{ font-weight:400; opacity:0.85; }
+  .donot-list{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .donot-item{ display:flex; gap:12px; padding:12px 14px; border-radius:12px; background:#fdf3f1; border:1px solid rgba(180,82,63,0.2); font-size:13.3px; line-height:1.55; }
+  .donot-item .ico{ color:var(--bad); font-weight:700; flex-shrink:0; }
+
+  .footnote{ font-size:12px; color:var(--ink-soft); margin-top:14px; line-height:1.6; }
+  .empty-state{ text-align:center; padding:40px 20px; color:var(--ink-soft); }
+
+  @media (max-width:640px){
+    .card{ padding:20px; }
+    .post-pair{ grid-template-columns:1fr; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="set-id">
+        <div class="avatar-stack" id="avatarStack"></div>
+        <div>
+          <div class="name-row" id="setNameRow">—</div>
+          <div class="meta" id="setMeta">—</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span class="pulled-tag" id="pulledTag">—</span>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="seg" id="rangeSeg">
+        <button data-range="7d">7 days</button>
+        <button data-range="30d" class="active">30 days</button>
+        <button data-range="custom">Custom</button>
+      </div>
+      <div class="date-inputs" id="customDates" style="display:none;">
+        <input type="date" id="customStart">
+        <span style="color:#9fb0c6;">to</span>
+        <input type="date" id="customEnd">
+      </div>
+      <div class="seg" id="acctSeg" style="display:none;"></div>
+      <div class="seg" id="platSeg" style="display:none;"></div>
+      <span class="scope-line" id="scopeLine">—</span>
+    </div>
+    <div id="statusBanner"></div>
+  </div>
+
+  <div class="tabs" id="tabBar"></div>
+
+  <div id="tabHost"></div>
+
+</div>
+
+<div class="bar-tooltip" id="barTooltip"></div>
+
+<script>
+"use strict";
+const RAW_DATA = __DATA_JSON__;
+const SEED_PULLED_AT = "__PULLED_AT__";
+const PLAT_COLOR = { Instagram:'#c2367a', TikTok:'#111111' };
+
+// ---------- state ----------
+let DB = null;
+let LIVE_DATA = null; // {accounts, posts, topics, pulledAt}
+let state = { rangeMode:'30d', customStart:null, customEnd:null, accountFilter:'all', platformFilter:'all', tab:null, sortKey:'date', sortDir:'desc', page:1 };
+
+// ---------- helpers ----------
+function fmtNum(n){ if(n===null||n===undefined) return '—'; return Math.round(n).toLocaleString('en-US'); }
+function fmtDate(d){ const dt = new Date(d+'T00:00:00Z'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric', timeZone:'UTC'}); }
+function fmtMultClean(x){ if(x===null||x===undefined) return '—'; let v = Math.round(x*100)/100; return v + 'x'; }
+function median(arr){ if(!arr.length) return null; const s=[...arr].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2 ? s[m] : (s[m-1]+s[m])/2; }
+function mean(arr){ if(!arr.length) return null; return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function pearson(xs, ys){
+  const n = xs.length; if(n<3) return null;
+  const mx = mean(xs), my = mean(ys);
+  let num=0, dx2=0, dy2=0;
+  for(let i=0;i<n;i++){ const dx=xs[i]-mx, dy=ys[i]-my; num+=dx*dy; dx2+=dx*dx; dy2+=dy*dy; }
+  if(dx2===0||dy2===0) return null;
+  return num/Math.sqrt(dx2*dy2);
+}
+
+// ---------- capability init ----------
+async function initCapabilities(){
+  try{ DB = await claude.use('db'); }catch(e){ DB = null; }
+}
+
+async function loadData(){
+  let fromDb = null;
+  if(DB){
+    try{
+      const meta = await DB.doc('meta/dashboard').get();
+      if(meta && meta.data && meta.data.accounts && meta.data.accounts.length){
+        const accounts = meta.data.accounts;
+        const posts = [];
+        for(const a of accounts){
+          try{
+            const doc = await DB.doc('accounts/'+a.id).get();
+            if(doc && doc.data && doc.data.posts) posts.push(...doc.data.posts);
+            if(doc && doc.data && doc.data.pulledAt) a.pulledAt = doc.data.pulledAt;
+          }catch(e){ /* skip this account, keep others */ }
+        }
+        fromDb = { accounts, posts, topics: meta.data.topics, pulledAt: meta.data.pulledAt };
+      }
+    }catch(e){ /* fall back to seed */ }
+  }
+  if(fromDb && fromDb.posts){
+    LIVE_DATA = fromDb;
+  } else {
+    LIVE_DATA = { accounts: RAW_DATA.accounts, posts: RAW_DATA.posts, topics: RAW_DATA.topics, pulledAt: SEED_PULLED_AT };
+    if(DB){
+      try{
+        await DB.doc('meta/dashboard').set({ accounts: LIVE_DATA.accounts, topics: LIVE_DATA.topics, pulledAt: LIVE_DATA.pulledAt });
+        for(const a of LIVE_DATA.accounts){
+          if(a.status!=='ok') continue;
+          const posts = LIVE_DATA.posts.filter(p=>p.accountId===a.id);
+          await DB.doc('accounts/'+a.id).set({ posts, pulledAt: LIVE_DATA.pulledAt });
+        }
+      }catch(e){ /* best effort cache */ }
+    }
+  }
+}
+
+// ---------- stats engine (per-account, own median only) ----------
+function inRange(p, start, end){ return p.date >= start && p.date <= end; }
+
+function computeStats(posts){
+  const vids = posts.filter(p => p.views !== null && p.views !== undefined);
+  const carousels = posts.filter(p => p.views === null || p.views === undefined);
+  const medianViews = median(vids.map(p=>p.views));
+  vids.forEach(p=>{
+    p.engagement = (p.likes||0)+(p.comments||0);
+    p.outlier = medianViews ? p.views/medianViews : null;
+    p.eng1000 = p.views ? p.engagement/p.views*1000 : null;
+    p.type = 'Video';
+  });
+  carousels.forEach(p=>{ p.engagement = (p.likes||0)+(p.comments||0); p.outlier=null; p.eng1000=null; p.type='Photo'; });
+  const eng1000List = vids.map(p=>p.eng1000).filter(x=>x!==null);
+  const medianEng1000 = median(eng1000List);
+  const hits = vids.filter(p=>p.outlier!==null && p.outlier>=2);
+  const anomalies = vids.filter(p=>p.outlier!==null && p.outlier>=10);
+  let best=null, weakest=null;
+  if(vids.length){
+    best = vids.reduce((a,b)=> (a.outlier>b.outlier?a:b));
+    weakest = vids.reduce((a,b)=> (a.outlier<b.outlier?a:b));
+  }
+  const buckets = {'<15s':[], '15-30s':[], '30-60s':[], '60s+':[]};
+  vids.forEach(p=>{
+    const d = p.durationSec;
+    if(d===null||d===undefined) return;
+    let b = d<15?'<15s': d<30?'15-30s': d<60?'30-60s':'60s+';
+    buckets[b].push(p);
+  });
+  const durationStats = Object.entries(buckets).filter(([,arr])=>arr.length).map(([b,arr])=>({
+    bucket:b, n:arr.length, medianViews: median(arr.map(p=>p.views)), medianOutlier: median(arr.map(p=>p.outlier))
+  }));
+  const quad = {both:[], reach_only:[], engagement_only:[], neither:[]};
+  if(medianEng1000!==null){
+    vids.forEach(p=>{
+      const gr = p.outlier >= 1.15, ge = p.eng1000 >= medianEng1000*1.15;
+      const pr = p.outlier <= 0.85, pe = p.eng1000 <= medianEng1000*0.85;
+      if(gr && ge) quad.both.push(p);
+      else if(gr && !ge) quad.reach_only.push(p);
+      else if(ge && !gr) quad.engagement_only.push(p);
+      else quad.neither.push(p);
+    });
+  }
+  const topicMap = {};
+  posts.forEach(p=>{ (topicMap[p.topic] = topicMap[p.topic]||[]).push(p); });
+  const topicRows = Object.entries(topicMap).map(([key, arr])=>{
+    const tv = arr.filter(p=>p.views!==null && p.views!==undefined);
+    return {
+      key, n: arr.length, nVideo: tv.length,
+      avgViews: tv.length ? mean(tv.map(p=>p.views)) : null,
+      avgOutlier: tv.length ? mean(tv.map(p=>p.outlier)) : null,
+      posts: arr,
+    };
+  }).sort((a,b)=>b.n-a.n);
+  const hasShares = posts.some(p=>p.shares!==null && p.shares!==undefined);
+  const hasSaves = posts.some(p=>p.saves!==null && p.saves!==undefined);
+  const topNoView = carousels.length ? carousels.reduce((a,b)=> (a.engagement>b.engagement?a:b)) : null;
+
+  return { vids, carousels, medianViews, medianEng1000, hits, anomalies, best, weakest, durationStats, quad, topicRows, topNoView, nTotal:posts.length, nVideo:vids.length, nCarousel:carousels.length, hasShares, hasSaves };
+}
+
+// consistency/ceiling/cadence/format-mix for head-to-head — computed on an account's FULL pulled history (not just the filtered window) for a more stable read, but reported alongside the in-view stats
+function computeAccountProfile(allAccountPosts, viewPosts){
+  const cur = computeStats(viewPosts);
+  const consistency = cur.nVideo ? cur.vids.filter(p=>p.outlier>=1).length/cur.nVideo : null;
+  const ceiling = cur.best ? cur.best.outlier : null;
+  // weekly cadence vs quality correlation, using the account's full pulled window
+  const vids = allAccountPosts.filter(p=>p.views!==null && p.views!==undefined);
+  const mv = median(vids.map(p=>p.views));
+  const weekMap = {};
+  vids.forEach(p=>{
+    const d = new Date(p.date+'T00:00:00Z');
+    const weekStart = new Date(d); weekStart.setUTCDate(d.getUTCDate()-d.getUTCDay());
+    const key = weekStart.toISOString().slice(0,10);
+    (weekMap[key]=weekMap[key]||[]).push(p);
+  });
+  const weeks = Object.values(weekMap).filter(arr=>arr.length>=1);
+  const cadenceCorr = weeks.length>=3 ? pearson(weeks.map(w=>w.length), weeks.map(w=>median(w.map(p=>p.views))/ (mv||1))) : null;
+  const postsPerWeek = weeks.length ? mean(weeks.map(w=>w.length)) : null;
+  return { cur, consistency, ceiling, cadenceCorr, postsPerWeek };
+}
+
+function getRangeDates(allPosts){
+  const allDates = allPosts.map(p=>p.date).sort();
+  if(!allDates.length) return { start:null, end:null, prevStart:null, prevEnd:null, dataMin:null, dataMax:null };
+  const dataMin = allDates[0], dataMax = allDates[allDates.length-1];
+  let end = dataMax, start;
+  if(state.rangeMode==='7d'){ start = shiftDate(end,-6); }
+  else if(state.rangeMode==='30d'){ start = shiftDate(end,-29); }
+  else {
+    start = state.customStart || shiftDate(end,-29);
+    end = state.customEnd || dataMax;
+  }
+  const lenDays = daysBetween(start,end)+1;
+  const prevEnd = shiftDate(start,-1);
+  const prevStart = shiftDate(prevEnd, -(lenDays-1));
+  return { start, end, prevStart, prevEnd, dataMin, dataMax };
+}
+function shiftDate(dateStr, days){
+  const d = new Date(dateStr+'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate()+days);
+  return d.toISOString().slice(0,10);
+}
+
+// ---------- account-set resolution (filters) ----------
+function okAccounts(){ return LIVE_DATA.accounts.filter(a=>a.status==='ok'); }
+function inViewAccounts(){
+  return okAccounts().filter(a=>{
+    if(state.accountFilter!=='all' && a.id!==state.accountFilter) return false;
+    if(state.platformFilter!=='all' && a.platform!==state.platformFilter) return false;
+    return true;
+  });
+}
+
+// ---------- rendering ----------
+function render(){
+  if(!LIVE_DATA) return;
+  const ok = okAccounts();
+  const inView = inViewAccounts();
+  const { start, end, dataMin } = getRangeDates(LIVE_DATA.posts);
+
+  renderTopbar(inView, start, end);
+  renderStatusBanner();
+  renderTabs(inView);
+  renderActiveTab(inView, start, end, dataMin);
+}
+
+function renderTopbar(inView, start, end){
+  const stack = document.getElementById('avatarStack');
+  stack.innerHTML = inView.slice(0,5).map(a=>`<div class="avatar" style="background:${PLAT_COLOR[a.platform]||'#555'};" title="${escapeHtml(a.displayName)}">${escapeHtml(a.displayName[0]||'?')}</div>`).join('');
+  const names = inView.map(a=>a.displayName+(a.isMine?' (you)':'')).join(', ');
+  document.getElementById('setNameRow').textContent = inView.length ? (inView.length===1 ? inView[0].displayName+' (@'+inView[0].handle+')' : inView.length+' accounts tracked') : 'No accounts in view';
+  const platforms = [...new Set(inView.map(a=>a.platform))];
+  document.getElementById('setMeta').textContent = inView.length===1
+    ? inView[0].platform + ' · ' + fmtNum(inView[0].followers) + ' followers · ' + (inView[0].isMine?'your account':'competitor')
+    : platforms.join(' + ') + ' · ' + inView.length + ' accounts';
+  const latestPull = inView.reduce((acc,a)=> a.pulledAt && (!acc || a.pulledAt>acc) ? a.pulledAt : acc, null) || LIVE_DATA.pulledAt;
+  document.getElementById('pulledTag').textContent = latestPull ? 'Last pulled ' + new Date(latestPull).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+
+  // account filter chips (only when >1 ok account)
+  const ok = okAccounts();
+  const acctSeg = document.getElementById('acctSeg');
+  if(ok.length>1){
+    acctSeg.style.display='flex';
+    acctSeg.innerHTML = '<button data-acct="all" class="'+(state.accountFilter==='all'?'active':'')+'">All accounts</button>' +
+      ok.map(a=>`<button data-acct="${a.id}" class="${state.accountFilter===a.id?'active':''}">${escapeHtml(a.displayName)}</button>`).join('');
+  } else acctSeg.style.display='none';
+
+  const platforms2 = [...new Set(ok.map(a=>a.platform))];
+  const platSeg = document.getElementById('platSeg');
+  if(platforms2.length>1){
+    platSeg.style.display='flex';
+    platSeg.innerHTML = '<button data-plat="all" class="'+(state.platformFilter==='all'?'active':'')+'">All platforms</button>' +
+      platforms2.map(p=>`<button data-plat="${p}" class="${state.platformFilter===p?'active':''}">${p}</button>`).join('');
+  } else platSeg.style.display='none';
+
+  const totalPosts = inView.reduce((sum,a)=>sum + LIVE_DATA.posts.filter(p=>p.accountId===a.id && p.date>=start && p.date<=end).length, 0);
+  document.getElementById('scopeLine').innerHTML = '<b>'+inView.length+' account'+(inView.length===1?'':'s')+'</b> · '+
+    (platforms.length? platforms.join(' + ') : '—') + ' · <b>' + (start?fmtDate(start)+'–'+fmtDate(end):'—') + '</b> · <b>' + totalPosts + ' posts</b> in view';
+}
+
+function renderStatusBanner(){
+  const failed = LIVE_DATA.accounts.filter(a=>a.status!=='ok');
+  const el = document.getElementById('statusBanner');
+  if(!failed.length){ el.innerHTML=''; return; }
+  el.innerHTML = `<div class="status-banner"><b>${failed.length} account${failed.length>1?'s':''} excluded:</b> ` +
+    failed.map(a=>`@${escapeHtml(a.handle)} (${escapeHtml(a.platform)}) — ${escapeHtml(a.errorNote||a.status)}`).join('; ') + '.</div>';
+}
+
+function renderTabs(inView){
+  const bar = document.getElementById('tabBar');
+  const tabs = inView.map(a=>({ id:a.id, label:a.displayName, plat:a.platform }));
+  if(inView.length>=2) tabs.push({ id:'__h2h', label:'Head to Head' });
+  if(inView.length>=2) tabs.push({ id:'__topics', label:'Topics & Gaps' });
+  tabs.push({ id:'__playbook', label:'Playbook' });
+  if(!state.tab || !tabs.find(t=>t.id===state.tab)) state.tab = tabs[0] ? tabs[0].id : null;
+  bar.innerHTML = tabs.map(t=>`<button class="tab-btn ${state.tab===t.id?'active':''}" data-tabid="${t.id}">${t.plat?`<span class="plat-dot" style="background:${PLAT_COLOR[t.plat]||'#555'}"></span>`:''}${escapeHtml(t.label)}</button>`).join('');
+  bar.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ state.tab = b.dataset.tabid; state.page=1; render(); }));
+}
+
+function card(inner){ return `<div class="card">${inner}</div>`; }
+
+function renderActiveTab(inView, start, end, dataMin){
+  const host = document.getElementById('tabHost');
+  if(!inView.length){ host.innerHTML = card('<div class="empty-state">No accounts in view for this filter combination.</div>'); return; }
+  if(state.tab==='__h2h'){ host.innerHTML = renderHeadToHead(inView, start, end); return; }
+  if(state.tab==='__topics'){ host.innerHTML = renderTopicsGaps(inView, start, end); return; }
+  if(state.tab==='__playbook'){ host.innerHTML = renderPlaybook(inView, start, end); return; }
+  const acct = inView.find(a=>a.id===state.tab) || inView[0];
+  renderAccountTab(host, acct, start, end, dataMin);
+}
+
+// ================= ACCOUNT TAB =================
+function renderAccountTab(host, acct, start, end, dataMin){
+  const allAcctPosts = LIVE_DATA.posts.filter(p=>p.accountId===acct.id);
+  const viewPosts = allAcctPosts.filter(p=>inRange(p,start,end));
+  const cur = computeStats(viewPosts);
+  const prevWindow = getRangeDates(allAcctPosts);
+  const havePrev = prevWindow.prevStart >= prevWindow.dataMin;
+  const prev = havePrev ? computeStats(allAcctPosts.filter(p=>inRange(p, prevWindow.prevStart, prevWindow.prevEnd))) : null;
+
+  const hitRateNow = cur.nVideo ? cur.hits.length/cur.nVideo : null;
+  const hitRatePrev = prev && prev.nVideo ? prev.hits.length/prev.nVideo : null;
+
+  let html = '';
+  html += card(`
+    <div class="card-head"><div><h2>Account summary</h2><div class="card-sub">Size context and headline normalized metrics for the selected window.</div></div></div>
+    <div class="grid-tiles">
+      <div class="tile"><span class="eyebrow">Followers</span><div class="big num">${fmtNum(acct.followers)}</div><div class="sub">size context only</div></div>
+      <div class="tile"><span class="eyebrow">Posts in view</span><div class="big num">${cur.nTotal}</div><div class="sub">${cur.nVideo} video · ${cur.nCarousel} carousel/photo</div></div>
+      <div class="tile"><span class="eyebrow">Median views (own)</span><div class="big num">${cur.medianViews? fmtNum(cur.medianViews):'—'}</div><div class="sub">${cur.nVideo? 'from '+cur.nVideo+' video posts · size context':'no video posts in range'}</div></div>
+      <div class="tile"><span class="eyebrow">Engagement / 1,000 viewers</span><div class="big num">${cur.medianEng1000!==null? cur.medianEng1000.toFixed(1):'—'}</div><div class="sub">median across video posts, likes+comments</div></div>
+      <div class="tile"><span class="eyebrow">Hit rate (≥2x median)</span><div class="big num">${hitRateNow!==null? Math.round(hitRateNow*100)+'%':'—'}</div><div class="sub">${trendArrow(hitRateNow, hitRatePrev)}</div></div>
+      ${cur.hasShares? `<div class="tile"><span class="eyebrow">Median shares</span><div class="big num">${fmtNum(median(cur.vids.map(p=>p.shares).filter(x=>x!==null&&x!==undefined)))}</div><div class="sub">TikTok only — partially available across this competitor set</div></div>`:''}
+      ${cur.hasSaves? `<div class="tile"><span class="eyebrow">Median saves</span><div class="big num">${fmtNum(median(cur.vids.map(p=>p.saves).filter(x=>x!==null&&x!==undefined)))}</div><div class="sub">TikTok only — partially available across this competitor set</div></div>`:''}
+    </div>
+    ${cur.anomalies.length? `<div class="callout"><b>${cur.anomalies.length} anomal${cur.anomalies.length>1?'ies':'y'} flagged</b> — ${cur.anomalies.map(a=>escapeHtml(a.caption.slice(0,60))+' ('+fmtMultClean(a.outlier)+')').join('; ')}. Roughly 10x the account median or higher — worth inspecting, not copying as a trend.</div>` : ''}
+  `);
+
+  if(cur.best){
+    html += card(`
+      <div class="card-head"><div><h2>Best &amp; weakest post</h2><div class="card-sub">Ranked by outlier score (views ÷ this account's own median views for the period) — only computable for video posts.</div></div></div>
+      <div class="post-pair">
+        <div class="post-card best">
+          <span class="tag">Best · ${fmtMultClean(cur.best.outlier)} the account median</span>
+          <div class="cap">${escapeHtml(cur.best.caption.slice(0,150))}${cur.best.caption.length>150?'…':''}</div>
+          <div class="stats"><span><b class="num">${fmtNum(cur.best.views)}</b> views</span><span><b class="num">${fmtNum(cur.best.likes)}</b> likes</span><span><b class="num">${fmtNum(cur.best.comments)}</b> comments</span>${cur.best.shares!=null?`<span><b class="num">${fmtNum(cur.best.shares)}</b> shares</span>`:''}${cur.best.saves!=null?`<span><b class="num">${fmtNum(cur.best.saves)}</b> saves</span>`:''}<span>${fmtDate(cur.best.date)}</span></div>
+        </div>
+        <div class="post-card weak">
+          <span class="tag">Weakest · ${fmtMultClean(cur.weakest.outlier)} the account median</span>
+          <div class="cap">${escapeHtml(cur.weakest.caption.slice(0,150))}${cur.weakest.caption.length>150?'…':''}</div>
+          <div class="stats"><span><b class="num">${fmtNum(cur.weakest.views)}</b> views</span><span><b class="num">${fmtNum(cur.weakest.likes)}</b> likes</span><span><b class="num">${fmtNum(cur.weakest.comments)}</b> comments</span><span>${fmtDate(cur.weakest.date)}</span></div>
+        </div>
+      </div>
+      ${cur.topNoView? `<div class="callout"><b>Highest-engagement post with no view data:</b> "${escapeHtml(cur.topNoView.caption.slice(0,120))}${cur.topNoView.caption.length>120?'…':''}" pulled <b class="num">${fmtNum(cur.topNoView.likes)}</b> likes and <b class="num">${fmtNum(cur.topNoView.comments)}</b> comments — well above this account's typical carousel/photo post. It can't be given an outlier score or compared head-to-head, since there's no view count to divide by. Do next: test the format again before trusting it as a pattern.</div>` : ''}
+    `);
+  } else {
+    html += card(`<div class="card-head"><h2>Best &amp; weakest post</h2></div><div class="empty-state">No video posts with view data in this window — outlier scoring needs at least one.</div>`);
+  }
+
+  if(cur.medianEng1000!==null){
+    const q = cur.quad;
+    const qCard = (key, title, cls, desc) => {
+      const arr = q[key];
+      const ex = arr.slice(0,2).map(p=>`<div>"${escapeHtml(p.caption.slice(0,80))}${p.caption.length>80?'…':''}" — ${fmtMultClean(p.outlier)} reach, ${p.eng1000.toFixed(1)}/1,000 engaged</div>`).join('');
+      return `<div class="quad-card ${cls}"><h4>${title}</h4><div class="count num">${arr.length}</div><p>${desc}</p>${arr.length? `<div class="ex">${ex}</div>`:''}</div>`;
+    };
+    html += card(`
+      <div class="card-head"><div><h2>Reach vs. engagement</h2><div class="card-sub">Each video post plotted against the account's own median reach and median engagement/1,000 viewers, ±15% band for "typical."</div></div></div>
+      <div class="quad-grid">
+        ${qCard('both','Both good','quad-both','Above-median reach and above-median engagement quality. Model these structurally — hook, pacing, and topic are all working together.')}
+        ${qCard('reach_only','Reach, weak engagement','quad-reach','The algorithm pushed it wide but viewers did not comment or like proportionally. Often a curiosity hook without a strong opinion inside.')}
+        ${qCard('engagement_only','Engaged, low reach','quad-eng','Small audience but they cared. Usually a niche or polarizing angle — worth a stronger hook to earn wider reach next time.')}
+        ${qCard('neither','Neither','quad-neither','Middling on both axes — the bulk of any account\'s output this window. Not failures, just not signal either way.')}
+      </div>
+      <div class="footnote">Do next: lean into the "both good" pattern for next week's hooks; carousel/photo posts are excluded here since there's no view count to measure reach against.</div>
+    `);
+  }
+
+  html += card(`
+    <div class="card-head"><div><h2>Heating up or cooling down?</h2><div class="card-sub">Hit rate = share of video posts landing at 2x the period's own median views or higher.</div></div></div>
+    <div class="grid-tiles">
+      <div class="tile"><span class="eyebrow">This period</span><div class="big num">${hitRateNow!==null?Math.round(hitRateNow*100)+'%':'—'}</div><div class="sub">${cur.hits.length} of ${cur.nVideo} video posts</div></div>
+      <div class="tile"><span class="eyebrow">Prior period</span><div class="big num">${hitRatePrev!==null?Math.round(hitRatePrev*100)+'%':'n/a'}</div><div class="sub">${prev? prev.hits.length+' of '+prev.nVideo+' video posts' : 'outside pulled data window'}</div></div>
+      <div class="tile"><span class="eyebrow">Reading</span><div class="big" style="font-size:16px;line-height:1.4;">${hitRatePrev===null?'Not enough history to compare.':(hitRateNow>hitRatePrev? 'Heating up — hits are more frequent than the prior period.':(hitRateNow<hitRatePrev?'Cooling down — hits are less frequent than the prior period.':'Steady — same hit frequency as the prior period.'))}</div></div>
+    </div>
+  `);
+
+  if(cur.durationStats.length){
+    const maxV = Math.max(...cur.durationStats.map(d=>d.medianViews));
+    html += card(`
+      <div class="card-head"><div><h2>Does video length matter?</h2><div class="card-sub">Median views and median outlier score by video duration, this window.</div></div></div>
+      <div class="dur-bars">
+        ${cur.durationStats.map(d=>`
+          <div class="dur-row">
+            <span class="label">${d.bucket}</span>
+            <div class="dur-track"><div class="dur-fill" style="width:${Math.max(4,d.medianViews/maxV*100)}%"></div></div>
+            <span class="num">${fmtNum(d.medianViews)} views</span>
+            <span class="n">n=${d.n} · ${fmtMultClean(d.medianOutlier)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="footnote">Do next: ${(() => {
+        const best = cur.durationStats.reduce((a,b)=>a.medianOutlier>b.medianOutlier?a:b);
+        const worst = cur.durationStats.reduce((a,b)=>a.medianOutlier<b.medianOutlier?a:b);
+        return best.bucket===worst.bucket ? 'no real spread between lengths this window — ignore this and pick length by content, not performance.' : `${best.bucket} clips are running ${fmtMultClean(best.medianOutlier)} vs ${worst.bucket} at ${fmtMultClean(worst.medianOutlier)} — bias new videos toward ${best.bucket}.`;
+      })()}</div>
+    `);
+  }
+
+  html += card(`
+    <div class="card-head"><div><h2>Performance by post</h2><div class="card-sub">One bar per video post, chronological, height = views. Carousel/photo posts have no view count to plot.</div></div></div>
+    <div class="chart-legend">
+      <span><span class="sw" style="background:var(--teal);"></span>Typical</span>
+      <span><span class="sw" style="background:var(--good);"></span>Hit (≥2x median)</span>
+      <span><span class="sw" style="background:var(--bad);"></span>Below half of median</span>
+    </div>
+    <div class="chart-wrap">${renderChart(cur)}</div>
+  `);
+
+  html += renderTopicsSection(cur);
+
+  html += card(`
+    <div class="card-head"><div><h2>All posts</h2><div class="card-sub">${cur.nTotal} posts in the selected window. Click a column to sort.</div></div></div>
+    <div id="tableHost"></div>
+  `);
+
+  host.innerHTML = html;
+  attachChartTooltips(host, cur);
+  renderTable(cur);
+}
+
+function trendArrow(curVal, prevVal, higherIsBetter=true){
+  if(prevVal===null||prevVal===undefined||curVal===null) return '';
+  const delta = curVal - prevVal;
+  if(Math.abs(delta) < 1e-9) return '<span style="color:var(--ink-soft);">flat vs prior period</span>';
+  const up = delta>0;
+  const good = higherIsBetter ? up : !up;
+  const cls = good ? 'trend-up':'trend-down';
+  const arrow = up ? '▲':'▼';
+  return '<span class="'+cls+'">'+arrow+'</span> vs prior period';
+}
+
+function renderChart(cur){
+  const vids = [...cur.vids].sort((a,b)=> a.date.localeCompare(b.date));
+  if(!vids.length) return '<div class="empty-state">No video posts with view data in this window.</div>';
+  const w = Math.max(640, vids.length*34), h = 240, padL=54, padB=30, padT=10;
+  const maxV = Math.max(...vids.map(p=>p.views));
+  const barW = (w-padL-16)/vids.length*0.62;
+  const gap = (w-padL-16)/vids.length;
+  const yFor = v => padT + (h-padT-padB)*(1 - v/maxV);
+  const ticks = [0,0.25,0.5,0.75,1].map(f=>Math.round(maxV*f));
+  let bars = vids.map((p,i)=>{
+    const x = padL + i*gap + (gap-barW)/2;
+    const y = yFor(p.views);
+    const barH = (h-padB) - y;
+    let color = 'var(--teal)';
+    if(p.outlier>=2) color = 'var(--good)';
+    else if(p.outlier<=0.5) color = 'var(--bad)';
+    return `<rect class="bar" data-i="${i}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(1,barH).toFixed(1)}" fill="${color}" rx="2"></rect>`;
+  }).join('');
+  const medY = cur.medianViews ? yFor(cur.medianViews) : null;
+  const medLine = medY!==null ? `<line x1="${padL}" x2="${w-10}" y1="${medY.toFixed(1)}" y2="${medY.toFixed(1)}" stroke="var(--ink-soft)" stroke-dasharray="4 4" stroke-width="1"></line><text x="${w-10}" y="${(medY-5).toFixed(1)}" text-anchor="end" font-size="10.5" fill="var(--ink-soft)">median</text>` : '';
+  const axisLabels = ticks.map(t=>`<text x="${padL-8}" y="${(yFor(t)+4).toFixed(1)}" text-anchor="end" font-size="10.5" fill="var(--ink-soft)">${fmtNum(t)}</text>`).join('');
+  window.__chartVids = vids;
+  return `<svg width="${w}" height="${h+20}" viewBox="0 0 ${w} ${h+20}" role="img" aria-label="Views per post bar chart">
+    ${axisLabels}${medLine}${bars}
+  </svg>`;
+}
+
+function attachChartTooltips(root, cur){
+  const svg = root.querySelector('svg');
+  const tip = document.getElementById('barTooltip');
+  if(!svg) return;
+  svg.querySelectorAll('.bar').forEach(rect=>{
+    rect.addEventListener('mousemove', (e)=>{
+      const p = window.__chartVids[+rect.dataset.i];
+      tip.style.opacity = 1;
+      tip.style.left = e.clientX+'px';
+      tip.style.top = (e.clientY-8)+'px';
+      tip.innerHTML = `<b>${fmtDate(p.date)}</b><br>${escapeHtml(p.caption.slice(0,70))}${p.caption.length>70?'…':''}<br>${fmtNum(p.views)} views · ${fmtMultClean(p.outlier)} median · ${fmtNum(p.likes)} likes`;
+    });
+    rect.addEventListener('mouseleave', ()=>{ tip.style.opacity = 0; });
+  });
+}
+
+function renderTable(cur){
+  const host = document.getElementById('tableHost');
+  if(!host) return;
+  const rows = [...cur.vids, ...cur.carousels];
+  const key = state.sortKey, dir = state.sortDir;
+  rows.sort((a,b)=>{
+    let av=a[key], bv=b[key];
+    if(av===null||av===undefined) av = -Infinity;
+    if(bv===null||bv===undefined) bv = -Infinity;
+    if(typeof av==='string') return dir==='asc'? av.localeCompare(bv) : bv.localeCompare(av);
+    return dir==='asc'? av-bv : bv-av;
+  });
+  const perPage = 10;
+  const totalPages = Math.max(1, Math.ceil(rows.length/perPage));
+  state.page = Math.min(state.page, totalPages);
+  const pageRows = rows.slice((state.page-1)*perPage, state.page*perPage);
+  const cols = [
+    {k:'date', label:'Date'}, {k:'type', label:'Type'}, {k:'caption', label:'Caption'},
+    {k:'views', label:'Views', num:true}, {k:'likes', label:'Likes', num:true}, {k:'comments', label:'Comments', num:true},
+  ];
+  if(cur.hasShares) cols.push({k:'shares', label:'Shares', num:true});
+  if(cur.hasSaves) cols.push({k:'saves', label:'Saves', num:true});
+  cols.push({k:'eng1000', label:'Eng/1,000', num:true}, {k:'outlier', label:'Outlier', num:true}, {k:'durationSec', label:'Duration', num:true});
+  const topOutlier = cur.best ? cur.best.outlier : null;
+  let html = `<div class="table-scroll"><table><thead><tr>` +
+    cols.map(c=>`<th class="${c.num?'num-col':''} ${state.sortKey===c.k?'sorted':''}" data-key="${c.k}">${c.label}<span class="arrow">${state.sortKey===c.k?(state.sortDir==='asc'?'▲':'▼'):'↕'}</span></th>`).join('') +
+    `</tr></thead><tbody>`;
+  pageRows.forEach(p=>{
+    const isTop = p.outlier!==null && p.outlier===topOutlier;
+    html += `<tr class="${isTop?'top-row':''}">`;
+    html += `<td>${fmtDate(p.date)}</td>`;
+    html += `<td><span class="type-pill ${p.type}">${p.type==='Video'?'Video':p.type}</span></td>`;
+    html += `<td class="cap-cell"><a href="${p.url}" target="_blank" rel="noopener">${escapeHtml(p.caption.slice(0,90))}${p.caption.length>90?'…':''}</a></td>`;
+    html += `<td class="num-col num">${p.views!==null?fmtNum(p.views):'<span class="na">n/a</span>'}</td>`;
+    html += `<td class="num-col num">${fmtNum(p.likes)}</td>`;
+    html += `<td class="num-col num">${fmtNum(p.comments)}</td>`;
+    if(cur.hasShares) html += `<td class="num-col num">${p.shares!=null?fmtNum(p.shares):'<span class="na">n/a</span>'}</td>`;
+    if(cur.hasSaves) html += `<td class="num-col num">${p.saves!=null?fmtNum(p.saves):'<span class="na">n/a</span>'}</td>`;
+    html += `<td class="num-col num">${p.eng1000!==null?p.eng1000.toFixed(1):'<span class="na">n/a</span>'}</td>`;
+    html += `<td class="num-col num">${p.outlier!==null?fmtMultClean(p.outlier):'<span class="na">n/a</span>'}</td>`;
+    html += `<td class="num-col num">${p.durationSec!==null&&p.durationSec!==undefined?Math.round(p.durationSec)+'s':'<span class="na">n/a</span>'}</td>`;
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div>`;
+  html += `<div class="table-foot"><span>Showing ${(state.page-1)*perPage+1}–${Math.min(state.page*perPage,rows.length)} of ${rows.length}</span><div class="pager">` +
+    `<button ${state.page<=1?'disabled':''} data-pg="${state.page-1}">‹</button>`;
+  for(let i=1;i<=totalPages;i++) html += `<button class="${i===state.page?'active':''}" data-pg="${i}">${i}</button>`;
+  html += `<button ${state.page>=totalPages?'disabled':''} data-pg="${state.page+1}">›</button></div></div>`;
+  host.innerHTML = html;
+
+  host.querySelectorAll('th[data-key]').forEach(th=>th.addEventListener('click', ()=>{
+    const k = th.dataset.key;
+    if(state.sortKey===k) state.sortDir = state.sortDir==='asc'?'desc':'asc';
+    else { state.sortKey = k; state.sortDir = 'desc'; }
+    state.page = 1;
+    renderTable(cur);
+  }));
+  host.querySelectorAll('.pager button[data-pg]').forEach(b=>b.addEventListener('click', ()=>{
+    state.page = +b.dataset.pg; renderTable(cur);
+  }));
+}
+
+const TOPIC_LABELS = () => LIVE_DATA.topics;
+
+function renderTopicsSection(cur){
+  const rows = cur.topicRows;
+  let table = `<div class="card-head"><div><h2>Performance by topic</h2><div class="card-sub">Average views/outlier use only posts with view data; carousel/photo-only topics are marked.</div></div></div>`;
+  table += `<div class="table-scroll topic-summary-table"><table><thead><tr><th class="no-sort">Topic</th><th class="num-col no-sort">Posts</th><th class="num-col no-sort">With view data</th><th class="num-col no-sort">Avg. views</th><th class="num-col no-sort">Avg. outlier</th></tr></thead><tbody>`;
+  const maxOutlier = Math.max(...rows.filter(r=>r.avgOutlier!==null).map(r=>r.avgOutlier), 0);
+  rows.forEach(r=>{
+    const top = r.avgOutlier!==null && r.avgOutlier===maxOutlier;
+    table += `<tr class="${top?'top-row':''}"><td>${TOPIC_LABELS()[r.key]||r.key}</td><td class="num-col num">${r.n}</td><td class="num-col num">${r.nVideo}</td><td class="num-col num">${r.avgViews!==null?fmtNum(r.avgViews):'<span class="na">n/a — no view data</span>'}</td><td class="num-col num">${r.avgOutlier!==null?fmtMultClean(r.avgOutlier):'<span class="na">n/a</span>'}</td></tr>`;
+  });
+  table += `</tbody></table></div>`;
+
+  let cards = '<div class="topic-grid">';
+  rows.forEach((r,i)=>{
+    const isHero = i===0;
+    const standout = pickStandout(r.posts);
+    let contextLine;
+    if(i===0) contextLine = `Most-used topic this window — ${r.n} of ${cur.nTotal} posts.`;
+    else if(r.avgOutlier!==null && r.avgOutlier===maxOutlier) contextLine = `Best average outlier score of any topic this window.`;
+    else if(r.nVideo===0) contextLine = `All ${r.n} posts have no view data — likely carousel/photo format.`;
+    else contextLine = `${r.n} post${r.n>1?'s':''} this window.`;
+    cards += `<div class="topic-card ${isHero?'hero':''}">
+      <span class="eyebrow">Topic ${String(i+1).padStart(2,'0')}</span>
+      <div class="headline">${TOPIC_LABELS()[r.key]||r.key}</div>
+      <hr class="divider">
+      <span class="metric-label">Avg outlier score</span>
+      <div class="metric-value">${r.avgOutlier!==null?fmtMultClean(r.avgOutlier):'n/a'}</div>
+      <div class="sup">${contextLine}</div>
+      ${standout? `<div class="quote">"${escapeHtml(standout.caption.slice(0,110))}${standout.caption.length>110?'…':''}" — <span class="stat">${standout.views!==null? fmtNum(standout.views)+' views':fmtNum(standout.likes)+' likes'}</span></div>` : ''}
+    </div>`;
+  });
+  cards += '</div>';
+
+  return card(table) + card(`<div class="card-head"><h2>Topic breakdown</h2></div>${cards}`);
+}
+function pickStandout(posts){
+  if(!posts.length) return null;
+  const withOutlier = posts.filter(p=>p.outlier!==null);
+  if(withOutlier.length) return withOutlier.reduce((a,b)=>a.outlier>b.outlier?a:b);
+  return posts.reduce((a,b)=> ((a.likes||0)>(b.likes||0)?a:b));
+}
+
+// ================= HEAD TO HEAD =================
+function renderHeadToHead(inView, start, end){
+  const profiles = inView.map(a=>{
+    const allAcctPosts = LIVE_DATA.posts.filter(p=>p.accountId===a.id);
+    const viewPosts = allAcctPosts.filter(p=>inRange(p,start,end));
+    const prof = computeAccountProfile(allAcctPosts, viewPosts);
+    return { account:a, ...prof };
+  });
+  const rows = profiles.map(p=>({
+    account: p.account,
+    consistency: p.consistency,
+    ceiling: p.ceiling,
+    engQuality: p.cur.medianEng1000,
+    cadence: p.postsPerWeek,
+    cadenceReading: p.cadenceCorr===null ? 'not enough weeks of history' : (p.cadenceCorr>0.25?'more posting → better median':(p.cadenceCorr<-0.25?'more posting → weaker median':'no clear relationship')),
+    formatMix: p.cur.durationStats,
+  }));
+
+  const bestOf = (key) => { const vals = rows.filter(r=>r[key]!==null); if(!vals.length) return null; return vals.reduce((a,b)=>a[key]>b[key]?a:b)[key]; };
+  const bestConsistency = bestOf('consistency'), bestCeiling = bestOf('ceiling'), bestEng = bestOf('engQuality'), bestCadence = bestOf('cadence');
+
+  let rowsHtml = rows.map(r=>{
+    const topRow = r.consistency===bestConsistency && bestConsistency!==null;
+    const fmtPct = v => v===null?'<span class="na">n/a</span>':Math.round(v*100)+'%';
+    return `<tr class="${topRow?'top-row':''}">
+      <td>${escapeHtml(r.account.displayName)}${r.account.isMine?' <span class="mine-badge">You</span>':''}<br><span style="font-size:11.5px;color:var(--ink-soft);">${r.account.platform}</span></td>
+      <td class="num-col num" style="${r.consistency===bestConsistency&&bestConsistency!==null?'font-weight:700;':''}">${fmtPct(r.consistency)}</td>
+      <td class="num-col num" style="${r.ceiling===bestCeiling&&bestCeiling!==null?'font-weight:700;':''}">${r.ceiling!==null?fmtMultClean(r.ceiling):'<span class="na">n/a</span>'}</td>
+      <td class="num-col num" style="${r.engQuality===bestEng&&bestEng!==null?'font-weight:700;':''}">${r.engQuality!==null?r.engQuality.toFixed(1):'<span class="na">n/a</span>'}</td>
+      <td class="num-col num" style="${r.cadence===bestCadence&&bestCadence!==null?'font-weight:700;':''}">${r.cadence!==null?r.cadence.toFixed(1)+'/wk':'<span class="na">n/a</span>'}</td>
+      <td style="font-size:12.5px;color:var(--ink-soft);">${r.cadenceReading}</td>
+    </tr>`;
+  }).join('');
+
+  let html = card(`
+    <div class="card-head"><div><h2>Head to head</h2><div class="card-sub">Direct comparison on normalized dimensions only — never raw view totals. Leading value in each column is bolded.</div></div></div>
+    <div class="table-scroll"><table><thead><tr>
+      <th class="no-sort">Account</th><th class="num-col no-sort">Consistency<br><span style="font-weight:400;text-transform:none;">% posts above own median</span></th>
+      <th class="num-col no-sort">Ceiling<br><span style="font-weight:400;text-transform:none;">highest outlier reached</span></th>
+      <th class="num-col no-sort">Engagement quality<br><span style="font-weight:400;text-transform:none;">likes+comments / 1,000 viewers</span></th>
+      <th class="num-col no-sort">Cadence<br><span style="font-weight:400;text-transform:none;">posts / week</span></th>
+      <th class="no-sort">More posting effect</th>
+    </tr></thead><tbody>${rowsHtml}</tbody></table></div>
+    <div class="footnote">Shares and saves (TikTok only) are never compared here — see each account's own tab. Raw view totals are never used as the headline; follower counts differ too much between accounts for that to mean anything.</div>
+  `);
+
+  // format mix
+  html += card(`
+    <div class="card-head"><div><h2>Format mix</h2><div class="card-sub">Share of each account's video output by duration, and which mix is working (median outlier per bucket).</div></div></div>
+    ${rows.map(r=>{
+      const total = r.formatMix.reduce((s,d)=>s+d.n,0);
+      if(!total) return `<div style="margin-bottom:14px;"><b>${escapeHtml(r.account.displayName)}</b><div class="empty-note">No duration data this window.</div></div>`;
+      return `<div style="margin-bottom:16px;">
+        <div style="font-weight:600;margin-bottom:6px;">${escapeHtml(r.account.displayName)}</div>
+        <div class="dur-bars">${r.formatMix.map(d=>`
+          <div class="dur-row">
+            <span class="label">${d.bucket}</span>
+            <div class="dur-track"><div class="dur-fill" style="width:${Math.round(d.n/total*100)}%"></div></div>
+            <span class="num">${Math.round(d.n/total*100)}%</span>
+            <span class="n">${fmtMultClean(d.medianOutlier)}</span>
+          </div>`).join('')}</div>
+      </div>`;
+    }).join('')}
+  `);
+
+  const mine = inView.find(a=>a.isMine);
+  if(mine){
+    const mineRow = rows.find(r=>r.account.id===mine.id);
+    const others = rows.filter(r=>r.account.id!==mine.id);
+    const otherMedian = (key) => median(others.map(r=>r[key]).filter(v=>v!==null));
+    const compareLine = (label, key, fmt, higherBetter=true) => {
+      const mv = mineRow[key], ov = otherMedian(key);
+      if(mv===null||ov===null) return `<div class="group-item">${label}: not enough data to compare.</div>`;
+      const lead = higherBetter ? mv>ov : mv<ov;
+      return `<div class="group-item"><b>${label}:</b> you're at ${fmt(mv)} vs the field's median ${fmt(ov)} — ${lead?'you lead':'the field leads'} here.</div>`;
+    };
+    html += card(`
+      <div class="card-head"><h2>Me vs. the field</h2></div>
+      <div class="group-items">
+        ${compareLine('Consistency', 'consistency', v=>Math.round(v*100)+'%')}
+        ${compareLine('Ceiling', 'ceiling', fmtMultClean)}
+        ${compareLine('Engagement quality', 'engQuality', v=>v.toFixed(1)+'/1,000')}
+        ${compareLine('Cadence', 'cadence', v=>v.toFixed(1)+'/wk')}
+      </div>
+    `);
+  }
+
+  return html;
+}
+
+// ================= TOPICS & GAPS =================
+function renderTopicsGaps(inView, start, end){
+  const perAccountTopics = inView.map(a=>{
+    const posts = LIVE_DATA.posts.filter(p=>p.accountId===a.id && inRange(p,start,end));
+    const stats = computeStats(posts);
+    return { account:a, topicRows: stats.topicRows };
+  });
+  const allTopicKeys = [...new Set(perAccountTopics.flatMap(pa=>pa.topicRows.map(r=>r.key)))];
+
+  // ownership matrix
+  let matrix = `<div class="table-scroll"><table><thead><tr><th class="no-sort">Topic</th>${inView.map(a=>`<th class="num-col no-sort">${escapeHtml(a.displayName)}</th>`).join('')}</tr></thead><tbody>`;
+  const cellData = {};
+  allTopicKeys.forEach(tk=>{
+    matrix += `<tr><td>${TOPIC_LABELS()[tk]||tk}</td>`;
+    inView.forEach(a=>{
+      const pa = perAccountTopics.find(x=>x.account.id===a.id);
+      const row = pa.topicRows.find(r=>r.key===tk);
+      cellData[tk+'|'+a.id] = row || null;
+      matrix += `<td class="num-col num">${row? (row.n+' post'+(row.n>1?'s':'')+(row.avgOutlier!==null?' · '+fmtMultClean(row.avgOutlier):'')) : '<span class="na">—</span>'}</td>`;
+    });
+    matrix += `</tr>`;
+  });
+  matrix += `</tbody></table></div>`;
+
+  // classify topics
+  const proven=[], owned=[], whitespace=[], saturated=[];
+  const mine = inView.find(a=>a.isMine);
+  allTopicKeys.forEach(tk=>{
+    const cells = inView.map(a=>({ account:a, row: cellData[tk+'|'+a.id] })).filter(c=>c.row);
+    const withOutlier = cells.filter(c=>c.row.avgOutlier!==null);
+    const totalN = cells.reduce((s,c)=>s+c.row.n,0);
+    const aboveMedian = withOutlier.filter(c=>c.row.avgOutlier>=1);
+    if(aboveMedian.length>=2){
+      proven.push({ tk, cells: aboveMedian });
+    }
+    if(withOutlier.length){
+      const sorted = [...withOutlier].sort((a,b)=>b.row.avgOutlier-a.row.avgOutlier);
+      const top = sorted[0], second = sorted[1];
+      if(top.row.avgOutlier>=1.2 && top.row.n>=2 && (!second || top.row.avgOutlier >= second.row.avgOutlier*1.4)){
+        owned.push({ tk, top });
+      }
+    }
+    const avgOutlierAll = withOutlier.length ? mean(withOutlier.map(c=>c.row.avgOutlier)) : null;
+    if(avgOutlierAll!==null && avgOutlierAll>=1.2 && totalN<=3){
+      whitespace.push({ tk, avgOutlierAll, totalN, reason:'high-signal, low-volume across the field' });
+    }
+    if(mine){
+      const mineHas = cells.some(c=>c.account.id===mine.id);
+      const othersWork = cells.some(c=>c.account.id!==mine.id && c.row.avgOutlier!==null && c.row.avgOutlier>=1.2);
+      if(!mineHas && othersWork){
+        whitespace.push({ tk, totalN, reason:'works for at least one competitor, untouched by you' });
+      }
+    }
+    if(totalN>=4 && withOutlier.length && withOutlier.every(c=>c.row.avgOutlier<0.95)){
+      saturated.push({ tk, totalN, avgOutlierAll });
+    }
+  });
+
+  const groupBlock = (title, desc, items, renderItem) => `
+    <div class="group-block">
+      <h3>${title}</h3>
+      <div class="group-desc">${desc}</div>
+      <div class="group-items">${items.length? items.map(renderItem).join('') : '<div class="empty-note">None found this window.</div>'}</div>
+    </div>`;
+
+  const exampleFor = (tk) => {
+    const posts = LIVE_DATA.posts.filter(p=>p.topic===tk && inRange(p,start,end) && inView.some(a=>a.id===p.accountId));
+    if(!posts.length) return null;
+    const withO = posts.filter(p=>{ const s=computeStats(LIVE_DATA.posts.filter(x=>x.accountId===p.accountId && inRange(x,start,end))); return true; });
+    return posts.reduce((a,b)=> ((a.likes||0)>(b.likes||0)?a:b));
+  };
+
+  let html = card(`
+    <div class="card-head"><div><h2>Topic ownership matrix</h2><div class="card-sub">One shared taxonomy applied to every account. Cell = post count and average outlier score.</div></div></div>
+    ${matrix}
+  `);
+
+  html += card(`
+    <div class="card-head"><h2>What the matrix means</h2></div>
+    ${groupBlock('Proven topics', 'Working above median for more than one account — safe bets, replicable.', proven, (p)=>{
+      const ex = exampleFor(p.tk);
+      return `<div class="group-item"><b>${TOPIC_LABELS()[p.tk]||p.tk}</b> — works for ${p.cells.map(c=>escapeHtml(c.account.displayName)).join(', ')}.${ex?` Example: "${escapeHtml(ex.caption.slice(0,90))}…"`:''}<span class="do-next">Do next: add this to your own rotation if you're not already.</span></div>`;
+    })}
+    ${groupBlock('Owned topics', 'One account massively outperforms everyone else on this topic — their moat, expensive to attack.', owned, (o)=>{
+      return `<div class="group-item"><b>${TOPIC_LABELS()[o.tk]||o.tk}</b> — owned by ${escapeHtml(o.top.account.displayName)} at ${fmtMultClean(o.top.row.avgOutlier)} avg outlier across ${o.top.row.n} posts.<span class="do-next">Do next: don't attack head-on — this account likely has an audience/format edge here already.</span></div>`;
+    })}
+    ${groupBlock('Whitespace', 'High performance with low volume across the field, or a topic that works for others but you haven\'t touched.', whitespace, (w)=>{
+      return `<div class="group-item"><b>${TOPIC_LABELS()[w.tk]||w.tk}</b> — ${w.reason}${w.avgOutlierAll?` (avg outlier ${fmtMultClean(w.avgOutlierAll)})`:''}, ${w.totalN} post${w.totalN===1?'':'s'} total across the field.<span class="do-next">Do next: test this before a competitor claims it.</span></div>`;
+    })}
+    ${groupBlock('Saturated', 'High volume, weak outlier scores across the board — crowded, skip.', saturated, (s)=>{
+      return `<div class="group-item"><b>${TOPIC_LABELS()[s.tk]||s.tk}</b> — ${s.totalN} posts across the field, avg outlier ${s.avgOutlierAll!==null?fmtMultClean(s.avgOutlierAll):'n/a'}.<span class="do-next">Do next: deprioritize — the crowd hasn't made this work.</span></div>`;
+    })}
+  `);
+
+  return html;
+}
+
+// ================= PLAYBOOK =================
+function renderPlaybook(inView, start, end){
+  if(inView.length===1) return renderPlaybookSingle(inView[0], start, end);
+  return renderPlaybookMulti(inView, start, end);
+}
+
+function renderPlaybookSingle(acct, start, end){
+  const allAcctPosts = LIVE_DATA.posts.filter(p=>p.accountId===acct.id);
+  const viewPosts = allAcctPosts.filter(p=>inRange(p,start,end));
+  const cur = computeStats(viewPosts);
+  const prevWindow = getRangeDates(allAcctPosts);
+  const prev = (prevWindow.prevStart >= prevWindow.dataMin) ? computeStats(allAcctPosts.filter(p=>inRange(p, prevWindow.prevStart, prevWindow.prevEnd))) : null;
+  const byTopic = {}; cur.topicRows.forEach(r=>byTopic[r.key]=r);
+  const rowsByVolume = [...cur.topicRows].sort((a,b)=>b.n-a.n);
+  const topByVolume = rowsByVolume[0];
+  const durBest = cur.durationStats.length ? cur.durationStats.reduce((a,b)=>a.medianOutlier>b.medianOutlier?a:b) : null;
+  const durWorst = cur.durationStats.length ? cur.durationStats.reduce((a,b)=>a.medianOutlier<b.medianOutlier?a:b) : null;
+
+  const recs = [];
+  if(cur.best && topByVolume){
+    recs.push({
+      title: `Keep making more of your most-used format`,
+      body: `"${TOPIC_LABELS()[topByVolume.key]||topByVolume.key}" is this account's most-used topic this window (${topByVolume.n} posts) and it's also where the biggest hit came from.`,
+      evidence: `"${escapeHtml(cur.best.caption.slice(0,90))}…" — ${fmtMultClean(cur.best.outlier)} the account median (${fmtNum(cur.best.views)} views).`,
+      stop: durWorst && durBest && durWorst.bucket!==durBest.bucket ? `Stop stretching these to ${durWorst.bucket} — they're running ${fmtMultClean(durWorst.medianOutlier)} vs ${fmtMultClean(durBest.medianOutlier)} for ${durBest.bucket}.` : null,
+      hero: true,
+    });
+  }
+  const weakTopics = rowsByVolume.filter(r=>r.avgOutlier!==null && r.avgOutlier<0.9 && r.n>=3);
+  weakTopics.slice(0,2).forEach(wt=>{
+    const topPost = wt.posts.filter(p=>p.outlier!==null).sort((a,b)=>b.outlier-a.outlier)[0];
+    recs.push({
+      title: `Fix or deprioritize "${TOPIC_LABELS()[wt.key]||wt.key}"`,
+      body: `${wt.n} posts this window but averaging below the account median (${fmtMultClean(wt.avgOutlier)}).`,
+      evidence: topPost ? `Best example: "${escapeHtml(topPost.caption.slice(0,80))}…" — ${fmtMultClean(topPost.outlier)} the median.` : `None of this window's examples have view data to judge by.`,
+      stop: `Reduce volume here until a reworked hook or format proves out.`,
+    });
+  });
+  if(cur.topNoView){
+    recs.push({
+      title: `Try more no-video content in this vein`,
+      body: `The single highest-engagement post in the window has no view data at all.`,
+      evidence: `"${escapeHtml(cur.topNoView.caption.slice(0,90))}…" — ${fmtNum(cur.topNoView.likes)} likes, ${fmtNum(cur.topNoView.comments)} comments (no reach data available).`,
+      stop: `Don't bank a whole content pillar on it yet — it's one post, not a repeated pattern.`,
+    });
+  }
+  const hitRateNow = cur.nVideo ? cur.hits.length/cur.nVideo : null;
+  const hitRatePrev = prev && prev.nVideo ? prev.hits.length/prev.nVideo : null;
+  if(hitRateNow!==null && hitRatePrev!==null && hitRateNow>hitRatePrev){
+    recs.push({
+      title: `Ride the current hot streak while it lasts`,
+      body: `Hit rate rose from ${Math.round(hitRatePrev*100)}% to ${Math.round(hitRateNow*100)}% period over period — lean into the current best-performing formats now rather than waiting.`,
+      evidence: `${cur.hits.length} of ${cur.nVideo} video posts hit 2x median this window vs ${prev.hits.length} of ${prev.nVideo} the window before.`,
+      stop: null,
+    });
+  }
+
+  let cardsHtml = '<div class="play-grid">';
+  recs.slice(0,8).forEach((r,i)=>{
+    cardsHtml += `<div class="play-card ${r.hero?'hero':''}">
+      <span class="num-badge">RECOMMENDATION ${i+1}</span>
+      <h4>${r.title}</h4>
+      <p>${r.body}</p>
+      <div class="evidence">${r.evidence}</div>
+      ${r.stop? `<div class="stop">Stop / deprioritize: <span>${r.stop}</span></div>`:''}
+    </div>`;
+  });
+  cardsHtml += '</div>';
+
+  const doNotCopy = [
+    cur.anomalies.length ? `${cur.anomalies.length>1?'These':'This'} anomal${cur.anomalies.length>1?'ies look':'y looks'} like a one-off viral spike (10x+ the median) — inspect it, don't build a content pillar around it.` : null,
+    cur.topNoView ? `The top no-view-data post is a single result with no repeat in this account's own history yet — treat it as a bet to test, not a proven pillar.` : null,
+  ].filter(Boolean);
+
+  return card(`
+    <div class="card-head"><div><h2>Playbook — what to make next week</h2><div class="card-sub">Grounded in this account's own data for the selected window. Every recommendation names the evidence and what it costs.</div></div></div>
+    ${cardsHtml}
+  `) + (doNotCopy.length ? card(`
+    <div class="card-head"><h2>Do not copy</h2></div>
+    <div class="donot-list">${doNotCopy.map(d=>`<div class="donot-item"><span class="ico">✕</span><span>${d}</span></div>`).join('')}</div>
+  `) : '');
+}
+
+function renderPlaybookMulti(inView, start, end){
+  const gaps = renderTopicsGaps(inView, start, end); // reuse computation by re-deriving groups below instead of parsing HTML
+  const perAccountTopics = inView.map(a=>{
+    const posts = LIVE_DATA.posts.filter(p=>p.accountId===a.id && inRange(p,start,end));
+    return { account:a, topicRows: computeStats(posts).topicRows };
+  });
+  const allTopicKeys = [...new Set(perAccountTopics.flatMap(pa=>pa.topicRows.map(r=>r.key)))];
+  const cellData = {};
+  allTopicKeys.forEach(tk=>{
+    inView.forEach(a=>{
+      const pa = perAccountTopics.find(x=>x.account.id===a.id);
+      cellData[tk+'|'+a.id] = pa.topicRows.find(r=>r.key===tk) || null;
+    });
+  });
+  const mine = inView.find(a=>a.isMine);
+  const recs = [];
+  let idx=1;
+  allTopicKeys.forEach(tk=>{
+    const cells = inView.map(a=>({ account:a, row: cellData[tk+'|'+a.id] })).filter(c=>c.row && c.row.avgOutlier!==null);
+    const above = cells.filter(c=>c.row.avgOutlier>=1);
+    const mineRow = mine ? cellData[tk+'|'+mine.id] : null;
+    if(above.length>=2 && (!mine || !mineRow || mineRow.n<2)){
+      const bestCell = above.reduce((a,b)=>a.row.avgOutlier>b.row.avgOutlier?a:b);
+      const bestPost = bestCell.row.posts.filter(p=>p.outlier!==null).sort((a,b)=>b.outlier-a.outlier)[0];
+      recs.push({
+        title: `Adopt "${TOPIC_LABELS()[tk]||tk}" — proven across ${above.length} accounts`,
+        body: `Working above median for ${above.map(c=>c.account.displayName).join(', ')}${mine?' — you have little or no presence here yet':''}.`,
+        evidence: bestPost ? `"${escapeHtml(bestPost.caption.slice(0,90))}…" (${escapeHtml(bestCell.account.displayName)}) — ${fmtMultClean(bestPost.outlier)} their median.` : '',
+        stop: null,
+      });
+      idx++;
+    }
+  });
+  if(mine){
+    allTopicKeys.forEach(tk=>{
+      const mineRow = cellData[tk+'|'+mine.id];
+      if(mineRow && mineRow.avgOutlier!==null && mineRow.avgOutlier>=1.3 && mineRow.n>=2){
+        recs.push({
+          title: `Keep defending "${TOPIC_LABELS()[tk]||tk}" — your strongest lane`,
+          body: `You're averaging ${fmtMultClean(mineRow.avgOutlier)} on your own median here across ${mineRow.n} posts — ahead of the field on this topic.`,
+          evidence: mineRow.posts.filter(p=>p.outlier!==null).sort((a,b)=>b.outlier-a.outlier)[0] ? `"${escapeHtml(mineRow.posts.filter(p=>p.outlier!==null).sort((a,b)=>b.outlier-a.outlier)[0].caption.slice(0,90))}…"` : '',
+          stop: null,
+          hero: true,
+        });
+      }
+    });
+  }
+
+  let cardsHtml = '<div class="play-grid">';
+  recs.slice(0,8).forEach((r,i)=>{
+    cardsHtml += `<div class="play-card ${r.hero?'hero':''}">
+      <span class="num-badge">RECOMMENDATION ${i+1}</span>
+      <h4>${r.title}</h4>
+      <p>${r.body}</p>
+      ${r.evidence?`<div class="evidence">${r.evidence}</div>`:''}
+      ${r.stop? `<div class="stop">Stop / deprioritize: <span>${r.stop}</span></div>`:''}
+    </div>`;
+  });
+  cardsHtml += '</div>';
+  if(!recs.length) cardsHtml = '<div class="empty-state">Not enough cross-account signal yet in this window — try a wider date range.</div>';
+
+  return card(`
+    <div class="card-head"><div><h2>Playbook — what to make next week</h2><div class="card-sub">Grounded in cross-account evidence for the selected window. See the Topics &amp; Gaps tab for the full breakdown behind these calls.</div></div></div>
+    ${cardsHtml}
+  `);
+}
+
+// ---------- wiring ----------
+document.getElementById('rangeSeg').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-range]'); if(!btn) return;
+  document.querySelectorAll('#rangeSeg button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  state.rangeMode = btn.dataset.range;
+  document.getElementById('customDates').style.display = state.rangeMode==='custom' ? 'flex' : 'none';
+  state.page = 1;
+  render();
+});
+document.getElementById('customStart').addEventListener('change', (e)=>{ state.customStart = e.target.value; render(); });
+document.getElementById('customEnd').addEventListener('change', (e)=>{ state.customEnd = e.target.value; render(); });
+document.getElementById('acctSeg').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-acct]'); if(!btn) return;
+  state.accountFilter = btn.dataset.acct; state.page=1; render();
+});
+document.getElementById('platSeg').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-plat]'); if(!btn) return;
+  state.platformFilter = btn.dataset.plat; state.page=1; render();
+});
+
+(async function init(){
+  await initCapabilities();
+  await loadData();
+  const dates = LIVE_DATA.posts.map(p=>p.date).sort();
+  if(dates.length){
+    document.getElementById('customStart').max = dates[dates.length-1];
+    document.getElementById('customEnd').max = dates[dates.length-1];
+    document.getElementById('customStart').min = dates[0];
+    document.getElementById('customEnd').min = dates[0];
+  }
+  render();
+})();
+</script>

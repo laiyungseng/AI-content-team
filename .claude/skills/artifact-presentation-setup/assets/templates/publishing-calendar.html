@@ -1,0 +1,115 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--__FONTS__-->
+<style>
+/*__THEME__*/
+/*__SHARED_CSS__*/
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 16px; margin-top: 16px; align-items: start; }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.months { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.mhead { font-family: var(--font-display); font-size: 18px; margin-bottom: 8px; }
+.cal { min-width: 640px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.dow, .day { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.dow { padding: 6px 8px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--surface-2); }
+.day { min-height: 92px; padding: 5px; display: flex; flex-direction: column; gap: 4px; background: var(--surface); }
+.day.out { background: var(--bg); }
+.day .n { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.day.today .n { color: var(--accent); font-weight: 700; }
+.ev { text-align: left; border: 1px solid var(--line); border-left: 4px solid var(--muted); background: var(--bg); border-radius: 5px; padding: 3px 6px; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; min-width: 0; }
+.ev b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev span { color: var(--muted); font-size: 11px; }
+.ev.good { border-left-color: var(--good); } .ev.warn { border-left-color: var(--warn); } .ev.bad { border-left-color: var(--bad); } .ev.info { border-left-color: var(--info); }
+.ev[aria-current="true"], .ev.link { outline: 2px solid var(--accent); outline-offset: 0; }
+.ev.dim { opacity: .35; }
+.detail { position: sticky; top: calc(88px + env(safe-area-inset-top, 0px)); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+@media (max-width: 900px) { .detail { position: static; } }
+.chain { display: flex; flex-direction: column; gap: 6px; }
+.chain .btn { text-align: left; }
+.dl { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 4px 10px; font-size: 13px; margin: 0; }
+.dl dt { color: var(--muted); } .dl dd { margin: 0; overflow-wrap: anywhere; }
+</style>
+<div id="app"></div>
+<script type="application/json" id="data">__DATA__</script>
+<script>
+/*__SHARED_JS__*/
+(function () {
+  const items = (DATA.items || []).slice().sort((a, b) => (a.date + a.id).localeCompare(b.date + b.id));
+  const byId = Object.fromEntries(items.map((i) => [i.id, i]));
+  const app = document.getElementById('app');
+  const f = { campaign: 'all', view: 'month' };
+  let selected = items[0] ? items[0].id : null;
+  const parse = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const iso = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const tone = (s) => STATUS_TONE[String(s || '').toLowerCase().replace(/\s+/g, '_')] || '';
+  const campaigns = ['all', ...new Set(items.map((i) => i.campaign).filter(Boolean))];
+
+  const body = h('div', { class: 'months' });
+  const detail = h('aside', { class: 'card detail', 'aria-live': 'polite' });
+  const chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'Filter by campaign' });
+  const views = h('div', { class: 'chips', role: 'group', 'aria-label': 'View' });
+
+  function visible() { return items.filter((i) => f.campaign === 'all' || i.campaign === f.campaign); }
+
+  function evBtn(it) {
+    const linked = selected && byId[selected] && (byId[selected].previous === it.id || byId[selected].next === it.id);
+    return h('button', { class: 'ev ' + tone(it.status) + (linked ? ' link' : ''), type: 'button', 'aria-current': String(it.id === selected), title: it.title || it.id,
+      onclick: () => { selected = it.id; paint(); } }, h('b', null, it.id + ' ' + (it.format || '')), h('span', null, it.title || it.campaign || ''));
+  }
+
+  function monthGrid(y, m, list) {
+    const first = new Date(y, m, 1), lead = (first.getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
+    const cells = [];
+    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach((d) => cells.push(h('div', { class: 'dow' }, d)));
+    for (let i = 0; i < lead; i++) cells.push(h('div', { class: 'day out' }));
+    const today = iso(new Date());
+    for (let d = 1; d <= days; d++) {
+      const key = iso(new Date(y, m, d));
+      cells.push(h('div', { class: 'day' + (key === today ? ' today' : '') }, h('span', { class: 'n' }, d), list.filter((i) => i.date === key).map(evBtn)));
+    }
+    while (cells.length % 7) cells.push(h('div', { class: 'day out' }));
+    return h('section', null, h('div', { class: 'mhead' }, new Date(y, m, 1).toLocaleString('en', { month: 'long', year: 'numeric' })),
+      h('div', { class: 'scroll-x' }, h('div', { class: 'cal' }, cells)));
+  }
+
+  function tableView(list) {
+    return h('div', { class: 'card scroll-x' }, h('table', null,
+      h('thead', null, h('tr', null, ['ID', 'Date', 'Platform', 'Format', 'Campaign', 'Stage', 'Status', 'Prev', 'Next'].map((t) => h('th', null, t)))),
+      h('tbody', null, list.map((i) => h('tr', { style: 'cursor:pointer', onclick: () => { selected = i.id; paint(); } },
+        h('td', { class: 'mono' }, i.id), h('td', { class: 'mono' }, i.date), h('td', null, i.platform), h('td', null, i.format), h('td', null, i.campaign),
+        h('td', null, i.stage), h('td', null, badge(i.status)), h('td', { class: 'mono' }, i.previous || '-'), h('td', { class: 'mono' }, i.next || '-'))))));
+  }
+
+  function paintDetail() {
+    const it = byId[selected];
+    if (!it) { detail.replaceChildren(h('p', { class: 'muted' }, 'Select an item to see its place in the campaign.')); return; }
+    const link = (id, label) => id && byId[id] ? h('button', { class: 'btn sm', type: 'button', onclick: () => { selected = id; paint(); } }, label + ': ' + id + ' - ' + (byId[id].title || byId[id].stage || '')) : h('span', { class: 'muted', style: 'font-size:13px' }, label + ': none');
+    detail.replaceChildren(
+      h('div', { class: 'eyebrow' }, it.campaign || 'No campaign'), h('h2', { style: 'font-size:19px' }, it.title || it.id),
+      h('div', null, badge(it.status)),
+      h('dl', { class: 'dl' }, h('dt', null, 'ID'), h('dd', { class: 'mono' }, it.id), h('dt', null, 'Date'), h('dd', { class: 'mono' }, it.date),
+        h('dt', null, 'Platform'), h('dd', null, it.platform), h('dt', null, 'Format'), h('dd', null, it.format), h('dt', null, 'Stage'), h('dd', null, it.stage)),
+      h('div', { class: 'chain' }, link(it.previous, 'Previous'), link(it.next, 'Next')));
+  }
+
+  function paint() {
+    chips.replaceChildren(...campaigns.map((c) => h('button', { class: 'chip', type: 'button', 'aria-pressed': String(c === f.campaign), onclick: () => { f.campaign = c; paint(); } }, c === 'all' ? 'All campaigns' : c)));
+    views.replaceChildren(...[['month', 'Month'], ['table', 'Table']].map(([k, l]) => h('button', { class: 'chip', type: 'button', 'aria-pressed': String(k === f.view), onclick: () => { f.view = k; paint(); } }, l)));
+    const list = visible();
+    if (f.view === 'table' || !list.length) body.replaceChildren(tableView(list));
+    else {
+      const ds = list.map((i) => parse(i.date)), min = new Date(Math.min(...ds)), max = new Date(Math.max(...ds));
+      const out = [];
+      for (let y = min.getFullYear(), m = min.getMonth(); y < max.getFullYear() || (y === max.getFullYear() && m <= max.getMonth()); m++) {
+        if (m > 11) { m = 0; y++; }
+        out.push(monthGrid(y, m, list));
+      }
+      body.replaceChildren(...out);
+    }
+    paintDetail();
+  }
+
+  app.append(chrome(DATA.title, DATA.subtitle),
+    h('main', { class: 'wrap' }, h('div', { class: 'row', style: 'margin-top:16px;justify-content:space-between' }, chips, views), h('div', { class: 'layout' }, body, detail)));
+  paint();
+})();
+</script>

@@ -1,0 +1,32 @@
+# Environment and secrets
+.venv/
+.env
+__pycache__/
+*.pyc
+
+# Per-machine status
+state/installation_status.md
+
+# Client / project data stays local: only _template folders (and memory/_system) are shared
+brand/*
+!brand/_template/
+competitor_analysis/projects/*
+!competitor_analysis/projects/_template/
+content_creation/projects/*
+!content_creation/projects/_template/
+memory/*
+!memory/_template/
+!memory/_system/
+performance/*
+!performance/_template/
+state/*
+!state/_template/
+
+# Downloaded media and Obsidian workspace state
+*.mp4
+*.mp3
+*.wav
+.obsidian/workspace*.json
+
+# Local Claude settings
+.claude/settings.local.json

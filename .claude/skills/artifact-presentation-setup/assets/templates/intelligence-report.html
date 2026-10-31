@@ -1,0 +1,102 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--__FONTS__-->
+<style>
+/*__THEME__*/
+/*__SHARED_CSS__*/
+.findings { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.findings li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; max-width: 80ch; }
+.findings li::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); margin-top: 8px; justify-self: center; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.pat { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.pat h3 { font-size: 16px; }
+.pat .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); }
+.bars { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; }
+.bar-row { display: grid; grid-template-columns: minmax(80px, 170px) minmax(0, 1fr) 70px; gap: 10px; align-items: center; font-size: 13px; }
+.bar-row .name { overflow-wrap: anywhere; }
+.track { position: relative; height: 18px; background: var(--surface-2); border-radius: 4px; }
+.fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 4px; }
+.fill.below { background: color-mix(in srgb, var(--muted) 55%, var(--surface-2)); }
+.base { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--fg); }
+.axis { display: grid; grid-template-columns: minmax(80px, 170px) minmax(0, 1fr) 70px; gap: 10px; font-size: 11px; color: var(--muted); }
+.axis .scale { display: flex; justify-content: space-between; }
+.legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.search { width: 100%; max-width: 360px; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 12px; }
+.score { display: inline-flex; align-items: center; gap: 8px; }
+.score .track { width: 64px; height: 8px; }
+.rec { padding: 14px 16px; display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; }
+</style>
+<div id="app"></div>
+<script type="application/json" id="data">__DATA__</script>
+<script>
+/*__SHARED_JS__*/
+(function () {
+  const app = document.getElementById('app');
+  const P = DATA.patterns || {};
+  const conf = (c) => h('span', { class: 'badge ' + ({ high: 'good', medium: 'warn', low: 'bad' }[String(c).toLowerCase()] || '') }, (c || 'n/a') + ' confidence');
+
+  function patternCard(p) {
+    return h('article', { class: 'card pat' },
+      h('div', { class: 'meta' }, h('span', { class: 'mono' }, p.id), conf(p.confidence), p.lift ? h('b', { style: 'color:var(--fg)' }, p.lift) : null),
+      h('h3', null, p.pattern),
+      p.evidence ? h('p', { class: 'muted' }, 'Evidence: ' + p.evidence) : null,
+      p.detail ? h('p', null, p.detail) : null);
+  }
+
+  function chart() {
+    const c = DATA.chart; if (!c || !(c.series || []).length) return null;
+    const max = Math.max(...c.series.flatMap((s) => [s.value, s.baseline || 0])) * 1.1 || 1;
+    const nice = (v) => (Math.round(v * 10) / 10);
+    const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => nice(max * f));
+    return h('section', { class: 'card' },
+      h('div', { class: 'pad', style: 'padding-bottom:0' }, h('h2', { style: 'font-size:18px' }, c.title),
+        h('div', { class: 'legend', style: 'margin-top:6px' },
+          h('span', null, h('i', { style: 'background:var(--accent)' }), 'Beat baseline'),
+          h('span', null, h('i', { style: 'background:color-mix(in srgb, var(--muted) 55%, var(--surface-2))' }), 'Below baseline'),
+          h('span', null, h('i', { style: 'background:var(--fg);width:2px;height:12px' }), c.baseline_label || 'Account baseline'))),
+      h('div', { class: 'bars' },
+        c.series.map((s) => h('div', { class: 'bar-row' },
+          h('span', { class: 'name' }, s.label),
+          h('div', { class: 'track' }, h('div', { class: 'fill' + (s.baseline && s.value < s.baseline ? ' below' : ''), style: 'width:' + (100 * s.value / max) + '%' }),
+            s.baseline ? h('div', { class: 'base', style: 'left:' + (100 * s.baseline / max) + '%', title: (c.baseline_label || 'Baseline') + ': ' + s.baseline }) : null),
+          h('span', { class: 'mono' }, s.value + (c.unit || '')))),
+        h('div', { class: 'axis' }, h('span'), h('div', { class: 'scale mono' }, ticks.map((t) => h('span', null, t))), h('span'))));
+  }
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', render: () => h('div', { class: 'stack' },
+        h('section', { class: 'card pad' }, h('div', { class: 'eyebrow', style: 'margin-bottom:10px' }, 'What we found'),
+          h('ul', { class: 'findings' }, (DATA.summary || []).map((t) => h('li', null, t)))),
+        chart(),
+        (DATA.recommendations || []).length ? h('div', { class: 'stack' }, h('h2', { style: 'font-size:18px' }, 'Recommended next moves'),
+          DATA.recommendations.map((r) => h('article', { class: 'card rec' },
+            h('span', { class: 'badge ' + ({ high: 'bad', medium: 'warn', low: '' }[String(r.priority).toLowerCase()] || '') }, r.priority || 'next'),
+            h('div', null, h('h3', { style: 'font-size:16px' }, r.title), h('p', { class: 'muted', style: 'margin-top:3px;max-width:70ch' }, r.detail))))) : null) },
+    { id: 'patterns', label: 'Patterns', render: () => h('div', { class: 'two' },
+        h('div', { class: 'stack' }, h('h2', { style: 'font-size:18px' }, 'Winning'), (P.winning || []).map(patternCard)),
+        h('div', { class: 'stack' }, h('h2', { style: 'font-size:18px' }, 'Weak'), (P.weak || []).map(patternCard))) },
+    { id: 'hooks', label: 'Hook library', render: () => {
+        const rows = h('tbody');
+        const q = h('input', { class: 'search', id: 'hook-search', type: 'search', placeholder: 'Search hook formulas', 'aria-label': 'Search hooks', oninput: paint });
+        function paint() {
+          const t = q.value.toLowerCase();
+          rows.replaceChildren(...(DATA.hooks || []).filter((x) => !t || (x.formula + x.example + (x.source || '')).toLowerCase().includes(t))
+            .sort((a, b) => b.score - a.score).map((x) => h('tr', null,
+              h('td', { class: 'mono' }, x.id), h('td', null, h('b', null, x.formula), h('div', { class: 'muted' }, x.example)),
+              h('td', null, x.source || ''),
+              h('td', null, h('span', { class: 'score' }, h('div', { class: 'track' }, h('div', { class: 'fill', style: 'width:' + x.score + '%' })), h('span', { class: 'mono' }, x.score))))));
+        }
+        paint();
+        return h('div', { class: 'stack' }, q, h('div', { class: 'card scroll-x' }, h('table', null,
+          h('thead', null, h('tr', null, h('th', null, 'ID'), h('th', null, 'Formula and example'), h('th', null, 'Seen in'), h('th', null, 'Score'))), rows)));
+      } },
+    { id: 'gaps', label: 'Gaps and opportunities', render: () => h('div', { class: 'two' }, (DATA.gaps || []).map((g) => h('article', { class: 'card pat' },
+        h('h3', null, g.title), h('p', null, g.detail), g.opportunity ? h('p', { class: 'muted' }, 'Opportunity: ' + g.opportunity) : null))) },
+  ];
+
+  app.append(chrome(DATA.title, [DATA.subtitle, DATA.period].filter(Boolean).join(' - ')), h('main', { class: 'wrap', style: 'margin-top:12px' }));
+  renderTabs(tabs, $('main'), (location.hash || '').slice(1) || 'overview');
+})();
+</script>

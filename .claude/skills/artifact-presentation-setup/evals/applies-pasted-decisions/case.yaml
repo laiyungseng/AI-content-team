@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: applies-pasted-decisions
+expected_outcome: |
+  Parses the pasted summary, sets C001 approved, C002 revision with the comment, C003 rejected, and does NOT publish because publish_authorized needs explicit authorization (asks the user).
