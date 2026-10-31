@@ -21,7 +21,7 @@ Read `references/requirements.md`. Brand onboarding is **not** required. If a pr
 | 3 | Plan + test pull | competitor_researcher | `$CI/scripts/collect.py plan <run> --test`; run each platform's actor with the printed input; save items to `raw/<platform>/items.json`; `collect.py check <run>`. Stop if fields are missing. XHS and Meta: always test first (see `platform_scraping.md`) |
 | 4 | Full pull | competitor_researcher | `collect.py plan <run>`; run all platforms in the same turn; save items (and `status.json` for private/failed accounts); `collect.py check` |
 | 5 | Normalise | competitor_researcher | `$CI/scripts/normalise.py build <run>` -> `items.tsv`. Read its warnings aloud |
-| 6 | Tag topics | competitor_analyzer | Read captions, assign one topic from `sources.md` to each ok item (ours get a `pillar` too if known). Write `tags.tsv` (`itemId<TAB>topic<TAB>pillar`), then `normalise.py tag <run> tags.tsv` |
+| 6 | Tag topics | competitor_analyzer | Read captions, assign one topic from `sources.md` to each ok item (ours get a `pillar` too if known). Write `tags.tsv` (`itemId<TAB>topic<TAB>pillar<TAB>sponsored`), then `normalise.py tag <run> tags.tsv` |
 | 7 | Select | competitor_analyzer | `$CI/scripts/build_report.py select <run>` -> `analysis/selected.json` (rules: `selection.md`) |
 | 8 | Verdicts | competitor_analyzer + hook_analyzer | One verdict per selected item -> `analysis/verdicts.json` using `verdict_rules.md`, `shared/frameworks/hooks.md` (spoken, text, visual, audio) and `hook_research.md`; wording per `writing_guide.md` |
 | 9 | Our baseline | performance_analyst | `normalise.py stats <run>` for typical views and counts; write `analysis/ours.json`. Optional dashboard: `references/perf_dashboard.md` (needs Ours on both Instagram and TikTok) |
@@ -40,7 +40,7 @@ Load `artifact-design` and `artifact-capabilities` (once per session). Publish `
 - `approve`: `run.py approve <run> --url <link>`; run status becomes `approved` and is never reversed.
 
 ### Optional page 3 (performance radar)
-For Instagram/TikTok only: `to_radar_tsv.py <run> <run>/radar` then `radar_build.py <run>/radar/config.json <run>/radar/posts.tsv <run>/radar/radar.html`; publish as a **separate** static artifact (`capabilities: {}`) and link it from the report summary. Runbook: `references/radar_dashboard.md`. Statistics rules: `shared/frameworks/stats_rules.md`.
+For Instagram/TikTok only: `to_radar_tsv.py <run> <run>/radar` then `radar_build.py <run>/radar/config.json <run>/radar/posts.tsv <run>/radar/radar.html`; publish as a **separate** static artifact (`capabilities: {}`) and link it from the report summary. Runbook: `references/radar_dashboard.md`. Statistics rules: `shared/frameworks/stats_rules.md` (page changes: `stats_maintenance.md`).
 
 ## After approval (always)
 1. **Promote** only validated lessons to `memory/<project>/` using the block formats in the files: a pattern needs evidence (post count), result, confidence ([[CLAUDE]] memory rules). One-run or thin findings go to `experiments.md`. Set `Promoted to memory` in `run.md`.

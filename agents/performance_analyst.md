@@ -13,7 +13,7 @@ Describe how our own accounts perform (the "Ours" side of the comparison) using 
 `runs/<run>/items.tsv` rows with `owner = ours`; `normalise.py stats <run>`; optional `performance/[project]/raw/**`.
 
 ## Required reading
-`shared/frameworks/stats_rules.md` (both parts); `shared/frameworks/writing_insights.md`; `competitor_analysis/skills/performance_analysis.md`; `.claude/skills/competitor-intelligence/references/comparison_method.md`.
+`shared/frameworks/stats_rules.md`; `shared/frameworks/writing_insights.md`; `competitor_analysis/skills/performance_analysis.md`; `.claude/skills/competitor-intelligence/references/comparison_method.md`.
 
 ## Allowed output folders
 `competitor_analysis/projects/[project]/runs/<run>/analysis/ours.json`; `competitor_analysis/projects/[project]/analysis/performance/**`; `performance/[project]/weekly/**`, `performance/[project]/monthly/**`.

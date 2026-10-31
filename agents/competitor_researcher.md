@@ -19,7 +19,7 @@ Turn the Active URLs of Enabled platforms in `sources.md` into clean, unified da
 `competitor_analysis/projects/[project]/runs/<run>/raw/**`, `.../media/**`, `.../items.tsv`.
 
 ## Process
-1. List targets with `sources.py targets`. Collect nothing outside that list.
+1. List targets with `uv run python .claude/skills/source-manager/scripts/sources.py targets competitor_analysis/projects/[project]/sources.md`. Collect nothing outside that list.
 2. `collect.py plan <run> --test` and run each platform's actor (Apify MCP) with the printed input, limit 2. Save to `raw/<platform>/items.json`. Run `collect.py check <run>`. If a mapped field is missing on every item, stop and report; do not edit mappings by guesswork. For XHS pick an actor with `search-actors` and record it in `collect.py`.
 3. `collect.py plan <run>` and start every platform's full pull in the same turn. Read each dataset in one call with the `fields` from the plan and a `limit` covering the dataset. Save items; write `raw/<platform>/status.json` for private, failed or not-found accounts. Instagram followers go to `raw/instagram/followers.json`.
 4. `normalise.py build <run>`. Read every WARNING to the orchestrator.

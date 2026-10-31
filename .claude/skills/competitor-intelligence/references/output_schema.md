@@ -6,7 +6,7 @@ source: posts.tsv null rules adapted from competitor-content-radar
 # Output schema
 
 ## items.tsv (unified, tab-separated, with header)
-`owner accountId platform itemType itemId date views likes comments shares saves durationSec topic pillar caption mediaUrl permalink status runningDays isActive variants`
+`owner accountId platform itemType itemId date views likes comments shares saves durationSec topic pillar caption mediaUrl permalink status runningDays isActive variants sponsored`
 
 | column | rule |
 |---|---|
@@ -25,10 +25,11 @@ source: posts.tsv null rules adapted from competitor-content-radar
 | status | ok, private, failed, empty |
 | runningDays | Meta ads only: days from the ad's start date to its end date (or the run date if none), minimum 0. Empty for posts |
 | isActive | Meta ads only: `yes` or `no` as returned by the Ad Library, empty if unknown |
+| sponsored | `yes` when the post is a paid partnership or carries an advert label in its caption (set by the analyzer through tags.tsv), empty otherwise. Meta ads are ads already and stay empty |
 | variants | Meta ads only: number of ads from the same page with identical text (first 300 characters), counting itself. A re-run under a new ad id counts as a variant |
 
 ## tags.tsv (run folder, written by competitor_analyzer, read by `normalise.py tag`)
-Tab-separated, header `itemId<TAB>topic<TAB>pillar`. One row per ok item; `topic` must be a key from `sources.md` Topics; `pillar` is optional (ours only). Ids are matched on `itemId` alone.
+Tab-separated, header `itemId<TAB>topic<TAB>pillar<TAB>sponsored`. One row per ok item; `topic` must be a key from `sources.md` Topics; `pillar` is optional (ours only); `sponsored` is optional and is `yes` or empty. Tag a sponsored post by what it shows (a home tour is `listing_tour`), never `off_topic` just because it is paid. Ids are matched on `itemId` alone.
 
 ## Analysis files (`runs/<id>/analysis/`, JSON so the report builder can read them)
 **verdicts.json**

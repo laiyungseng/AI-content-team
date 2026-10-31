@@ -10,7 +10,7 @@ the losing ones don't. That lives in the captions, the hooks, the posting
 times and the formats - things sitting in the data you pulled but invisible
 to a median.
 
-So read the captions before writing a word. Sort by outlier score, put the
+So read the captions before writing a word. Sort by ratio to each account's usual views, put the
 top five next to the bottom five, and look for what actually separates them.
 The insight is in the contrast.
 
@@ -23,12 +23,12 @@ should be able to click through and see what you meant.
 This rules out the failure mode these strings exist to fix - confident prose
 about things you did not observe:
 
-- ❌ "Your audience responds to authenticity." Not visible in any field.
-- ❌ "The algorithm favors longer watch time." You have no watch-time data.
-- ❌ "Post more consistently." True of everyone, learned from nothing.
-- ✅ "Both winners opened on a specific number in the first line. The four
+- Bad: "Your audience responds to authenticity." Not visible in any field.
+- Bad: "The algorithm favors longer watch time." You have no watch-time data.
+- Bad: "Post more consistently." True of everyone, learned from nothing.
+- Good: "Both winners opened on a specific number in the first line. The four
   that missed opened on a question."
-- ✅ "The three high-reach, low-engagement posts all ended on 'let me know
+- Good: "The three high-reach, low-engagement posts all ended on 'let me know
   what you think'. The two that converted ended on one instruction."
 
 The difference is not tone. It is whether the sentence would change if the
