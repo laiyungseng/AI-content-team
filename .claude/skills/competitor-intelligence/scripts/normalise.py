@@ -23,7 +23,7 @@ sys.path.insert(0, str(HERE.parents[1] / "source-manager" / "scripts"))
 import sources as src  # noqa: E402
 
 COLUMNS = ["owner", "accountId", "platform", "itemType", "itemId", "date", "views", "likes", "comments", "shares", "saves",
-           "durationSec", "topic", "pillar", "caption", "mediaUrl", "permalink", "status"]
+           "durationSec", "topic", "pillar", "caption", "mediaUrl", "permalink", "status", "runningDays", "isActive", "variants"]
 
 # field -> candidate dotted paths (".0" indexes a list)
 MAP = {
@@ -43,6 +43,7 @@ MAP = {
         "id": ["adArchiveID", "adArchiveId", "ad_archive_id", "adId", "id"],
         "date": ["startDateFormatted", "startDate", "start_date", "startDateString"],
         "end": ["endDateFormatted", "endDate", "end_date"],
+        "active": ["isActive", "is_active"],
         "views": [], "likes": [], "comments": [], "shares": [], "saves": [], "duration": [],
         "caption": ["snapshot.body.text", "snapshot.caption", "body.text", "adText", "text"],
         "media": ["snapshot.images.0.original_image_url", "snapshot.images.0.resized_image_url", "snapshot.videos.0.video_preview_image_url",
@@ -53,15 +54,15 @@ MAP = {
         "owner": ["user.nickname", "author.nickname", "nickname", "userName", "user.name", "author.name"],
         "owner_id": ["user.userId", "author.userId", "userId", "user_id", "user.user_id"],
         "id": ["noteId", "note_id", "id"],
-        "date": ["time", "publishTime", "publish_time", "lastUpdateTime", "createTime", "timestamp"],
+        "date": ["create_time", "time", "publishTime", "publish_time", "lastUpdateTime", "createTime", "timestamp"],
         "views": ["viewCount", "view_count", "interactInfo.viewCount"],
         "likes": ["likedCount", "likes", "likeCount", "interactInfo.likedCount"],
-        "comments": ["commentCount", "comments", "commentsCount", "interactInfo.commentCount"],
-        "shares": ["sharedCount", "shareCount", "shares", "interactInfo.shareCount"],
-        "saves": ["collectedCount", "collectCount", "collects", "interactInfo.collectedCount"],
-        "duration": ["video.duration", "duration"],
+        "comments": ["comments_count", "commentCount", "comments", "commentsCount", "interactInfo.commentCount"],
+        "shares": ["share_count", "sharedCount", "shareCount", "shares", "interactInfo.shareCount"],
+        "saves": ["collected_count", "collectedCount", "collectCount", "collects", "interactInfo.collectedCount"],
+        "duration": ["video_info_v2.capa.duration", "video.duration", "duration"],
         "caption": ["title", "desc", "displayTitle", "description"],
-        "media": ["cover", "cover.url", "coverUrl", "imageList.0.url", "images.0", "imageList.0.urlDefault"],
+        "media": ["images_list.0.url", "cover", "cover.url", "coverUrl", "imageList.0.url", "images.0", "imageList.0.urlDefault"],
         "link": ["url", "noteUrl", "note_url"],
     },
 }
@@ -91,7 +92,7 @@ def to_int(v):
     if v is None or isinstance(v, bool):
         return ""
     if isinstance(v, (int, float)):
-        return str(int(v))
+        return str(int(v)) if v >= 0 else ""  # Instagram returns -1 when likes are hidden: missing, never a count
     s = str(v).strip().lower().replace(",", "")
     m = re.fullmatch(r"([\d.]+)\s*([kw万m]?)", s)
     if not m:
@@ -131,10 +132,30 @@ def handle_of(platform, url):
     elif platform == "xhs":
         m = re.search(r"/profile/([^/?#]+)", u)
     else:
-        m = re.search(r"view_all_page_id=(\d+)", u)
+        m = re.search(r"view_all_page_id=(\d+)", u) or re.search(r"facebook\.com/(?!ads/)([^/?#]+)", u)
     if m:
         ids.add(m.group(1).lower())
     return ids
+
+
+def expand_xhs(items: list[dict]) -> list[dict]:
+    """zen-studio/rednote-user-profile-scraper returns one row per profile with notes[]; flatten to one row per note.
+    Rows that already look like single notes pass through unchanged."""
+    out = []
+    for it in items:
+        if not isinstance(it, dict) or "notes" not in it:
+            out.append(it)
+            continue
+        prof = it.get("profile") or {}
+        owner = {"nickname": prof.get("nickname", ""), "userId": prof.get("userid") or it.get("_user_id", "")}
+        for n in it.get("notes") or []:
+            n = dict(n)
+            n["user"] = owner
+            n["url"] = f"https://www.xiaohongshu.com/explore/{n.get('id')}" if n.get("id") else ""
+            if not n.get("view_count"):  # actor reports 0 views for every note: missing, never 0
+                n.pop("view_count", None)
+            out.append(n)
+    return out
 
 
 def run_ctx(run_dir: Path):
@@ -156,6 +177,8 @@ def build(run_dir: Path) -> None:
             continue
         itemsf = pdir / "items.json"
         items = json.loads(itemsf.read_text(encoding="utf-8")) if itemsf.exists() else []
+        if platform == "xhs":
+            items = expand_xhs(items)
         if not itemsf.exists():
             warnings.append(f"{platform}: raw/{platform}/items.json missing; all accounts marked failed")
         statusf = pdir / "status.json"
@@ -166,6 +189,8 @@ def build(run_dir: Path) -> None:
         by_target = {i: [] for i in range(len(targets))}
         for it in items:
             keys = {str(pick(it, m["owner"]) or "").lower(), str(pick(it, m.get("owner_id", [])) or "").lower()} - {""}
+            if platform == "meta":  # Facebook page vanity or numeric id from the ad's page link; page names drift (dashes, case)
+                keys |= handle_of("meta", str(pick(it, ["snapshot.pageProfileUri"]) or ""))
             hit = next((i for i, (_, r) in enumerate(targets)
                         if keys & (handle_of(platform, r["url"]) | {slug(r["name"]), r["name"].lower()})), None)
             if hit is None and len(targets) == 1:
@@ -176,6 +201,8 @@ def build(run_dir: Path) -> None:
             by_target[hit].append(it)
         for i, (owner, r) in enumerate(targets):
             acc = slug(r["name"])
+            if len(acc) < 4 or acc == "account":  # Chinese names slug to "account" or "kl": fall back to the profile id so accounts stay distinct
+                acc = next(iter(sorted(handle_of(platform, r["url"]))), acc)[:12]
             hs = handle_of(platform, r["url"]) | {acc, r["name"].lower()}
             st = next((status[h] for h in hs if h in status), None)
             out = []
@@ -190,13 +217,21 @@ def build(run_dir: Path) -> None:
                 elif dt.date.fromisoformat(d) < cutoff:
                     continue
                 itype = ITEM_TYPE[platform]
+                run_days, is_active = "", ""
+                if platform == "meta":  # ads have no metrics: how long one has run and whether it is live is the signal
+                    end = to_date(pick(it, m["end"]))
+                    stop = min(dt.date.fromisoformat(end), run_date) if end else run_date
+                    run_days = str(max((stop - dt.date.fromisoformat(d)).days, 0))
+                    flag = pick(it, m["active"])
+                    is_active = "yes" if flag is True else "no" if flag is False else ""
                 views = "" if (platform == "instagram" and str(it.get("type", "")).lower() in ("image", "sidecar")
                                and not it.get("videoPlayCount")) else to_int(pick(it, m["views"]))
                 out.append({
                     "owner": owner, "accountId": acc, "platform": platform, "itemType": itype, "itemId": str(pick(it, m["id"]) or ""),
                     "date": d, "views": views, "likes": to_int(pick(it, m["likes"])), "comments": to_int(pick(it, m["comments"])),
                     "shares": to_int(pick(it, m["shares"])), "saves": to_int(pick(it, m["saves"])),
-                    "durationSec": to_int(pick(it, m["duration"])), "topic": "", "pillar": "",
+                    "durationSec": (to_int(pick(it, m["duration"])) if to_int(pick(it, m["duration"])) != "0" else ""),  # actors return 0 for photo posts: missing, never 0
+                    "topic": "", "pillar": "", "runningDays": run_days, "isActive": is_active, "variants": "",
                     "caption": clean(pick(it, m["caption"])), "mediaUrl": str(pick(it, m["media"]) or ""),
                     "permalink": str(pick(it, m["link"]) or ""), "status": "ok",
                 })
@@ -212,6 +247,13 @@ def build(run_dir: Path) -> None:
                 rows.append({c: "" for c in COLUMNS} | {"owner": owner, "accountId": acc, "platform": platform,
                              "itemType": ITEM_TYPE[platform], "caption": note, "status": reason if reason in ("private", "failed", "empty") else "failed",
                              "permalink": r["url"]})
+    same = {}
+    for r in rows:  # ads from one page with identical text: variants counts them all (a re-run under a new ad id counts too)
+        if r["platform"] == "meta" and r["status"] == "ok":
+            same[(r["accountId"], r["caption"])] = same.get((r["accountId"], r["caption"]), 0) + 1
+    for r in rows:
+        if r["platform"] == "meta" and r["status"] == "ok":
+            r["variants"] = str(same[(r["accountId"], r["caption"])])
     with (run_dir / "items.tsv").open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COLUMNS, delimiter="\t", lineterminator="\n", quoting=csv.QUOTE_NONE, escapechar="\\")
         w.writeheader()

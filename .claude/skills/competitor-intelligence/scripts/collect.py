@@ -25,7 +25,7 @@ ACTORS = {
     "instagram": "apify/instagram-scraper",
     "tiktok": "clockworks/tiktok-scraper",
     "meta": "apify/facebook-ads-scraper",
-    "xhs": "TODO-choose-with-search-actors",
+    "xhs": "zen-studio/rednote-user-profile-scraper",
 }
 FIELDS = {
     "instagram": "ownerUsername,shortCode,type,productType,timestamp,videoPlayCount,likesCount,commentsCount,videoDuration,caption,displayUrl,url",
@@ -52,9 +52,9 @@ def plan(run_dir: Path, test: bool) -> None:
         elif platform == "tiktok":
             inp = {"profiles": [re.sub(r".*@", "", u).strip("/") for u in urls], "resultsPerPage": limit, "oldestPostDateUnified": since}
         elif platform == "meta":
-            inp = {"startUrls": [{"url": u} for u in urls], "resultsLimit": limit, "activeStatus": "all"}
+            inp = {"startUrls": [{"url": u} for u in urls], "resultsLimit": limit}  # activeStatus omitted = active and inactive (the enum rejects "all" and "")
         else:
-            inp = {"startUrls": [{"url": u} for u in urls], "maxItems": limit}
+            inp = {"profileUrls": urls, "includeNotes": True, "maxNotesPerProfile": limit}
         d = run_dir / "raw" / platform
         d.mkdir(parents=True, exist_ok=True)
         (d / "input.json").write_text(json.dumps({"actor": ACTORS[platform], "fields": FIELDS[platform], "input": inp}, indent=2), encoding="utf-8")
@@ -69,6 +69,8 @@ def check(run_dir: Path) -> int:
         if not f.exists():
             continue
         items = json.loads(f.read_text(encoding="utf-8"))
+        if platform == "xhs":
+            items = nz.expand_xhs(items)
         if not items:
             print(f"{platform}: items.json is empty")
             continue

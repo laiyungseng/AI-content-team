@@ -58,7 +58,10 @@ def select(run: Path, per_acc: int, total: int) -> None:
         have = [i for i in items if ratio[i["itemId"]] is not None]
         if have:
             have.sort(key=lambda i: ratio[i["itemId"]], reverse=True)
-            pick = have[:6] + have[-2:] + [i for i in have if ratio[i["itemId"]] >= 10]
+            noview = sorted((i for i in items if ratio[i["itemId"]] is None),
+                            key=lambda i: (int(i["likes"] or 0) + int(i["comments"] or 0), i["date"]), reverse=True)[:2]
+            anomalies = [i for i in have if ratio[i["itemId"]] >= 10]
+            pick = have[:6] + have[-2:]
         else:  # ads, photo-only accounts, XHS without views: recency, then engagement
             items.sort(key=lambda i: (i["date"], int(i["likes"] or 0) + int(i["comments"] or 0)), reverse=True)
             pick = items
@@ -70,6 +73,9 @@ def select(run: Path, per_acc: int, total: int) -> None:
         if len(chosen) > per_acc:
             trimmed.append(f"{plat}/{acc}")
             chosen = chosen[:per_acc]
+        if have:  # no-view posts fill any room left under the cap; the cap never drops an anomaly
+            chosen += [i for i in noview if i not in chosen][:max(per_acc - len(chosen), 0)]
+            chosen += [i for i in anomalies if i not in chosen]
         ids += [i["itemId"] for i in chosen]
     if len(ids) > total:
         trimmed.append("overall cap")

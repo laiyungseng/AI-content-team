@@ -16,7 +16,7 @@ Brand-specific platform findings (what works for this brand on each platform). G
 ## <platform>
 ### PLT-001 <finding>
 - evidence / result:
-- confidence: low           # low (<5 posts or 1 run) | medium (5-15 posts or 2 runs) | high (15+ posts, our own validation)
+- confidence: low           # low (<5 posts) | medium (5 to 14 posts; one run caps at medium) | high (15+ posts and a 2nd run or our own validation)
 - source: [[run-...]]   date: YYYY-MM-DD
 ```
 

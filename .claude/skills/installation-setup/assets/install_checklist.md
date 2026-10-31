@@ -2,26 +2,45 @@
 
 Date: ____  Machine / OS: ____
 
-## Tools (`setup.py check`)
-- [ ] uv
-- [ ] git
-- [ ] node (Perplexity connector)
-- [ ] ffmpeg (reels, optional)
+Tick `[x]` when done. Optional items may be marked `later` instead; required items must all be ticked before first use.
 
-## Python libraries and folders
-- [ ] core (`setup.py python`)
-- [ ] media (`setup.py python --media`) - optional
-- [ ] folders (`setup.py scaffold`)
+## A. Accounts and app (required)
+- [ ] Claude Code installed and signed in (desktop Code tab or `claude`)
+- [ ] Access to the GitHub repo (owner added your account)
+- [ ] Project cloned and opened in Claude Code
+- [ ] Folder trusted and project MCP servers (`.mcp.json`) approved
 
-## Smoke test
-- [ ] `setup.py smoke` passed
+## B. Tools (`setup.py check`)
+- [ ] uv (required)
+- [ ] git (required)
+- [ ] node (needed for the Perplexity connector)
+- [ ] ffmpeg (reels only, optional)  later: [ ]
 
-## Connectors
-- [ ] Apify (account)
-- [ ] Perplexity (local, `PERPLEXITY_API_KEY`)
-- [ ] nanobanana (local, `GEMINI_API_KEY`)
-- [ ] Zernio (account, Phase 6)
-- [ ] NotebookLM / Notion / Figma (optional)
+## C. Python libraries and folders
+- [ ] core libraries (`setup.py python`)
+- [ ] media libraries (`setup.py python --media`), optional  later: [ ]
+- [ ] workspace folders (`setup.py scaffold`)
+
+## D. Smoke test
+- [ ] `setup.py smoke` printed SMOKE TEST PASSED
+
+## E. Connectors
+Research (start here):
+- [ ] Apify (account sign-in)
+- [ ] Perplexity (`PERPLEXITY_API_KEY` set, Claude Code fully restarted)
+
+Image / video generation (user chooses: one, both or later):
+- [ ] nanobanana (`GEMINI_API_KEY` set)  later: [ ]
+- [ ] Higgsfield (added, browser sign-in done)  later: [ ]
+
+Publishing and extras:
+- [ ] Zernio (account, needed for publishing)  later: [ ]
+- [ ] NotebookLM / Notion / Figma (optional)  later: [ ]
+
+## F. First run
+- [ ] "show my sources" opened and competitor / own links added
+- [ ] "research competitors" produced a report
+- [ ] Brand guideline ("set up my business") done before production work
 
 ## Needs the user
 - (list sign-ins and keys the user must set)
