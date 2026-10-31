@@ -4,7 +4,7 @@ status: active
 ---
 # Writing guide for the report
 
-Follow [[writing_insights]] and the plain-language list in [[stats_rules]] (Part A). In short:
+Follow [[writing_insights]] and the plain-language list in [[stats_rules]]. In short:
 
 - The reader is a marketer deciding what to make next week. No statistical terms on the page: write "typical views", "2.5x their usual reach", "too early to call", "need more posts".
 - Every insight ends with `Do next: ...` (including "nothing to act on yet").

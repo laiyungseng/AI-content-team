@@ -42,5 +42,5 @@ snapshot: no `db`, no refresh button. Fresh numbers mean a new run republished t
 5. Publish with no capabilities. On a refresh pass the previous dashboard's `url`; never hand over a second link.
    To recover an older dashboard's handles and topics verbatim: `uv run python scripts/perf_build.py reuse <read index.html> <run>/perf/config.json`.
 
-Hand over as a snapshot of the run's window. Changing the page itself: read `shared/frameworks/stats_rules.md` first,
+Hand over as a snapshot of the run's window. Changing the page itself: read `shared/frameworks/stats_rules.md` and `stats_maintenance.md` first,
 render once after any template edit, fix what that shows, and stop.

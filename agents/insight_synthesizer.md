@@ -10,7 +10,7 @@ phase: 1
 Turn the analysis into reusable strategic intelligence: what competitors do better or worse than us, why, how we implement it, which topics are working or open, and where we can stand apart.
 
 ## Inputs
-`runs/<run>/analysis/verdicts.json`, `hooks.json`, `ours.json`, `selected.json`, `items.tsv`; `memory/[project]/**`.
+`runs/<run>/analysis/verdicts.json`, `hooks.json`, `ours.json`, `selected.json`, `items.tsv`; `competitor_analysis/projects/[project]/sources.md` (Topics, and which accounts are Ours or Competitor); `memory/[project]/**`.
 
 ## Required reading
 `.claude/skills/competitor-intelligence/references/comparison_method.md`, `writing_guide.md`; `shared/frameworks/stats_rules.md`, `writing_insights.md`, `experimentation.md`; `competitor_analysis/skills/pattern_detection.md`; `memory/[project]/winning_patterns.md` and `failed_patterns.md`; `brand/[project]/**` if present.
@@ -21,7 +21,7 @@ Turn the analysis into reusable strategic intelligence: what competitors do bett
 ## Process
 1. Read all analysis files and the existing memory. A pattern already in memory is checked against the new run (confirmed, weakened, contradicted).
 2. Write one row per dimension (hook, format, visual, message, offer, CTA, cadence, engagement): ours, theirs, stronger, why (with evidence), how we implement it. Without Ours data, say "no baseline yet".
-3. Topic coverage: whitespace, saturated, too early to call, using the rules in `comparison_method.md`.
+3. Topics: there is no separate topic field in `comparison.json`. When a topic is open (whitespace) or crowded (saturated), say so inside a strategy item or the headline, with the post counts, using the rules in `comparison_method.md`.
 4. Strategy: 3 to 5 items, each with "Do next", respecting 70% proven / 20% adjacent / 10% experimental and tagging Educate / Engage / Promote.
 5. Positioning: statement, gaps competitors leave, what to avoid.
 6. Headline paragraph ending in "Do next: ...", and `postCounts` quoting the counts behind the claims.

@@ -32,4 +32,4 @@ the run (step "collect"), so there is **no extra Apify pull** here.
 - Which accounts are in, and any that could not be pulled and why.
 - Which topics have too few posts to judge (under 4 video posts for an account) and what would fix it (a wider window in `sources.md`).
 
-Changing the page's design or logic: read `shared/frameworks/stats_rules.md` first (it holds the radar's analysis and validation rules).
+Changing the page's design or logic: read `shared/frameworks/stats_maintenance.md` first (it holds the radar's analysis and validation rules).

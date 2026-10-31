@@ -16,6 +16,7 @@ Input: `items.tsv`, `analysis/verdicts.json`, `analysis/ours.json`. Output: `ana
 hook, format, visual, message, offer, CTA, cadence, engagement. Per row: what we do (ours), what they do (theirs), who is stronger (`ours|theirs|similar|unclear`), why, how we implement it. "Why" cites evidence; "how" is something the production team can do.
 
 ## Topic coverage
+No separate field in `comparison.json`: put a whitespace or saturated finding in a strategy item or the headline, with its post counts.
 Use the shared topics from `sources.md`. Whitespace = a topic working for competitors and unused by us. Saturated = every competitor with 4+ posts is below its usual. Anything else: "too early to call".
 
 ## Strategy and positioning

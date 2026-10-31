@@ -2,7 +2,7 @@
 """Turn raw actor output into the unified items.tsv, and apply topic tags.
 
     normalise.py build <run_dir>                 raw/<platform>/items.json + sources.md -> items.tsv
-    normalise.py tag   <run_dir> <tags.tsv>      tags.tsv = itemId<TAB>topic<TAB>pillar (pillar optional)
+    normalise.py tag   <run_dir> <tags.tsv>      tags.tsv = itemId<TAB>topic<TAB>pillar<TAB>sponsored (last two optional)
     normalise.py stats <run_dir>                 per-account counts and typical views (JSON)
 
 Null rule: empty = missing, never 0. Non-ok accounts are kept as a row with an empty itemId and the reason in `caption`.
@@ -23,7 +23,7 @@ sys.path.insert(0, str(HERE.parents[1] / "source-manager" / "scripts"))
 import sources as src  # noqa: E402
 
 COLUMNS = ["owner", "accountId", "platform", "itemType", "itemId", "date", "views", "likes", "comments", "shares", "saves",
-           "durationSec", "topic", "pillar", "caption", "mediaUrl", "permalink", "status", "runningDays", "isActive", "variants"]
+           "durationSec", "topic", "pillar", "caption", "mediaUrl", "permalink", "status", "runningDays", "isActive", "variants", "sponsored"]
 
 # field -> candidate dotted paths (".0" indexes a list)
 MAP = {
@@ -231,7 +231,7 @@ def build(run_dir: Path) -> None:
                     "date": d, "views": views, "likes": to_int(pick(it, m["likes"])), "comments": to_int(pick(it, m["comments"])),
                     "shares": to_int(pick(it, m["shares"])), "saves": to_int(pick(it, m["saves"])),
                     "durationSec": (to_int(pick(it, m["duration"])) if to_int(pick(it, m["duration"])) != "0" else ""),  # actors return 0 for photo posts: missing, never 0
-                    "topic": "", "pillar": "", "runningDays": run_days, "isActive": is_active, "variants": "",
+                    "topic": "", "pillar": "", "runningDays": run_days, "isActive": is_active, "variants": "", "sponsored": "",
                     "caption": clean(pick(it, m["caption"])), "mediaUrl": str(pick(it, m["media"]) or ""),
                     "permalink": str(pick(it, m["link"]) or ""), "status": "ok",
                 })
@@ -284,12 +284,15 @@ def tag(run_dir: Path, tags: Path) -> None:
         if len(p) >= 2 and p[0] and p[0] != "itemId":
             if allowed and p[1] not in allowed:
                 sys.exit(f"topic '{p[1]}' for {p[0]} is not in sources.md Topics {sorted(allowed)}")
-            mp[p[0]] = (p[1], p[2] if len(p) > 2 else "")
+            sp = p[3].strip().lower() if len(p) > 3 else ""
+            if sp not in ("", "yes"):
+                sys.exit(f"sponsored for {p[0]} must be yes or empty, got '{sp}'")
+            mp[p[0]] = (p[1], p[2] if len(p) > 2 else "", sp)
     rows = read_items(run_dir)
     n = 0
     for r in rows:
         if r["itemId"] in mp:
-            r["topic"], r["pillar"] = mp[r["itemId"]]
+            r["topic"], r["pillar"], r["sponsored"] = mp[r["itemId"]]
             n += 1
     write_items(run_dir, rows)
     print(f"tagged {n} of {len(mp)} ids")
