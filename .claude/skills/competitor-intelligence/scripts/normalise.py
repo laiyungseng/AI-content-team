@@ -53,15 +53,15 @@ MAP = {
         "owner": ["user.nickname", "author.nickname", "nickname", "userName", "user.name", "author.name"],
         "owner_id": ["user.userId", "author.userId", "userId", "user_id", "user.user_id"],
         "id": ["noteId", "note_id", "id"],
-        "date": ["time", "publishTime", "publish_time", "lastUpdateTime", "createTime", "timestamp"],
+        "date": ["create_time", "time", "publishTime", "publish_time", "lastUpdateTime", "createTime", "timestamp"],
         "views": ["viewCount", "view_count", "interactInfo.viewCount"],
         "likes": ["likedCount", "likes", "likeCount", "interactInfo.likedCount"],
-        "comments": ["commentCount", "comments", "commentsCount", "interactInfo.commentCount"],
-        "shares": ["sharedCount", "shareCount", "shares", "interactInfo.shareCount"],
-        "saves": ["collectedCount", "collectCount", "collects", "interactInfo.collectedCount"],
-        "duration": ["video.duration", "duration"],
+        "comments": ["comments_count", "commentCount", "comments", "commentsCount", "interactInfo.commentCount"],
+        "shares": ["share_count", "sharedCount", "shareCount", "shares", "interactInfo.shareCount"],
+        "saves": ["collected_count", "collectedCount", "collectCount", "collects", "interactInfo.collectedCount"],
+        "duration": ["video_info_v2.capa.duration", "video.duration", "duration"],
         "caption": ["title", "desc", "displayTitle", "description"],
-        "media": ["cover", "cover.url", "coverUrl", "imageList.0.url", "images.0", "imageList.0.urlDefault"],
+        "media": ["images_list.0.url", "cover", "cover.url", "coverUrl", "imageList.0.url", "images.0", "imageList.0.urlDefault"],
         "link": ["url", "noteUrl", "note_url"],
     },
 }
@@ -91,7 +91,7 @@ def to_int(v):
     if v is None or isinstance(v, bool):
         return ""
     if isinstance(v, (int, float)):
-        return str(int(v))
+        return str(int(v)) if v >= 0 else ""  # Instagram returns -1 when likes are hidden: missing, never a count
     s = str(v).strip().lower().replace(",", "")
     m = re.fullmatch(r"([\d.]+)\s*([kw万m]?)", s)
     if not m:
@@ -131,10 +131,30 @@ def handle_of(platform, url):
     elif platform == "xhs":
         m = re.search(r"/profile/([^/?#]+)", u)
     else:
-        m = re.search(r"view_all_page_id=(\d+)", u)
+        m = re.search(r"view_all_page_id=(\d+)", u) or re.search(r"facebook\.com/(?!ads/)([^/?#]+)", u)
     if m:
         ids.add(m.group(1).lower())
     return ids
+
+
+def expand_xhs(items: list[dict]) -> list[dict]:
+    """zen-studio/rednote-user-profile-scraper returns one row per profile with notes[]; flatten to one row per note.
+    Rows that already look like single notes pass through unchanged."""
+    out = []
+    for it in items:
+        if not isinstance(it, dict) or "notes" not in it:
+            out.append(it)
+            continue
+        prof = it.get("profile") or {}
+        owner = {"nickname": prof.get("nickname", ""), "userId": prof.get("userid") or it.get("_user_id", "")}
+        for n in it.get("notes") or []:
+            n = dict(n)
+            n["user"] = owner
+            n["url"] = f"https://www.xiaohongshu.com/explore/{n.get('id')}" if n.get("id") else ""
+            if not n.get("view_count"):  # actor reports 0 views for every note: missing, never 0
+                n.pop("view_count", None)
+            out.append(n)
+    return out
 
 
 def run_ctx(run_dir: Path):
@@ -156,6 +176,8 @@ def build(run_dir: Path) -> None:
             continue
         itemsf = pdir / "items.json"
         items = json.loads(itemsf.read_text(encoding="utf-8")) if itemsf.exists() else []
+        if platform == "xhs":
+            items = expand_xhs(items)
         if not itemsf.exists():
             warnings.append(f"{platform}: raw/{platform}/items.json missing; all accounts marked failed")
         statusf = pdir / "status.json"
@@ -166,6 +188,8 @@ def build(run_dir: Path) -> None:
         by_target = {i: [] for i in range(len(targets))}
         for it in items:
             keys = {str(pick(it, m["owner"]) or "").lower(), str(pick(it, m.get("owner_id", [])) or "").lower()} - {""}
+            if platform == "meta":  # Facebook page vanity or numeric id from the ad's page link; page names drift (dashes, case)
+                keys |= handle_of("meta", str(pick(it, ["snapshot.pageProfileUri"]) or ""))
             hit = next((i for i, (_, r) in enumerate(targets)
                         if keys & (handle_of(platform, r["url"]) | {slug(r["name"]), r["name"].lower()})), None)
             if hit is None and len(targets) == 1:
@@ -176,6 +200,8 @@ def build(run_dir: Path) -> None:
             by_target[hit].append(it)
         for i, (owner, r) in enumerate(targets):
             acc = slug(r["name"])
+            if len(acc) < 4 or acc == "account":  # Chinese names slug to "account" or "kl": fall back to the profile id so accounts stay distinct
+                acc = next(iter(sorted(handle_of(platform, r["url"]))), acc)[:12]
             hs = handle_of(platform, r["url"]) | {acc, r["name"].lower()}
             st = next((status[h] for h in hs if h in status), None)
             out = []
