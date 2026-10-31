@@ -4,7 +4,7 @@ status: in-progress      # final -> in-progress -> done
 created: 2026-10-31
 last-updated: 2026-10-31
 owner: user
-related: [[CLAUDE]], [[2026-10-31_architecture-and-skill-merge]]
+related: [[CLAUDE]], [[2026-10-31_remaining-work]]
 ---
 # Plan: install the AI Content Team from scratch
 
