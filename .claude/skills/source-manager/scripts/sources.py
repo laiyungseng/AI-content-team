@@ -6,6 +6,11 @@
     sources.py status  <sources.md>                 in-sync | changed-by-hand | never-synced
     sources.py targets <sources.md>                 print URLs to scrape (platform Enabled AND row Active)
     sources.py build   <sources.md> <out.html>      editor page fragment seeded from sources.md
+    sources.py suggest <sources.md> <candidates.json>  add discovered Meta advertisers as Competitors > Meta rows with Active = no
+
+candidates.json: [{"pageName","pageId","activeAds","class","note"}] (see references/competitor_discovery.md).
+`suggest` skips a Page already listed (same Page ID in its URL, same URL, or same name), refuses when sources.md was
+edited by hand since the last sync, and records the new sync hash. It never turns a row Active.
 
 State JSON: {"platforms":[{"key","enabled","maxPosts","range"}], "topics":[{"key","label"}],
              "competitors":{platform:[row]}, "ours":{platform:[row]}}; row = {"name","url","type","active"}
@@ -14,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -149,6 +155,43 @@ def cmd_targets(path: Path) -> list[dict]:
     return out
 
 
+def clean_cell(s: object) -> str:
+    return " ".join(str(s).replace("|", "/").split())
+
+
+def page_id_of(url: str) -> str:
+    m = re.search(r"facebook\.com/(\d{6,})|view_all_page_id=(\d+)|[?&]id=(\d{6,})", url)
+    return next((g for g in m.groups() if g), "") if m else ""
+
+
+def cmd_suggest(path: Path, cand_path: Path) -> dict:
+    if cmd_status(path) == "changed-by-hand":
+        sys.exit("sources.md was edited by hand since the last sync: sync first (see SKILL.md), then suggest again")
+    cands = json.loads(cand_path.read_text(encoding="utf-8"))
+    state = parse(path.read_text(encoding="utf-8"))
+    rows = state["competitors"]["meta"]
+    ids = {page_id_of(r["url"]) for r in rows} - {""}
+    urls = {r["url"].rstrip("/").lower() for r in rows}
+    names = {r["name"].strip().lower() for r in rows}
+    added, skipped = [], []
+    for c in cands:
+        pid, name = str(c.get("pageId", "")).strip(), clean_cell(c.get("pageName", ""))
+        if not pid.isdigit() or not name:
+            sys.exit(f"candidate needs a numeric pageId and a pageName: {c}")
+        url = f"https://www.facebook.com/{pid}"
+        if pid in ids or url.lower() in urls or name.lower() in names:
+            skipped.append(name)
+            continue
+        kind = clean_cell(c.get("class", "")) or "unclassified"
+        rows.append({"name": name, "url": url, "type": f"page, suggested ({kind}, {int(c.get('activeAds') or 0)} active ads)", "active": False})
+        ids.add(pid), urls.add(url.lower()), names.add(name.lower())
+        added.append(name)
+    text = render(state)
+    path.write_text(text, encoding="utf-8")
+    sync_file(path).write_text(sha(text), encoding="utf-8")
+    return {"added": added, "skippedAlreadyListed": skipped}
+
+
 def cmd_build(path: Path, out: Path) -> None:
     seed = json.dumps(cmd_read(path), ensure_ascii=False).replace("</", "<\\/")
     html = TEMPLATE.read_text(encoding="utf-8").replace("__SOURCES_JSON__", seed)
@@ -156,6 +199,9 @@ def cmd_build(path: Path, out: Path) -> None:
 
 
 def main() -> None:
+    for stream in (sys.stdout, sys.stderr):  # Windows consoles default to cp1252 and crash on Chinese account names
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     if len(sys.argv) < 3:
         sys.exit(__doc__)
     cmd, path = sys.argv[1], Path(sys.argv[2])
@@ -168,6 +214,8 @@ def main() -> None:
         print(cmd_status(path))
     elif cmd == "targets":
         print(json.dumps(cmd_targets(path), indent=2, ensure_ascii=False))
+    elif cmd == "suggest":
+        print(json.dumps(cmd_suggest(path, Path(sys.argv[3])), indent=2, ensure_ascii=False))
     elif cmd == "build":
         cmd_build(path, Path(sys.argv[3]))
         print(f"built {sys.argv[3]}")

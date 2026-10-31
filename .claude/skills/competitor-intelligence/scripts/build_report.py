@@ -2,9 +2,11 @@
 """Select report items and build the report page.
 
     build_report.py select <run_dir> [--max-per-account 8] [--max-total 120]   -> analysis/selected.json
+    build_report.py winning <run_dir> [--top 10]                              -> analysis/winning_ads.json
     build_report.py build  <run_dir>                                          -> report.html (page fragment)
 
 `select` ranks competitor items by ratio to the account's own typical views (see references/selection.md).
+`winning` ranks each Meta advertiser's identical ad texts by copies x days running (longevity is Meta's only performance signal).
 `build` needs analysis/verdicts.json (one verdict per selected id) and analysis/comparison.json; analysis/ours.json is optional.
 It refuses to build on a missing verdict, an invalid value, or a missing comparison dimension, and warns on banned jargon.
 Images are referenced as media/<id>.jpg when the file exists; publish report.html with the media files (Artifact `files`).
@@ -27,6 +29,23 @@ VERDICTS = ("adapt", "copy", "ignore")
 BANNED = ["p-value", "permutation", "bootstrap", "confidence interval", "confidence band", "significant", "statistically", "benjamini",
           "false-discovery", "pearson", "correlation", "variance", "standard deviation", "percentile", "resampling", "sample size",
           "outlier score", "median"]
+# Hook types (shared/frameworks/hooks.md "Hook types"); a hookType is one key, or two joined by "+"
+HOOK_TYPES = {
+    "pain_question": "Pain question", "shock_number": "Shocking number", "identity_callout": "Identity call-out",
+    "secret_reveal": "Secret reveal", "before_after": "Before / after", "authority": "Authority", "time_pressure": "Time pressure",
+    "story_hook": "Story hook", "mistake_accusation": "You're doing it wrong", "what_if_scenario": "Imagined future",
+    "curiosity_gap": "Curiosity gap", "empathy": "Empathy", "warning": "Warning", "social_proof": "Social proof",
+    "direct_benefit": "Direct benefit", "other": "Other",
+}
+REUSE = ("yes", "partly", "no")
+
+
+def hook_type_keys(value: str) -> list[str]:
+    return [k.strip() for k in (value or "").split("+") if k.strip()]
+
+
+def hook_type_label(value: str) -> str:
+    return " + ".join(HOOK_TYPES.get(k, k) for k in hook_type_keys(value))
 
 
 def safe_id(s: str) -> str:
@@ -119,6 +138,19 @@ def build(run: Path) -> None:
     for r in comp["rows"]:
         if r.get("stronger") not in ("ours", "theirs", "similar", "unclear"):
             die(f"row '{r['dimension']}': stronger must be ours|theirs|similar|unclear")
+    for key in ("devilsAdvocate", "winningHooks"):
+        if not comp.get(key):
+            print(f"WARNING comparison.json has no '{key}': that section is left out of the report (new runs should write it, see comparison_method.md)")
+    for n, d in enumerate(comp.get("devilsAdvocate", []), 1):
+        if missing := [k for k in ("misread", "truth", "adjust") if not d.get(k)]:
+            die(f"devilsAdvocate item {n} missing {missing}")
+    for n, w in enumerate(comp.get("winningHooks", []), 1):
+        if missing := [k for k in ("hook", "source", "scale", "hookType", "reuse", "why") if not w.get(k)]:
+            die(f"winningHooks item {n} missing {missing}")
+        if w["reuse"] not in REUSE:
+            die(f"winningHooks item {n}: reuse must be one of {REUSE}")
+        if unknown := [k for k in hook_type_keys(w["hookType"]) if k not in HOOK_TYPES]:
+            print(f"WARNING winningHooks item {n}: unknown hookType {unknown}")
     rows = nz.read_items(run)
     byid = {r["itemId"]: r for r in rows if r["itemId"]}
     ratio, _, scored = ratios([r for r in rows if r["owner"] == "competitor"])
@@ -139,14 +171,24 @@ def build(run: Path) -> None:
             "date": r["date"], "views": r["views"], "likes": r["likes"], "comments": r["comments"], "shares": r["shares"], "saves": r["saves"],
             "ratio": ratio.get(i), "caption": r["caption"][:200], "permalink": r["permalink"],
             "image": img if (run / img).exists() else "", "reason": v["reason"], "hook": v.get("hook", ""),
+            "hookType": v.get("hookType", ""), "hookTypeLabel": hook_type_label(v.get("hookType", "")),
             "why": v.get("whyItWorks", ""), "how": v.get("howToUse", ""), "confidence": v.get("confidence", "low"),
             "anomaly": bool(ratio.get(i) and ratio[i] >= 10),
         })
+    for c in cards:
+        if c["verdict"] == "ignore" or not c["hook"]:
+            continue
+        if not c["hookType"]:
+            print(f"WARNING item {c['id']}: has a hook but no hookType (hook_analyzer must tag every hook)")
+        elif unknown := [k for k in hook_type_keys(c["hookType"]) if k not in HOOK_TYPES]:
+            print(f"WARNING item {c['id']}: unknown hookType {unknown}")
     unread = [{"account": r["accountId"], "platform": r["platform"], "owner": r["owner"], "status": r["status"], "note": r["caption"]}
               for r in rows if r["status"] != "ok"]
     meta = {"project": run.parents[1].name, "run": run.name, "trimmed": sel.get("trimmed", []),
             "counts": {"competitor": sum(1 for r in rows if r["owner"] == "competitor" and r["status"] == "ok"),
                        "ours": sum(1 for r in rows if r["owner"] == "ours" and r["status"] == "ok")}}
+    for w in comp.get("winningHooks", []):
+        w["hookTypeLabel"] = hook_type_label(w["hookType"])
     data = {"meta": meta, "cards": cards, "comparison": comp, "ours": ours, "unread": unread}
     bad = sorted({b for s in strings({"c": comp, "v": [c["reason"] + c["why"] + c["how"] for c in cards]}) for b in BANNED if b in s.lower()})
     if bad:
@@ -155,6 +197,32 @@ def build(run: Path) -> None:
     (run / "report.html").write_text(html, encoding="utf-8")
     n_img = sum(1 for c in cards if c["image"])
     print(f"report.html: {len(cards)} cards ({n_img} with images), {len(unread)} unreadable accounts")
+
+
+def winning(run: Path, top: int) -> None:
+    """Rank each Meta advertiser's identical ad texts by copies x days running; write analysis/winning_ads.json."""
+    rows = [r for r in nz.read_items(run)
+            if r["owner"] == "competitor" and r["platform"] == "meta" and r["itemType"] == "ad" and r["status"] == "ok"]
+    groups: dict[tuple[str, str], list[dict]] = {}
+    for r in rows:
+        if r["caption"].strip():
+            groups.setdefault((r["accountId"], r["caption"]), []).append(r)
+    out = []
+    for (acc, text), items in groups.items():
+        # older items.tsv files lack the runningDays / variants columns: treat as missing, never as 0 days
+        ads = max(len(items), *(int(i["variants"]) for i in items if str(i.get("variants", "")).isdigit()), 1)
+        days = max((int(i["runningDays"]) for i in items if str(i.get("runningDays", "")).isdigit()), default=0)
+        out.append({"account": acc, "hookText": text[:140], "ads": ads, "daysRunning": days,
+                    "active": any(i.get("isActive") == "yes" for i in items), "score": ads * days, "itemIds": [i["itemId"] for i in items]})
+    out = sorted((o for o in out if o["score"] > 0), key=lambda o: (o["score"], o["ads"]), reverse=True)[:top]
+    (run / "analysis").mkdir(exist_ok=True)
+    (run / "analysis" / "winning_ads.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    if not out:
+        print("winning_ads.json: no Meta ads with running days in this run; omit the winningHooks section")
+        return
+    print(f"winning_ads.json: top {len(out)} of {len(groups)} ad texts (copies x days running)")
+    for o in out:
+        print(f"  {o['ads']:>3} ads x {o['daysRunning']:>3} d = {o['score']:>5}  {o['account']}: {o['hookText'][:60]}")
 
 
 def main() -> None:
@@ -166,6 +234,8 @@ def main() -> None:
         return int(args[args.index(name) + 1]) if name in args else default
     if cmd == "select":
         select(run, opt("--max-per-account", 8), opt("--max-total", 120))
+    elif cmd == "winning":
+        winning(run, opt("--top", 10))
     elif cmd == "build":
         build(run)
     else:

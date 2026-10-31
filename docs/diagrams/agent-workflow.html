@@ -1,0 +1,187 @@
+<title>Content Team Workflow</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: phase columns left to right (like a swimlane board), agents stacked inside, human gates as inverted blocks, connectors drawn in one SVG overlay. */
+:root{
+  --bg:#f6f6f3; --board:#ffffff; --lane:#efefeb; --ink:#1d1f24; --muted:#5f636c; --line:#9a9ea6;
+  --block:#ffffff; --block-line:#d7d8d3;
+  --gate-bg:#1d1f24; --gate-fg:#ffffff; --gate-sub:#c9cbd1;
+  --chip:#eef0f3; --chip-fg:#3a3f48;
+  --p0:#e6e1d6; --p0-fg:#4d4434;
+  --p1:#f7c9c0; --p1-fg:#7a2c1d;
+  --p2:#ddd3f7; --p2-fg:#43307f;
+  --p3:#c4ecd5; --p3-fg:#1d5e3a;
+  --p4:#c6e2f7; --p4-fg:#174a73;
+  --p5:#f3e2b3; --p5-fg:#6a4c0b;
+  --live:#1fa463;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141518; --board:#1b1d21; --lane:#23262b; --ink:#ecedef; --muted:#a3a7b0; --line:#6d727c;
+  --block:#2b2e34; --block-line:#3b3f46; --gate-bg:#f1f1ee; --gate-fg:#15171a; --gate-sub:#4a4e57;
+  --chip:#363a41; --chip-fg:#d3d6dc;
+  --p0:#4a4335; --p0-fg:#efe6d2; --p1:#5d2f27; --p1-fg:#ffd8cf; --p2:#3c335e; --p2-fg:#e5ddff;
+  --p3:#24493a; --p3-fg:#cff3dd; --p4:#23405a; --p4-fg:#d3eaff; --p5:#54451f; --p5-fg:#f8e8bb; --live:#35c17b;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141518; --board:#1b1d21; --lane:#23262b; --ink:#ecedef; --muted:#a3a7b0; --line:#6d727c;
+  --block:#2b2e34; --block-line:#3b3f46; --gate-bg:#f1f1ee; --gate-fg:#15171a; --gate-sub:#4a4e57;
+  --chip:#363a41; --chip-fg:#d3d6dc;
+  --p0:#4a4335; --p0-fg:#efe6d2; --p1:#5d2f27; --p1-fg:#ffd8cf; --p2:#3c335e; --p2-fg:#e5ddff;
+  --p3:#24493a; --p3-fg:#cff3dd; --p4:#23405a; --p4-fg:#d3eaff; --p5:#54451f; --p5-fg:#f8e8bb; --live:#35c17b;
+  color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45}
+.wrap{padding-block:28px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1640px;margin:0 auto}
+h1{font-size:24px;font-weight:600;margin:0 0 6px;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 18px;max-width:72ch}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 18px;color:var(--muted);font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:26px;height:16px;border-radius:4px;border:1px solid var(--block-line);background:var(--block);display:inline-block}
+.sw.planned{border:1.5px dashed var(--line)}
+.sw.gate{background:var(--gate-bg);border-color:var(--gate-bg)}
+.sw.skill{background:var(--lane)}
+.sw.chip{background:var(--chip);border-color:transparent;font:500 10px var(--mono);color:var(--chip-fg);width:auto;padding:0 5px;line-height:16px}
+.scroller{overflow-x:auto;background:var(--board);border:1px solid var(--block-line);border-radius:12px}
+.board{position:relative;display:grid;grid-template-columns:repeat(6,minmax(215px,1fr));gap:34px;padding:22px 22px 70px;min-width:1440px}
+.lane{display:flex;flex-direction:column;min-width:0}
+.head{border-radius:6px 6px 0 0;padding:9px 12px 10px;text-align:center}
+.head small{display:block;font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.head b{display:block;font-size:16px;font-weight:600}
+.body{flex:1;background:var(--lane);border-radius:0 0 6px 6px;padding:18px 16px 22px;display:flex;flex-direction:column;gap:26px}
+.blk{position:relative;z-index:1;background:var(--block);border:1px solid var(--block-line);border-radius:6px;padding:9px 11px 10px}
+.blk.planned{border:1.5px dashed var(--line)}
+.blk.skill{background:transparent;border:1.5px solid var(--line)}
+.blk .who{font:500 12.5px var(--mono);word-break:break-word}
+.blk .what{color:var(--muted);font-size:12.5px;margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.chips i{font:400 10.5px var(--mono);font-style:normal;background:var(--chip);color:var(--chip-fg);border-radius:3px;padding:1px 5px}
+.blk.gate{background:var(--gate-bg);border-color:var(--gate-bg);color:var(--gate-fg)}
+.blk.gate .what{color:var(--gate-sub)}
+.gate .who{font-family:var(--sans);font-weight:600;font-size:13px;display:flex;gap:7px;align-items:center}
+.gate svg{flex:none}
+.tag{display:inline-block;font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.05em;border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-left:6px;opacity:.75;vertical-align:1px}
+.live{align-self:center;width:118px;height:118px;border-radius:50%;background:var(--live);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;z-index:1}
+.live b{font-size:15px}.live span{font-size:11.5px;opacity:.9}
+#wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#wires path{fill:none;stroke:var(--line);stroke-width:1.6}
+#wires path.dash{stroke-dasharray:5 4}
+#wires text{fill:var(--muted);font:500 11px var(--mono)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px 28px;margin-top:22px;color:var(--muted);font-size:13px}
+.notes p{margin:0}.notes b{color:var(--ink);font-weight:600}
+</style>
+
+<div class="wrap">
+  <h1>AI content team workflow</h1>
+  <p class="lede">Who does each step, which tools they use, and where you step in. Read left to right; the last column feeds lessons back into the next intelligence run.</p>
+  <div class="legend">
+    <span><i class="sw"></i>Agent, active (Phase 1)</span>
+    <span><i class="sw planned"></i>Agent, planned (stub today)</span>
+    <span><i class="sw skill"></i>Skill run by Claude</span>
+    <span><i class="sw gate"></i>You decide (human checkpoint)</span>
+    <span><i class="sw chip">tool</i>Script, connector or file</span>
+  </div>
+
+  <div class="scroller">
+  <div class="board" id="board">
+    <svg id="wires" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" style="fill:var(--line);stroke:none"/></marker></defs></svg>
+
+    <section class="lane">
+      <div class="head" style="background:var(--p0);color:var(--p0-fg)"><small>Phase 0 · one-time</small><b>Setup</b></div>
+      <div class="body">
+        <div class="blk skill" id="s1"><div class="who">installation-setup</div><div class="what">Install tools, folders, smoke test</div><div class="chips"><i>setup.py</i><i>uv</i><i>ffmpeg</i></div></div>
+        <div class="blk gate" id="s2"><div class="who"><svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="currentColor"/></svg>Authorise connectors</div><div class="what">Click Allow in /mcp for Apify, Zernio, nanobanana</div></div>
+        <div class="blk skill" id="s3"><div class="who">business-onboarding<span class="tag">deferred</span></div><div class="what">Interview → brand guideline</div><div class="chips"><i>init_project.py</i><i>render_brand_files.py</i></div></div>
+        <div class="blk gate" id="s4"><div class="who"><svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="currentColor"/></svg>Approve brand guideline</div><div class="what">Needed before any production work</div></div>
+        <div class="blk skill" id="s5"><div class="who">source-manager</div><div class="what">Competitor + own account URLs</div><div class="chips"><i>sources.py</i><i>sources.md</i><i>editor page</i></div></div>
+        <div class="blk gate" id="s6"><div class="who"><svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="currentColor"/></svg>Confirm sources</div><div class="what">Edit URLs; pick the winner on a sync conflict</div></div>
+      </div>
+    </section>
+
+    <section class="lane">
+      <div class="head" style="background:var(--p1);color:var(--p1-fg)"><small>Phase 1 · active</small><b>Intelligence</b></div>
+      <div class="body">
+        <div class="blk" id="i1"><div class="who">orchestrator</div><div class="what">Route request, sync sources, open run</div><div class="chips"><i>run.py init</i><i>state/</i></div></div>
+        <div class="blk" id="i2"><div class="who">competitor_researcher</div><div class="what">Collect Meta ads, IG, TikTok, XHS</div><div class="chips"><i>Apify MCP</i><i>collect.py</i><i>normalise.py</i><i>items.tsv</i></div></div>
+        <div class="blk" id="i3"><div class="who">competitor_analyzer</div><div class="what">Tag topics, select, Adapt / Copy / Ignore</div><div class="chips"><i>normalise.py tag</i><i>build_report.py select</i></div></div>
+        <div class="blk" id="i4"><div class="who">hook_analyzer</div><div class="what">Spoken, text, visual, audio → formula</div><div class="chips"><i>hooks.json</i><i>media/</i></div></div>
+        <div class="blk" id="i5"><div class="who">performance_analyst</div><div class="what">Our baseline vs our own typical views</div><div class="chips"><i>normalise.py stats</i><i>ours.json</i></div></div>
+        <div class="blk" id="i6"><div class="who">insight_synthesizer</div><div class="what">Us vs them, 3–5 strategy moves, lessons</div><div class="chips"><i>comparison.json</i><i>memory/</i></div></div>
+        <div class="blk" id="i7"><div class="who">orchestrator</div><div class="what">Build and present the 2-page report</div><div class="chips"><i>build_report.py build</i><i>Artifact</i></div></div>
+        <div class="blk gate" id="i8"><div class="who"><svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="currentColor"/></svg>Approve report</div><div class="what">Change verdicts, comment, approve → run.py approve</div></div>
+      </div>
+    </section>
+
+    <section class="lane">
+      <div class="head" style="background:var(--p2);color:var(--p2-fg)"><small>Phase 2 · planned</small><b>Strategy</b></div>
+      <div class="body">
+        <div class="blk planned" id="t1"><div class="who">content_strategist</div><div class="what">Objectives, pillars, 70 / 20 / 10 mix</div><div class="chips"><i>brand/</i><i>insights/</i><i>memory/</i></div></div>
+        <div class="blk planned" id="t2"><div class="who">campaign_planner</div><div class="what">Awareness → problem → proof → offer</div><div class="chips"><i>campaign_map.md</i></div></div>
+        <div class="blk planned" id="t3"><div class="who">schedule_planner</div><div class="what">When and in what order; no repeats</div><div class="chips"><i>schedule_publish.md</i><i>platform_rules/</i></div></div>
+        <div class="blk gate" id="t4"><div class="who"><svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="currentColor"/></svg>Approve plan</div><div class="what">Strategy, campaign and calendar on one board</div></div>
+      </div>
+    </section>
+
+    <section class="lane">
+      <div class="head" style="background:var(--p3);color:var(--p3-fg)"><small>Phase 3 · planned</small><b>Production</b></div>
+      <div class="body">
+        <div class="blk planned" id="c1"><div class="who">content_strategist</div><div class="what">One brief per piece</div><div class="chips"><i>briefs/</i></div></div>
+        <div class="blk planned" id="c2"><div class="who">reel · carousel · static creators</div><div class="what">Script, slides or image copy from one brief</div><div class="chips"><i>nanobanana</i><i>Higgsfield (optional)</i><i>drafts/</i></div></div>
+        <div class="blk planned" id="c3"><div class="who">content_reviewer</div><div class="what">Score /100: 85+ pass, 70–84 revise, under 70 redo</div><div class="chips"><i>review/</i></div></div>
+        <div class="blk gate" id="c4"><div class="who"><svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="currentColor"/></svg>Approve drafts</div><div class="what">Sets status: approved and publish_authorized: true</div></div>
+      </div>
+    </section>
+
+    <section class="lane">
+      <div class="head" style="background:var(--p4);color:var(--p4-fg)"><small>Phase 6 · planned</small><b>Publish</b></div>
+      <div class="body">
+        <div class="blk planned" id="p1"><div class="who">publishing_agent</div><div class="what">Schedule and post only authorised items</div><div class="chips"><i>Zernio MCP</i><i>scheduled/</i></div></div>
+        <div class="live" id="p2"><b>Live</b><span>on IG, TikTok,<br>XHS, Meta</span></div>
+      </div>
+    </section>
+
+    <section class="lane">
+      <div class="head" style="background:var(--p5);color:var(--p5-fg)"><small>Phase 5 · planned</small><b>Measure &amp; learn</b></div>
+      <div class="body">
+        <div class="blk planned" id="m1"><div class="who">performance_analyst</div><div class="what">Did each post beat our own typical?</div><div class="chips"><i>Zernio analytics</i><i>perf_build.py</i></div></div>
+        <div class="blk" id="m2"><div class="who">orchestrator</div><div class="what">Retrospective, propose lessons and skill edits</div><div class="chips"><i>memory/_system/</i></div></div>
+        <div class="blk gate" id="m3"><div class="who"><svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" fill="currentColor"/><path d="M2 15c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" fill="currentColor"/></svg>Approve lessons</div><div class="what">Promote to memory/[project]; approve skill edits</div></div>
+      </div>
+    </section>
+  </div>
+  </div>
+
+  <div class="notes">
+    <p><b>Hard gates.</b> No strategy or content until a report is approved in runs/index.md. Nothing publishes without both status: approved and publish_authorized: true.</p>
+    <p><b>Creators never approve their own work.</b> content_reviewer scores every draft first; you give the final yes on the approval board.</p>
+    <p><b>The loop.</b> Approved lessons land in memory/[project] and are read by the next intelligence run and by content_strategist.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var seq=[["s1","s2","s3","s4","s5","s6"],["i1","i2","i3","i4","i5","i6","i7","i8"],["t1","t2","t3","t4"],["c1","c2","c3","c4"],["p1","p2"],["m1","m2","m3"]];
+  var board=document.getElementById("board"),svg=document.getElementById("wires");
+  function box(id){var e=document.getElementById(id).getBoundingClientRect(),b=board.getBoundingClientRect();return{l:e.left-b.left,r:e.right-b.left,t:e.top-b.top,btm:e.bottom-b.top,cx:(e.left+e.right)/2-b.left,cy:(e.top+e.bottom)/2-b.top};}
+  function path(d,cls){var p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",d);p.setAttribute("marker-end","url(#ah)");if(cls)p.setAttribute("class",cls);svg.appendChild(p);}
+  function label(x,y,t,anchor){var e=document.createElementNS("http://www.w3.org/2000/svg","text");e.setAttribute("x",x);e.setAttribute("y",y);if(anchor)e.setAttribute("text-anchor",anchor);e.textContent=t;svg.appendChild(e);}
+  function draw(){
+    while(svg.childNodes.length>1)svg.removeChild(svg.lastChild);
+    seq.forEach(function(col,ci){
+      for(var k=0;k<col.length-1;k++){var a=box(col[k]),b=box(col[k+1]);path("M"+a.cx+" "+a.btm+" V"+(b.t-2));}
+      if(ci<seq.length-1){var a=box(col[col.length-1]),b=box(seq[ci+1][0]),mx=a.r+17;path("M"+a.r+" "+a.cy+" H"+mx+" V"+b.cy+" H"+(b.l-2));}
+    });
+    var rv=box("c3"),cr=box("c2"),x=rv.l-9;
+    path("M"+rv.l+" "+rv.cy+" H"+x+" V"+cr.cy+" H"+(cr.l-2),"dash");
+    label(x-3,(rv.cy+cr.cy)/2+4,"revise","end");
+    var g=box("m3"),bh=board.getBoundingClientRect().height,i1=box("i8"),y=bh-30,lx=i1.cx;
+    path("M"+g.cx+" "+g.btm+" V"+y+" H"+lx+" V"+(i1.btm+2),"dash");
+    label((g.cx+lx)/2,y-7,"lessons feed the next intelligence run","middle");
+  }
+  draw();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
+  window.addEventListener("resize",draw);
+})();
+</script>

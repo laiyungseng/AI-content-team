@@ -1,0 +1,303 @@
+/* ============================================
+   Carousel HTML — Base CSS v2 (Senior Designer rewrite)
+   All design primitives extracted from analysis of 7 top IG designers.
+   See docs/design-rules.md for the full 12 Universal Rules.
+   ============================================ */
+
+:root {
+  --brand-primary: {{BRAND_PRIMARY}};      /* terracotta / accent */
+  --brand-dark: {{BRAND_DARK}};            /* warm near-black */
+  --brand-light: {{BRAND_LIGHT}};          /* warm cream BG */
+  --brand-body: {{BRAND_BODY}};            /* secondary text */
+  --brand-muted: {{BRAND_MUTED}};          /* muted ink for small labels */
+  --brand-watermark: {{BRAND_WATERMARK}};  /* BG -12% for ghost watermark text */
+  --brand-pill-fill: {{BRAND_PILL_FILL}};  /* 15-20% tint of primary */
+  --font-sans: {{FONT_SANS}};
+  --font-serif: {{FONT_SERIF}};
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1350px; }
+
+.page {
+  width: 1080px;
+  height: 1350px;
+  font-family: var(--font-sans);
+  position: relative;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background: var(--brand-light);
+  color: var(--brand-dark);
+}
+
+/* ============================================
+   PRIMITIVE 1: Corner brackets (L-shape marks)
+   Rule 2: 1-2px stroke, brand accent, asymmetric TL+BR by default
+   ============================================ */
+.corner-tl, .corner-tr, .corner-bl, .corner-br {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+}
+.corner-tl { top: 40px; left: 40px;
+  border-top: 1.5px solid var(--brand-primary);
+  border-left: 1.5px solid var(--brand-primary); }
+.corner-tr { top: 40px; right: 40px;
+  border-top: 1.5px solid var(--brand-primary);
+  border-right: 1.5px solid var(--brand-primary); }
+.corner-bl { bottom: 40px; left: 40px;
+  border-bottom: 1.5px solid var(--brand-primary);
+  border-left: 1.5px solid var(--brand-primary); }
+.corner-br { bottom: 40px; right: 40px;
+  border-bottom: 1.5px solid var(--brand-primary);
+  border-right: 1.5px solid var(--brand-primary); }
+
+/* ============================================
+   PRIMITIVE 2: Ghost watermark text (giant BG word)
+   Rule 3: 400-650px serif, BG -12% solid tone (not opacity), partial off-canvas
+   ============================================ */
+.watermark {
+  position: absolute;
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 520px;
+  line-height: 0.85;
+  color: var(--brand-watermark);
+  letter-spacing: -0.04em;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+.watermark--br { bottom: -60px; right: -40px; }
+.watermark--tr { top: -40px; right: -60px; }
+.watermark--bl { bottom: -60px; left: -40px; }
+.watermark--center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+/* ============================================
+   PRIMITIVE 3: Eyebrow label (tracked all-caps + short underline)
+   Rule 7: 18-32px, letter-spacing +200, brand-accent, short hairline stub
+   ============================================ */
+.eyebrow {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brand-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+}
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 40px;
+  height: 3px;
+  background: var(--brand-primary);
+}
+
+/* ============================================
+   PRIMITIVE 4: Subtle divider hairline
+   Rule 10: short 80-180px terracotta stub, 3-5px tall, below H1
+   ============================================ */
+.divider {
+  width: 120px;
+  height: 4px;
+  background: var(--brand-primary);
+  border: none;
+  margin: 30px 0 40px;
+  display: block;
+}
+.divider--thin {
+  height: 1px;
+  background: var(--brand-dark);
+  opacity: 0.18;
+  width: 100%;
+  margin: 24px 0;
+}
+
+/* ============================================
+   PRIMITIVE 5: Pill chips (fully rounded, monospace, tinted accent fill)
+   Rule 11: radius = half-height, tinted bg, tracked uppercase mono
+   ============================================ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: var(--brand-pill-fill);
+  color: var(--brand-primary);
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  line-height: 1;
+}
+.pill--dark {
+  background: var(--brand-dark);
+  color: var(--brand-light);
+}
+.pill--outline {
+  background: transparent;
+  border: 1.5px solid var(--brand-primary);
+}
+
+/* ============================================
+   PRIMITIVE 6: Header bar (strict — handle left, page counter right)
+   Rule 4
+   ============================================ */
+.header-bar {
+  position: absolute;
+  top: 60px;
+  left: 80px;
+  right: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+}
+.header-bar .handle {
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--brand-dark);
+  letter-spacing: 0.02em;
+}
+.header-bar .page-num {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--brand-muted);
+  letter-spacing: 0.15em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   PRIMITIVE 7: Footer bar (slogan left, SWIPE right, hairline above)
+   Rule 5
+   ============================================ */
+.footer-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 140px;
+  padding: 40px 80px 60px;
+  background: var(--brand-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 22px;
+  color: var(--brand-dark);
+  z-index: 10;
+}
+/* hairline divider above footer */
+.footer-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 80px;
+  right: 80px;
+  height: 1px;
+  background: rgba(0,0,0,0.12);
+}
+/* solid mask above footer to fully cover any watermark bleed */
+.footer-bar::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, var(--brand-light), rgba(255,255,255,0));
+  pointer-events: none;
+}
+.page--dark .footer-bar { background: var(--brand-dark); }
+.page--dark .footer-bar::before { background: rgba(255,255,255,0.18); }
+.header-bar {
+  z-index: 5;
+}
+.footer-bar .slogan {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.footer-bar .swipe {
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ============================================
+   PRIMITIVE 8: Big serif numeral (anchor)
+   Rule 8: 110-220px serif Heavy
+   ============================================ */
+.big-numeral {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 180px;
+  line-height: 0.9;
+  color: var(--brand-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   PRIMITIVE 9: Quote callout box (with accent quote-mark badge)
+   Rule from @jasonxtsai signature
+   ============================================ */
+.quote-box {
+  position: relative;
+  border: 1.5px solid var(--brand-primary);
+  border-radius: 20px;
+  padding: 40px 50px 40px 80px;
+  margin-top: 60px;
+}
+.quote-box::before {
+  content: "“";
+  position: absolute;
+  top: 50%;
+  left: -32px;
+  transform: translateY(-50%);
+  width: 64px;
+  height: 64px;
+  background: var(--brand-primary);
+  color: white;
+  font-family: var(--font-serif);
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 0.6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 14px;
+}
+.quote-box .q-setup {
+  font-size: 28px;
+  color: var(--brand-dark);
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.quote-box .q-punch {
+  font-size: 32px;
+  color: var(--brand-primary);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ============================================
+   Theme variants (background switches)
+   ============================================ */
+.page--dark { background: var(--brand-dark); color: white; }
+.page--dark .header-bar .handle,
+.page--dark .footer-bar .slogan,
+.page--dark .footer-bar .swipe { color: white; }
+.page--dark .footer-bar { border-top-color: rgba(255,255,255,0.18); }
+.page--dark .header-bar .page-num { color: rgba(255,255,255,0.55); }
+.page--dark .watermark { color: rgba(255,255,255,0.05); }
+
+.page--white { background: white; }
+
+.serif { font-family: var(--font-serif); }
+.sans { font-family: var(--font-sans); }

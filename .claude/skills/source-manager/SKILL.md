@@ -1,6 +1,6 @@
 ---
 name: source-manager
-description: Show and edit the list of competitor and own accounts to research (sources.md) through an interactive page, and keep the page and the file in sync. Use when the user says "update sources", "add a competitor", "remove a competitor", "show my URLs", "which accounts are we tracking", "turn TikTok off", "sync sources", or before any research run, even if they never mention sources.md.
+description: Show and edit the list of competitor and own accounts to research (sources.md) through an interactive page, and keep the page and the file in sync. Use when the user says "update sources", "add a competitor", "remove a competitor", "show my URLs", "which accounts are we tracking", "turn TikTok off", "sync sources", "find competitors", "suggest competitors", or before any research run, even if they never mention sources.md.
 ---
 
 # Source manager
@@ -10,7 +10,8 @@ description: Show and edit the list of competitor and own accounts to research (
 A URL is researched only when its platform is **Enabled** and its row is **Active**.
 
 ## Files
-- `scripts/sources.py` - `read`, `write`, `status`, `targets`, `build` (run with `uv run python`)
+- `scripts/sources.py` - `read`, `write`, `status`, `targets`, `build`, `suggest` (run with `uv run python`)
+- `references/competitor_discovery.md` - how to find new competitors in the Meta Ad Library
 - `assets/sources_editor.html` - editor page template (placeholder `__SOURCES_JSON__`)
 - project file: `competitor_analysis/projects/<project>/sources.md` and its `sources.md.sync` (hash of the last synced version)
 
@@ -33,6 +34,14 @@ A URL is researched only when its platform is **Enabled** and its row is **Activ
 2. Update the doc: `ArtifactData` `set` on `sources/state` with `{state: <sources.py read output without sha256>, baseSha: <its sha256>, editedAt: <now>}`.
 3. Republish the same file path. Run `sources.py write` is not needed; the file is already the source.
 4. Record the hash: `sources.py write <sources.md> <that state json>` (rewrites the file in canonical form and stores the sync hash).
+
+## Discover competitors (when the user asks "find competitors", "who else is advertising", "suggest competitors")
+Method: `references/competitor_discovery.md` (Meta Ad Library census; needs the Meta Ads connector or Apify). The method has not been run live yet, so begin with a small test.
+1. Sync page -> file first if the page may have unsaved edits (section above).
+2. Run the method; it ends with `candidates.json`.
+3. `sources.py suggest <sources.md> <candidates.json>` adds the new Pages to Competitors > Meta with Active = no and "suggested" in the type column. Pages already listed are skipped.
+4. Run "Sync sources.md -> page" so the user sees the suggestions. Tell the user to tick Active on the ones to research, then say "sync sources".
+Never set Active for them yourself, and never research a suggestion that is still unticked.
 
 ## Used by research
 `sources.py targets <sources.md>` prints the exact list to scrape (platform, owner, name, url, max posts, range). Research must not read URLs from anywhere else.

@@ -23,9 +23,9 @@ Read `references/requirements.md`. Brand onboarding is **not** required. If a pr
 | 5 | Normalise | competitor_researcher | `$CI/scripts/normalise.py build <run>` -> `items.tsv`. Read its warnings aloud |
 | 6 | Tag topics | competitor_analyzer | Read captions, assign one topic from `sources.md` to each ok item (ours get a `pillar` too if known). Write `tags.tsv` (`itemId<TAB>topic<TAB>pillar<TAB>sponsored`), then `normalise.py tag <run> tags.tsv` |
 | 7 | Select | competitor_analyzer | `$CI/scripts/build_report.py select <run>` -> `analysis/selected.json` (rules: `selection.md`) |
-| 8 | Verdicts | competitor_analyzer + hook_analyzer | One verdict per selected item -> `analysis/verdicts.json` using `verdict_rules.md`, `shared/frameworks/hooks.md` (spoken, text, visual, audio) and `hook_research.md`; wording per `writing_guide.md` |
+| 8 | Verdicts | competitor_analyzer + hook_analyzer | One verdict per selected item -> `analysis/verdicts.json` using `verdict_rules.md`, `shared/frameworks/hooks.md` (spoken, text, visual, audio, plus a `hookType` on every hook) and `hook_research.md`; wording per `writing_guide.md` |
 | 9 | Our baseline | performance_analyst | `normalise.py stats <run>` for typical views and counts; write `analysis/ours.json`. Optional dashboard: `references/perf_dashboard.md` (needs Ours on both Instagram and TikTok) |
-| 10 | Compare + strategy | insight_synthesizer | `comparison_method.md` -> `analysis/comparison.json` |
+| 10 | Compare + strategy | insight_synthesizer | `build_report.py winning <run>` (Meta ads) -> `analysis/winning_ads.json`; then `comparison_method.md` -> `analysis/comparison.json`, including `winningHooks` and, written last, `devilsAdvocate` |
 | 11 | Images | competitor_researcher | `collect.py media <run>` (selected items only; failures just show "no image") |
 | 12 | Build + present | orchestrator | `build_report.py build <run>`; publish `<run>/report.html` with the Artifact tool (below); give the link |
 | 13 | Approval | user | Cards: change verdict or comment. Foot: Approve report / Request changes. User says "done" |

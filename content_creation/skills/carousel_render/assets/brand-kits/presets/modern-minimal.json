@@ -1,0 +1,19 @@
+{
+  "name": "Modern Minimal",
+  "slug": "preset-modern-minimal",
+  "handle": "@your.handle",
+  "logo_path": null,
+  "colors": {
+    "primary": "#2563EB",
+    "dark": "#0F172A",
+    "light": "#F8FAFC",
+    "body": "#1E293B",
+    "muted": "#64748B"
+  },
+  "fonts": {
+    "sans": "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Microsoft JhengHei', -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif",
+    "serif": "'Playfair Display', 'Songti SC', 'STSong', 'SimSun', 'Microsoft YaHei', serif"
+  },
+  "tagline": "Clean, minimal, modern — 适合 SaaS / 科技 / 工具品牌",
+  "_preset_use_case": "SaaS / 科技 / 工具 / B2B 顾问 / 数字产品"
+}

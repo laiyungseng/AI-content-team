@@ -1,0 +1,19 @@
+{
+  "name": "Editorial",
+  "slug": "preset-editorial",
+  "handle": "@your.handle",
+  "logo_path": null,
+  "colors": {
+    "primary": "#B8860B",
+    "dark": "#1C1C1C",
+    "light": "#F5F0E8",
+    "body": "#2A2A2A",
+    "muted": "#7A6E5D"
+  },
+  "fonts": {
+    "sans": "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Microsoft JhengHei', -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif",
+    "serif": "'Playfair Display', 'Songti SC', 'STSong', 'SimSun', 'Microsoft YaHei', serif"
+  },
+  "tagline": "Magazine feel — 适合作家 / 顾问 / 思想内容",
+  "_preset_use_case": "作家 / 顾问 / 思考类 IP / 高端 B2B / 杂志风内容"
+}

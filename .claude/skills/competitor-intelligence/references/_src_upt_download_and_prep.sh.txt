@@ -1,0 +1,161 @@
+# source: UPT-course-setup-v2.skill / course-skills/viral-sales-video-clone/scripts/download-and-prep.sh
+# copied: 2026-10-31
+# status: staged
+# destination: transcribe.py (plan step 10); reference only, never executed
+
+#!/usr/bin/env bash
+# viral-sales-video-clone / download-and-prep.sh
+# 下载视频 → 抽 10-12 关键帧 → Groq whisper 转写（含时间戳）
+#
+# 用法：
+#   bash download-and-prep.sh <URL>              # 从 URL 下载
+#   bash download-and-prep.sh --local <path>     # 用本地 mp4
+#
+# 依赖：yt-dlp / ffmpeg / ffprobe / curl（jq 可选，没装会自动用 python3 兜底）
+# 环境变量：GROQ_API_KEY —— 由 /course-setup-v2 写进 ~/.claude/settings.json 的 env 区块，自动注入
+
+set -euo pipefail
+
+# ------ 参数解析 ------
+MODE="url"
+INPUT=""
+if [[ "${1:-}" == "--local" ]]; then
+  MODE="local"
+  INPUT="${2:-}"
+elif [[ -n "${1:-}" ]]; then
+  INPUT="$1"
+else
+  echo "用法：$0 <URL>   或   $0 --local <path>"
+  exit 1
+fi
+
+if [[ -z "$INPUT" ]]; then
+  echo "❌ 缺少输入（URL 或本地文件路径）"
+  exit 1
+fi
+
+# ------ Groq API key 加载 ------
+# 正常情况下 ~/.claude/settings.json 的 env 区块会自动注入 GROQ_API_KEY，
+# 这里只在没注入时给一个看得懂的提示（给学员看的，不是给工程师看的）。
+if [[ -z "${GROQ_API_KEY:-}" ]]; then
+  echo "❌ 找不到 Groq 钥匙，这个 skill 需要它把影片里的讲话转成文字。"
+  echo ""
+  echo "   怎么办：在 Claude Code 打这一句，它会带你拿一把新的（免费，2 分钟）"
+  echo "   👉  /course-setup-v2"
+  exit 1
+fi
+
+# ------ 建工作目录 ------
+# 优先用当前工作空间；没有就退到使用者的 Downloads，保证在哪台电脑都有地方放。
+if [[ -z "${REPO_ROOT:-}" ]]; then
+  if [[ -d "$PWD/competitor_analysis" ]]; then
+    REPO_ROOT="$PWD"
+  else
+    REPO_ROOT="$HOME/Downloads"
+  fi
+fi
+TS="$(date +%Y-%m-%d_%H%M%S)"
+OUTDIR="$REPO_ROOT/downloads/viral-sales-video-clone/$TS"
+mkdir -p "$OUTDIR/frames"
+echo "📁 工作目录：$OUTDIR"
+
+# ------ 下载 or 复制 ------
+SRC="$OUTDIR/source.mp4"
+if [[ "$MODE" == "url" ]]; then
+  echo "⬇️  yt-dlp 下载中：$INPUT"
+  yt-dlp -f "bv*[height<=1080]+ba/b[height<=1080]/best" \
+         --merge-output-format mp4 \
+         -o "$SRC" \
+         "$INPUT"
+else
+  if [[ ! -f "$INPUT" ]]; then
+    echo "❌ 本地文件不存在：$INPUT"
+    exit 1
+  fi
+  echo "📂 复制本地文件：$INPUT → $SRC"
+  cp "$INPUT" "$SRC"
+fi
+
+# ------ ffprobe 元数据 ------
+DURATION=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$SRC" | awk '{printf "%.2f", $1}')
+RESOLUTION=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$SRC")
+
+cat > "$OUTDIR/metadata.json" <<EOF
+{
+  "source": "$INPUT",
+  "mode": "$MODE",
+  "duration_s": $DURATION,
+  "resolution": "$RESOLUTION",
+  "downloaded_at": "$TS"
+}
+EOF
+echo "📊 时长: ${DURATION}s / 分辨率: $RESOLUTION"
+
+# ------ 抽 10-12 关键帧（等间距）------
+# 目标：短视频（< 60s）抽 10 帧，长视频（> 60s）抽 12 帧
+FRAMES=$(awk -v d="$DURATION" 'BEGIN { print (d < 60) ? 10 : 12 }')
+echo "🖼  抽 $FRAMES 张关键帧..."
+ffmpeg -y -hide_banner -loglevel error \
+       -i "$SRC" \
+       -vf "select='not(mod(n\,floor(${DURATION}*30/${FRAMES})))',scale=720:-1" \
+       -frames:v $FRAMES \
+       -q:v 2 \
+       "$OUTDIR/frames/frame_%03d.png"
+
+ACTUAL_FRAMES=$(ls "$OUTDIR/frames/" | wc -l | tr -d ' ')
+echo "✅ 抽出 $ACTUAL_FRAMES 张帧"
+
+# ------ 抽音轨（转写用） ------
+AUDIO="$OUTDIR/audio.m4a"
+echo "🎙  抽音轨..."
+ffmpeg -y -hide_banner -loglevel error \
+       -i "$SRC" \
+       -vn -c:a copy \
+       "$AUDIO" 2>/dev/null || \
+ffmpeg -y -hide_banner -loglevel error \
+       -i "$SRC" \
+       -vn -c:a aac -b:a 128k \
+       "$AUDIO"
+
+# ------ Groq whisper 转写 ------
+echo "📝 Groq whisper 转写中（whisper-large-v3-turbo）..."
+TRANSCRIPT_JSON="$OUTDIR/transcript.json"
+curl -sS https://api.groq.com/openai/v1/audio/transcriptions \
+     -H "Authorization: Bearer $GROQ_API_KEY" \
+     -F "file=@$AUDIO" \
+     -F "model=whisper-large-v3-turbo" \
+     -F "response_format=verbose_json" \
+     -F "timestamp_granularities[]=segment" \
+     > "$TRANSCRIPT_JSON"
+
+# 提取纯文本 + 时间戳
+TRANSCRIPT_TXT="$OUTDIR/transcript.txt"
+if command -v jq >/dev/null 2>&1; then
+  jq -r '.segments[] | "[\(.start | tostring)s - \(.end | tostring)s] \(.text)"' \
+     "$TRANSCRIPT_JSON" > "$TRANSCRIPT_TXT"
+else
+  # jq 没装，用 python 兜底
+  python3 -c "
+import json, sys
+with open('$TRANSCRIPT_JSON') as f:
+    data = json.load(f)
+for seg in data.get('segments', []):
+    print(f\"[{seg['start']:.2f}s - {seg['end']:.2f}s] {seg['text'].strip()}\")
+" > "$TRANSCRIPT_TXT"
+fi
+
+echo "✅ 转写完成：$TRANSCRIPT_TXT"
+
+# ------ 收尾报告 ------
+echo ""
+echo "════════════════════════════════════════"
+echo "✨ 素材准备完毕"
+echo "════════════════════════════════════════"
+echo "📁 $OUTDIR"
+echo "  ├── source.mp4        (${DURATION}s / $RESOLUTION)"
+echo "  ├── frames/           ($ACTUAL_FRAMES 张)"
+echo "  ├── transcript.txt    (Groq whisper verbose)"
+echo "  ├── transcript.json   (原始 API 输出)"
+echo "  └── metadata.json"
+echo ""
+echo "下一步：Claude 读 frames/*.png + transcript.txt → 走 Step 2 视觉拆解"

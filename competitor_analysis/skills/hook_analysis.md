@@ -19,8 +19,11 @@ Curiosity, specificity, relevance, emotional impact, novelty, urgency, contraria
 3. Say why it stops the scroll in one sentence tied to a visible element.
 4. Say how to rebuild it for us with different content, without reusing their line.
 
+## Hook type
+Tag every hook with one type key (or two joined by `+`) from the table in [[hooks]] ("Hook types"): `pain_question`, `shock_number`, `identity_callout`, `secret_reveal`, `before_after`, `authority`, `time_pressure`, `story_hook`, `mistake_accusation`, `what_if_scenario`, `curiosity_gap`, `empathy`, `warning`, `social_proof`, `direct_benefit`, or `other`. The type is a count-able label; the formula is the reusable part. Use `other` instead of forcing a fit.
+
 ## Output schema
-`{id, spoken, text, visual, audio, scores: {dimension: level}, formula, whyItStopsScroll, howToRebuild}` (list in `analysis/hooks.json`).
+`{id, spoken, text, visual, audio, scores: {dimension: level}, hookType, formula, whyItStopsScroll, howToRebuild}` (list in `analysis/hooks.json`).
 
 ## Good / bad examples
 - Good formula: "[Common belief] is wrong: [specific counter-fact]" with a cold-open visual of the fact on screen.

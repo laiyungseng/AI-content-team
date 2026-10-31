@@ -22,7 +22,7 @@ Judge individual competitor items: what topic they cover, whether they worked re
 1. **Tag topics.** Read the captions and assign exactly one topic key from `sources.md` to each ok item. Do not invent topics; if none fit, propose a new one to the orchestrator. A sponsored post (paid partnership or advert label) takes the topic of what it shows, with `sponsored` = yes, never `off_topic` for being paid. Write `tags.tsv`, run `normalise.py tag`.
 2. **Select** with `build_report.py select <run>`; read which accounts were trimmed.
 3. **Hand to hook_analyzer** the Copy/Adapt candidates (a first-pass call from the ratio and `verdict_rules.md`) and wait for `analysis/hooks.json`.
-4. **Verdicts.** For each selected id, in order: ratio to the account's own typical views (`normalise.py stats`, `selected.json` ratios), the checks in `verdict_rules.md`, then the verdict. Use `hooks.json` for `hook`, `whyItWorks`, `howToUse`.
+4. **Verdicts.** For each selected id, in order: ratio to the account's own typical views (`normalise.py stats`, `selected.json` ratios), the checks in `verdict_rules.md`, then the verdict. Use `hooks.json` for `hookType`, `hook`, `whyItWorks`, `howToUse`.
 5. Write `analysis/verdicts.json` per `output_schema.md`: `reason` (1 or 2 plain sentences, ends with "Do next: ..." where there is an action), `confidence`.
 
 ## Expected output format

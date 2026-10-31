@@ -34,13 +34,14 @@ Tab-separated, header `itemId<TAB>topic<TAB>pillar<TAB>sponsored`. One row per o
 ## Analysis files (`runs/<id>/analysis/`, JSON so the report builder can read them)
 **verdicts.json**
 ```json
-{"items": [{"id": "<itemId>", "verdict": "adapt|copy|ignore", "reason": "...", "hook": "...",
+{"items": [{"id": "<itemId>", "verdict": "adapt|copy|ignore", "reason": "...", "hookType": "pain_question", "hook": "...",
             "whyItWorks": "...", "howToUse": "...", "confidence": "low|medium|high"}]}
 ```
+`hookType` is one key from `shared/frameworks/hooks.md` ("Hook types"), or two joined by `+`, or `other`. It is required on every Copy and Adapt item that has a hook; the builder warns when it is missing or not in the list.
 
 **hooks.json** (from hook_analyzer)
 ```json
-[{"id": "<itemId>", "spoken": "", "text": "", "visual": "", "audio": "", "scores": {}, "formula": "", "whyItStopsScroll": "", "howToRebuild": ""}]
+[{"id": "<itemId>", "spoken": "", "text": "", "visual": "", "audio": "", "scores": {}, "hookType": "", "formula": "", "whyItStopsScroll": "", "howToRebuild": ""}]
 ```
 
 **ours.json**
@@ -54,9 +55,21 @@ Tab-separated, header `itemId<TAB>topic<TAB>pillar<TAB>sponsored`. One row per o
  "rows": [{"dimension": "hook", "ours": "", "theirs": "", "stronger": "ours|theirs|similar|unclear", "why": "", "how": ""}],
  "strategy": [{"title": "", "detail": "", "doNext": ""}],
  "positioning": {"statement": "", "gaps": [""], "avoid": [""]},
- "postCounts": "text quoting the post counts behind the claims"}
+ "postCounts": "text quoting the post counts behind the claims",
+ "devilsAdvocate": [{"misread": "", "truth": "", "adjust": ""}],
+ "winningHooks": [{"hook": "", "source": "", "scale": "", "hookType": "", "reuse": "yes|partly|no", "why": ""}]}
 ```
 Dimensions: hook, format, visual, message, offer, CTA, cadence, engagement.
+
+`devilsAdvocate` (3 to 5 items, written last, see `comparison_method.md`): `misread` = how a newcomer would read the data, `truth` = what the data actually supports, `adjust` = what we should do differently because of it.
+`winningHooks` (up to 10, Meta ads only, seeded from `analysis/winning_ads.json`): `scale` is plain text such as "12 ads, running 64 days"; `reuse` says whether we can use the angle without their brand, following, credentials or offer.
+Both fields are optional for old runs: the builder warns and leaves the section out when they are missing, but a new run's synthesizer writes both.
+
+**winning_ads.json** (written by `build_report.py winning <run>`, read by insight_synthesizer)
+```json
+[{"account": "", "hookText": "", "ads": 0, "daysRunning": 0, "active": true, "score": 0, "itemIds": [""]}]
+```
+One row per advertiser and identical ad text; `ads` = copies (the `variants` count), `daysRunning` = longest `runningDays` of the group, `score` = ads x daysRunning, sorted high to low.
 
 ## Decisions (artifact db, collection `decisions`)
 Per card: document id = itemId with characters outside `A-Za-z0-9_-` replaced by `_`; fields `{item, verdict, comment, at}` (the user's final verdict). Overall: id `report`, `{item: "report", decision: approve|revise|reject, comment, at}`. See `.claude/skills/artifact-presentation-setup/references/approvals.md`.

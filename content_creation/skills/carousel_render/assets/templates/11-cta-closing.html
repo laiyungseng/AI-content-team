@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 11-cta-closing v2 — Editorial CTA with pill chip + quote box + brand mark
+   Slots: TAG, HEADLINE, CTA_TEXT, CTA_ACTION */
+.page--11 .watermark--cta { font-size: 420px; top: -140px; left: -40px; line-height: 0.78; }
+.page--11 .content {
+  position: absolute;
+  top: 200px;
+  left: 80px;
+  right: 80px;
+  bottom: 200px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.page--11 .pill { margin-bottom: 60px; }
+.page--11 h2 {
+  font-family: var(--font-serif);
+  font-size: 124px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--brand-dark);
+  margin-bottom: 60px;
+}
+.page--11 h2 .accent { color: var(--brand-primary); }
+.page--11 .cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--brand-dark);
+  color: var(--brand-light);
+  padding: 28px 56px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 40px;
+}
+.page--11 .cta-btn .arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--brand-primary);
+  border-radius: 50%;
+  color: var(--brand-light);
+  font-size: 24px;
+}
+.page--11 .cta-action {
+  font-family: var(--font-sans);
+  font-size: 26px;
+  color: var(--brand-body);
+  font-weight: 400;
+  line-height: 1.5;
+  max-width: 700px;
+}
+</style></head>
+<body><div class="page page--11">
+  <span class="watermark watermark--cta">END</span>
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <span class="pill">{{TAG}}</span>
+    <h2>{{HEADLINE}}</h2>
+    <div class="cta-btn">{{CTA_TEXT}} <span class="arrow">→</span></div>
+    <p class="cta-action">{{CTA_ACTION}}</p>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">END</span>
+  </div>
+</div></body></html>

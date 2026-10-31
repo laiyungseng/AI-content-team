@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<style>{{BASE_CSS}}</style>
+<style>
+/* 07-quote v2 — Magazine editorial with header/footer + big serif quote + accent mark
+   Slots: TAG (italic serif above), WATERMARK_WORD (optional), QUOTE (main), ATTRIBUTION */
+.page--07 { padding: 0; background: var(--brand-light); color: var(--brand-body); }
+.page--07 .watermark--quote { font-size: 480px; top: -120px; left: -40px; line-height: 0.78; }
+.page--07 .content {
+  position: absolute;
+  top: 240px;
+  left: 90px;
+  right: 90px;
+  bottom: 200px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.page--07 .tag {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 30px;
+  color: var(--brand-muted);
+  margin-bottom: 32px;
+}
+.page--07 .quote-mark {
+  font-family: var(--font-serif);
+  font-size: 160px;
+  line-height: 1;
+  color: var(--brand-primary);
+  margin: 0 0 -30px 0;
+  height: 100px;
+  letter-spacing: -0.05em;
+}
+.page--07 .quote {
+  font-family: var(--font-serif);
+  font-size: 88px;
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--brand-dark);
+  margin-bottom: 44px;
+  letter-spacing: -0.02em;
+}
+.page--07 .attr {
+  font-size: 26px;
+  color: var(--brand-muted);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+</style></head>
+<body><div class="page page--07">
+  <span class="watermark watermark--quote">{{WATERMARK_WORD}}</span>
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="header-bar">
+    <span class="handle">{{HANDLE}}</span>
+    <span class="page-num">{{PAGE_NUM}}</span>
+  </div>
+
+  <div class="content">
+    <div class="tag">{{TAG}}</div>
+    <div class="quote-mark">“</div>
+    <p class="quote">{{QUOTE}}</p>
+    <div class="attr">— {{ATTRIBUTION}}</div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="slogan">{{SLOGAN_FOOTER}}</span>
+    <span class="swipe">SWIPE →</span>
+  </div>
+</div></body></html>
