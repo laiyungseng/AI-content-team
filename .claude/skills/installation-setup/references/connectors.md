@@ -8,6 +8,7 @@ session first (tools named `mcp__<server>__*`, or the user runs `/mcp`). Authori
 | **Apify** | account | Scrape Instagram/TikTok/Meta Ad Library/XHS posts and metrics | research, performance | analysing competitors or own accounts |
 | **Perplexity** | local | Web-grounded research, market/competitor context | research | business-onboarding research, trend checks |
 | **nanobanana** (Gemini image) | local | Generate/edit images for static posts, flyers | generation | static content creation |
+| **Higgsfield** | account (remote, OAuth) | Generate images and AI video (reels, b-roll, characters) | generation | reel/video content, or the user prefers it over nanobanana for images |
 | **Zernio** | account | Schedule/publish posts, analytics, best time to post | schedule, publish, measure | Phase 6 publishing, performance pulls |
 | **NotebookLM** | local | Source-grounded Q&A over uploaded docs, transcripts | analysis | many transcripts / long documents |
 | **Notion** | account | Optional content calendar / docs sync | schedule | user keeps planning in Notion |
@@ -15,7 +16,8 @@ session first (tools named `mcp__<server>__*`, or the user runs `/mcp`). Authori
 
 ## Tiers (enable only what the user's goal needs)
 - **Intelligence MVP (Phase 1):** Apify + Perplexity.
-- **Strategy + generation (Phases 2-3):** add nanobanana.
+- **Strategy + generation (Phases 2-3):** add an image/video generator. **Ask the user which they prefer** (one, both, or
+  "set up later"): nanobanana (Gemini images, API key) or Higgsfield (images + video, browser sign-in). Do not install either by default.
 - **Publishing + measurement (Phases 5-6):** add Zernio.
 - **Optional on request:** NotebookLM, Notion, Figma.
 
@@ -25,6 +27,15 @@ These belong to the user's Claude account, not the machine, so they follow the l
 2. If the tools are missing, the user adds or authorizes the connector: Claude desktop app > Settings > Connectors,
    or `/mcp` in a Claude Code terminal. Key-based ones (Apify, Zernio) ask for the key in the connector's own form, never in chat.
 3. Verify with one cheap read-only call (Apify: search for an actor; Zernio: list accounts).
+
+## Higgsfield (optional, remote server)
+Hosted at `https://mcp.higgsfield.ai/mcp`; no API key, it signs in through the browser (OAuth) with the user's Higgsfield account.
+It is deliberately **not** in `.mcp.json`, so it only exists for users who choose it. The user adds it themselves:
+- Terminal: `claude mcp add --transport http --scope user higgsfield https://mcp.higgsfield.ai/mcp`, then `/mcp` > higgsfield > Authenticate.
+- Desktop app: Settings > Connectors > add custom connector, URL above.
+
+Verify with `/mcp` (status connected) and one cheap read-only call such as listing characters or a generation status.
+The command and tool names come from third-party write-ups, not Higgsfield docs; if it fails, check Higgsfield's own MCP docs and update this section.
 
 ## Local servers (Perplexity, nanobanana, NotebookLM)
 Declared in the project `.mcp.json`, so a clone already knows how to start them. Claude Code asks the user once to approve

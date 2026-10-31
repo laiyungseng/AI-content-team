@@ -84,8 +84,10 @@ Tell Claude **"set up the connectors"** and say what you want to do first. You o
 | Goal | Connectors |
 |---|---|
 | Research competitors (start here) | Apify, Perplexity |
-| Make images for posts | + nanobanana (Gemini) |
+| Make images / video for posts | + **your choice**: nanobanana (Gemini images), Higgsfield (images + video), both, or set up later |
 | Schedule and publish | + Zernio |
+
+Claude will ask which image/video generator you prefer. You can also skip it and add it afterwards by saying "set up Higgsfield" or "set up nanobanana".
 
 There are two kinds:
 - **Account connectors** (Apify, Zernio, Notion, Figma) belong to your Claude account. If you already use them on another PC,
@@ -96,6 +98,9 @@ There are two kinds:
   - macOS: `echo 'export PERPLEXITY_API_KEY="your-key"' >> ~/.zshrc` (same for `GEMINI_API_KEY`)
 
   Get keys at perplexity.ai (Settings > API) and aistudio.google.com (Get API key). Then **fully close and reopen Claude Code**.
+- **Higgsfield** (optional, no key) signs in through your browser. Add it yourself:
+  `claude mcp add --transport http --scope user higgsfield https://mcp.higgsfield.ai/mcp`, then run `/mcp` and choose Authenticate.
+  In the desktop app use Settings > Connectors > add custom connector with the same URL.
 - NotebookLM (optional) needs a one-time sign-in: `uvx --from notebooklm-mcp-cli nlm login`.
 
 ### Step 7: First run
@@ -104,6 +109,20 @@ In Claude Code, say:
 2. **"research competitors"**: collects their posts and builds a 2-page report for you to approve.
 
 When you are ready to make content, say **"set up my business"** (creates your brand guideline).
+
+### Installation checklist
+Tick everything before you start. Claude also fills in a copy at `state/install_checklist.md` when you say "set up this project"
+(template: `.claude/skills/installation-setup/assets/install_checklist.md`).
+
+- [ ] Claude Code installed and signed in
+- [ ] Repo access granted and project cloned (Step 3)
+- [ ] `uv` and `git` present (Step 2 and 4)
+- [ ] Setup finished with `SMOKE TEST PASSED` (Step 4)
+- [ ] Folder trusted and project MCP servers approved (Step 5)
+- [ ] Apify connected and Perplexity key set (Step 6, needed to research)
+- [ ] Image / video generator chosen: nanobanana, Higgsfield, both, or "later" (Step 6)
+- [ ] Zernio connected, or "later" (only needed to publish)
+- [ ] Sources added and first competitor report approved (Step 7)
 
 ### Troubleshooting
 | Problem | Fix |

@@ -26,9 +26,13 @@ Run every command from the workspace root. `$S` = `.claude/skills/installation-s
 4. **Smoke test** - `setup.py smoke`. Runs the real pipeline offline on a throwaway project `zz_smoketest` and deletes it.
    Setup is not done until this passes. `setup.py all` runs steps 1, 3 and 4 in one go.
 5. **Connectors** - ask what the user wants to do first, then follow `references/connectors.md` for that tier only.
+   For image/video generation, ask which they prefer: **nanobanana**, **Higgsfield**, both, or set up later (Apify + Perplexity
+   are enough to start). Record the choice; skipped ones stay unticked in the checklist, not failed.
    You cannot sign in or enter API keys for them; never ask them to paste keys into chat.
-6. **Report** - read `state/installation_status.md` and summarise: what works, what is missing, what the user must do.
-   Then point to `source-manager` (add competitor URLs). `business-onboarding` waits until they start production.
+6. **Checklist and report** - copy `assets/install_checklist.md` to `state/install_checklist.md`, tick each item from
+   `state/installation_status.md` and the connector checks, and show it to the user. Setup is finished only when every
+   required item is ticked and each optional item is ticked or marked "later". Summarise what works, what is missing and what the
+   user must do. Then point to `source-manager` (add competitor URLs). `business-onboarding` waits until they start production.
 
 ## Rules
 - Ask before installing or downloading anything; state the package and size when known.
