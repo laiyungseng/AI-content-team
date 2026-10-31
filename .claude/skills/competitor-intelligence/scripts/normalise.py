@@ -23,7 +23,7 @@ sys.path.insert(0, str(HERE.parents[1] / "source-manager" / "scripts"))
 import sources as src  # noqa: E402
 
 COLUMNS = ["owner", "accountId", "platform", "itemType", "itemId", "date", "views", "likes", "comments", "shares", "saves",
-           "durationSec", "topic", "pillar", "caption", "mediaUrl", "permalink", "status"]
+           "durationSec", "topic", "pillar", "caption", "mediaUrl", "permalink", "status", "runningDays", "isActive", "variants"]
 
 # field -> candidate dotted paths (".0" indexes a list)
 MAP = {
@@ -43,6 +43,7 @@ MAP = {
         "id": ["adArchiveID", "adArchiveId", "ad_archive_id", "adId", "id"],
         "date": ["startDateFormatted", "startDate", "start_date", "startDateString"],
         "end": ["endDateFormatted", "endDate", "end_date"],
+        "active": ["isActive", "is_active"],
         "views": [], "likes": [], "comments": [], "shares": [], "saves": [], "duration": [],
         "caption": ["snapshot.body.text", "snapshot.caption", "body.text", "adText", "text"],
         "media": ["snapshot.images.0.original_image_url", "snapshot.images.0.resized_image_url", "snapshot.videos.0.video_preview_image_url",
@@ -216,13 +217,21 @@ def build(run_dir: Path) -> None:
                 elif dt.date.fromisoformat(d) < cutoff:
                     continue
                 itype = ITEM_TYPE[platform]
+                run_days, is_active = "", ""
+                if platform == "meta":  # ads have no metrics: how long one has run and whether it is live is the signal
+                    end = to_date(pick(it, m["end"]))
+                    stop = min(dt.date.fromisoformat(end), run_date) if end else run_date
+                    run_days = str(max((stop - dt.date.fromisoformat(d)).days, 0))
+                    flag = pick(it, m["active"])
+                    is_active = "yes" if flag is True else "no" if flag is False else ""
                 views = "" if (platform == "instagram" and str(it.get("type", "")).lower() in ("image", "sidecar")
                                and not it.get("videoPlayCount")) else to_int(pick(it, m["views"]))
                 out.append({
                     "owner": owner, "accountId": acc, "platform": platform, "itemType": itype, "itemId": str(pick(it, m["id"]) or ""),
                     "date": d, "views": views, "likes": to_int(pick(it, m["likes"])), "comments": to_int(pick(it, m["comments"])),
                     "shares": to_int(pick(it, m["shares"])), "saves": to_int(pick(it, m["saves"])),
-                    "durationSec": to_int(pick(it, m["duration"])), "topic": "", "pillar": "",
+                    "durationSec": (to_int(pick(it, m["duration"])) if to_int(pick(it, m["duration"])) != "0" else ""),  # actors return 0 for photo posts: missing, never 0
+                    "topic": "", "pillar": "", "runningDays": run_days, "isActive": is_active, "variants": "",
                     "caption": clean(pick(it, m["caption"])), "mediaUrl": str(pick(it, m["media"]) or ""),
                     "permalink": str(pick(it, m["link"]) or ""), "status": "ok",
                 })
@@ -238,6 +247,13 @@ def build(run_dir: Path) -> None:
                 rows.append({c: "" for c in COLUMNS} | {"owner": owner, "accountId": acc, "platform": platform,
                              "itemType": ITEM_TYPE[platform], "caption": note, "status": reason if reason in ("private", "failed", "empty") else "failed",
                              "permalink": r["url"]})
+    same = {}
+    for r in rows:  # ads from one page with identical text: variants counts them all (a re-run under a new ad id counts too)
+        if r["platform"] == "meta" and r["status"] == "ok":
+            same[(r["accountId"], r["caption"])] = same.get((r["accountId"], r["caption"]), 0) + 1
+    for r in rows:
+        if r["platform"] == "meta" and r["status"] == "ok":
+            r["variants"] = str(same[(r["accountId"], r["caption"])])
     with (run_dir / "items.tsv").open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COLUMNS, delimiter="\t", lineterminator="\n", quoting=csv.QUOTE_NONE, escapechar="\\")
         w.writeheader()

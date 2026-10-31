@@ -14,7 +14,7 @@ kind: audience_learnings
 ### AUD-001 <what the audience does / wants / ignores>
 - segment:
 - signal: <comments, saves, DMs, replies; counts>
-- confidence: low           # low (<5 posts or 1 run) | medium (5-15 posts or 2 runs) | high (15+ posts, our own validation)
+- confidence: low           # low (<5 posts) | medium (5 to 14 posts; one run caps at medium) | high (15+ posts and a 2nd run or our own validation)
 - source: [[run-...]]   date: YYYY-MM-DD
 - do next:
 ```

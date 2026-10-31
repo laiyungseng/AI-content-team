@@ -17,7 +17,7 @@ kind: winning_patterns
 - evidence: <N posts across M accounts; ratio to own typical; link run ids>
 - our validation: <our posts using it + result, or "none yet">
 - result: <what happened / expected effect, with numbers>
-- confidence: low           # low (<5 posts or 1 run) | medium (5-15 posts or 2 runs) | high (15+ posts, our own validation)
+- confidence: low           # low (<5 posts) | medium (5 to 14 posts; one run caps at medium) | high (15+ posts and a 2nd run or our own validation)
 - source: [[run-YYYY-MM-DD_HHMM]] , [[INS-###]]
 - first seen: YYYY-MM-DD   last confirmed: YYYY-MM-DD
 - do next: <one action>

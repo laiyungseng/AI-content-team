@@ -6,7 +6,7 @@ source: posts.tsv null rules adapted from competitor-content-radar
 # Output schema
 
 ## items.tsv (unified, tab-separated, with header)
-`owner accountId platform itemType itemId date views likes comments shares saves durationSec topic pillar caption mediaUrl permalink status`
+`owner accountId platform itemType itemId date views likes comments shares saves durationSec topic pillar caption mediaUrl permalink status runningDays isActive variants`
 
 | column | rule |
 |---|---|
@@ -16,13 +16,19 @@ source: posts.tsv null rules adapted from competitor-content-radar
 | itemType | `post` or `ad` |
 | itemId | shortCode / video id / ad archive id / note id |
 | date | YYYY-MM-DD (UTC) |
-| views, likes, comments, shares, saves, durationSec | integers. **Empty = missing, never 0.** Photo/carousel posts have no views; Instagram has no shares/saves; ads have no metrics |
+| views, likes, comments, shares, saves, durationSec | integers. **Empty = missing, never 0.** Photo/carousel posts have no views; Instagram has no shares/saves; ads have no metrics. `durationSec` 0 from an actor is stored empty. Instagram `comments` of 0 can be a true zero or hidden comments, so it is not proof of no engagement |
 | topic | key from `sources.md` Topics (assigned in analysis, via `normalise.py tag`) |
 | pillar | content pillar, ours only (max 3) |
 | caption | tabs/newlines replaced by spaces, first 300 chars; for non-ok rows, the reason |
 | mediaUrl | image/thumbnail URL as returned (expires; see `media/`) |
 | permalink | link to the original |
 | status | ok, private, failed, empty |
+| runningDays | Meta ads only: days from the ad's start date to its end date (or the run date if none), minimum 0. Empty for posts |
+| isActive | Meta ads only: `yes` or `no` as returned by the Ad Library, empty if unknown |
+| variants | Meta ads only: number of ads from the same page with identical text (first 300 characters), counting itself. A re-run under a new ad id counts as a variant |
+
+## tags.tsv (run folder, written by competitor_analyzer, read by `normalise.py tag`)
+Tab-separated, header `itemId<TAB>topic<TAB>pillar`. One row per ok item; `topic` must be a key from `sources.md` Topics; `pillar` is optional (ours only). Ids are matched on `itemId` alone.
 
 ## Analysis files (`runs/<id>/analysis/`, JSON so the report builder can read them)
 **verdicts.json**
