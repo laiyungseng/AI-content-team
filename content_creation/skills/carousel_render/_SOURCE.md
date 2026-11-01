@@ -1,7 +1,7 @@
 ---
 source: UPT-course-setup-v2.skill / course-skills/carousel-html
 copied: 2026-10-31
-status: staged
+status: adapted
 destination: Phase 3 production (plan step 8b)
 ---
 # carousel_render: where these files came from
@@ -15,6 +15,6 @@ Not copied on purpose: client and personal brand kits, the three creator-specifi
 
 How it renders: each page is an HTML template with `{{SLOT}}` placeholders plus a brand kit (colours, fonts, handle). Headless Chrome screenshots every page to a 1080x1350 PNG. Needs Chrome, Chromium or Edge.
 
-Still to build in step 8b: `brand_kit.py`, which generates a kit from `brand/[project]/` so no preset has to be picked by hand.
+Still to build: `brand_kit.py`, which generates a kit from `brand/[project]/` so no preset has to be picked by hand.
 
-Method docs are staged as `_src_upt_*.md` here (`docs/` and `_src_upt_carousel_SKILL.md`); they are rewritten into `content_creation/skills/carousel_generation.md` and `static_post_generation.md` in step 8b.
+Method docs are rewritten into `content_creation/skills/carousel_generation.md` and `carousel_recipes.md`; the staged originals were deleted (2026-11-01).

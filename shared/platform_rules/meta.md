@@ -24,3 +24,28 @@ Rules for Facebook and Instagram paid ads, and how to read the Meta Ad Library. 
 ## Rules
 - Hook [[hooks]], CTA [[cta]]. Never copy a competitor's creative or claims; extract the angle and rebuild it.
 - Comparison with our ads is on creative approach and longevity only, not engagement. See [[stats_rules]].
+
+## Safe claims (ads)
+Keep claims specific but safe. Applies to paid ads and to organic posts that carry an offer.
+
+**Avoid**
+- Assuming a personal attribute ("Are you in debt?", "You are blacklisted").
+- Guaranteed income, approval, medical or education results.
+- Before/after material implying every customer gets the same result.
+- Aggressive fear language aimed at a sensitive status.
+
+**Safer patterns**
+- Speak to business situations, not identity; "many owners face..." instead of "you are...".
+- Use "may help", "designed for", "assessment", "case example". Show proof as an example, never as a guaranteed outcome.
+- Results depend on documents, execution, market, budget and assessment; terms and conditions apply.
+
+### Regulated categories
+Flag financing, loans, investment, income claims, health, beauty, education outcomes, government-related and approval claims.
+
+**Finance (loans, grants, SME funding, credit-check or approval topics)**
+- Never: guaranteed approval, "100% approved", "no rejection", "blacklisted can still get it", an unverified government-backed claim, "instant money", "no documents needed", a misleading link to an official body, promised speed or outcome.
+- Use: subject to approval; terms and conditions apply; eligibility depends on documents and assessment; speak to a consultant for assessment; "assess your documents and eligibility first, then see which option fits".
+- Angle direction: keep urgency but drop the guaranteed outcome; speak to fear of rejection, confusion, documents and wrong applications; make the assessment the bridge to action; filter out people expecting shortcuts or instant approval.
+
+**Courses and training:** no unrealistic income or outcome promises.
+Write each brand's own banned and required wording to `brand/[project]/prohibited_claims.md`. (verify) Platform policies change; re-check before a publish.

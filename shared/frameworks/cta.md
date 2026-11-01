@@ -86,3 +86,6 @@ If the user has no lead magnet at all, that is worth naming as the real constrai
 ---
 
 **Where to go next:** back to `writing-a-script.md` section 5 for where the CTA sits in the payoff. To `diagnosing.md` if content is getting views but no leads and the CTA may not be the only cause.
+
+## 5. Written-copy CTA block
+For long-form post and ad copy the CTA is a block, not a line: urgency, specific offer, contact channels (primary chat link first, then URL, phone, address for physical services), then hashtags. Scarcity and CTA are both required, never one or the other. A button line carries no icon emoji. Details and hashtag mix: `content_creation/skills/ad_copy_longform.md`.
