@@ -24,3 +24,11 @@ publish_authorized: false
 ## Core message
 
 ## CTA
+
+## Angle
+Angle name and score from [[angle_evaluation]] (strategy, /50).
+
+## Buyer hesitation addressed
+
+## Claims to avoid
+From `brand/{{project}}/prohibited_claims.md` and `shared/platform_rules/meta.md`.

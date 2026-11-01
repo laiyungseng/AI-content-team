@@ -76,34 +76,33 @@ A multi-agent content system that works as a continuous learning loop (see [[CLA
 - Zernio is connected with one `Default` profile and no social accounts.
 
 ## 6. Is the UPT skill transformation done?
-**No, only the Phase 1 part.** 32 text files were staged; 3 are adapted, 29 wait for Phase 2 and 3, which cannot start before brand onboarding.
+**Methods: yes (2026-11-01). Agents and one script: no.** The 28 staged text files for Phase 2 and 3 were rewritten in English into project methods and deleted. Only `download_and_prep.sh.txt` (step 10) is still staged. The 3 Phase 1 adapted originals stay until R1 confirms them. The methods are written but untested in a real run, and the agent files still need filling.
 
 | State | Meaning | Count |
 |---|---|---|
-| Adapted | Method rewritten into the project, tested on a scratch copy, not yet used in a real run | 3 |
-| Staged | Cleaned of client names and paths only; still Chinese, still points to tools we do not have | 29 |
-| Usable as copied | Carousel templates, presets and `render.py` (a test slide rendered in Windows Chrome) | 19 files |
+| Adapted in Phase 1 | Method in the project; original kept until R1 | 3 |
+| Adapted 2026-11-01 | Rewritten in English, staged original deleted, logged in `memory/_system/changelog.md`; not yet used in a real run | 28 |
+| Still staged | `download_and_prep.sh.txt`, waits for step 10 | 1 |
+| Usable as copied | Carousel templates, presets and `render.py` | 19 files |
 
-| Staged file (`_src_upt_*`) | Becomes | State | Step |
-|---|---|---|---|
-| `fb_competitor_census` | `source-manager/references/competitor_discovery.md` + `sources.py suggest` | Adapted | 11d |
-| `fb_ad_intelligence` | Meta rules in `platform_scraping.md`; winning hooks and Devil's Advocate in `comparison_method.md` and the report | Adapted | 11b, 11c |
-| `hook_library` | Hook types in `shared/frameworks/hooks.md`, `hookType` in `hooks.json` | Adapted | 11a |
-| `download_and_prep.sh.txt` | `competitor-intelligence/scripts/transcribe.py` (Python, Windows-safe) | Staged | 10 |
-| `ad_angle_SKILL`, `brutal_evaluation`, `weak_idea_kill_filter`, `generic_output_detector` | `content_creation/skills/angle_evaluation.md`, read by `content_strategist` and `content_reviewer` | Staged | 8a |
-| `evaluation_checklist`, `acceptance_checklist` | `content_reviewer` checks | Staged | 8a / 8b |
-| `output_format_template`, `input_brief_template` | `content_creation/templates/content_strategy.md`, `content_brief.md` | Staged | 8a |
-| 3 `eval_case_*` | `content_creation/tests/angle_eval_cases/`, de-branded | Staged | 8a |
-| `meta_ads_safe_claims`, `finance_ads_safe_claims`, `sensitive_claims` | `shared/platform_rules/meta.md`, `brand/_template/prohibited_claims.md` | Staged | 8a |
-| `carousel_SKILL`, 3 `docs/_src_upt_*` | `carousel_generation.md`, `static_post_generation.md`; new `brand_kit.py` builds a kit from `brand/[project]/` | Staged | 8b |
-| `ad_copywriter_SKILL`, `framework`, `snickc_checklist`, `style_guide` | `ad_copy_longform.md`, `shared/frameworks/cta.md`, a `content_reviewer` check; style guide is a market example only | Staged | 8b |
-| `viral_video_clone_SKILL`, `ugc_anti_slop_rules`, `seedance_prompt_formula`, `shot_list_template` | `reel_generation.md`, `reel_creator`; drop the "mirror 1:1" rule (D10) | Staged | 8b |
-| `higgsfield_script_to_video` | video section of `reel_generation.md`, only if Higgsfield is used | Staged | 8b |
-| `sample_clone` | `static_post_generation.md` (idea only, done with nanobanana) | Staged | 8b |
+| Staged file | Became | State |
+|---|---|---|
+| `fb_competitor_census` | `source-manager/references/competitor_discovery.md` + `sources.py suggest` | Adapted, original kept |
+| `fb_ad_intelligence` | Meta rules in `platform_scraping.md`; winning hooks and Devil's Advocate in `comparison_method.md` | Adapted, original kept |
+| `hook_library` | `shared/frameworks/hooks.md`, `hookType` in `hooks.json` | Adapted, original kept |
+| `download_and_prep.sh.txt` | `competitor-intelligence/scripts/transcribe.py` | Staged (step 10) |
+| `ad_angle_SKILL`, `brutal_evaluation`, `weak_idea_kill_filter`, `generic_output_detector`, `evaluation_checklist` | `content_creation/skills/angle_evaluation.md` | Done |
+| `acceptance_checklist`, 3 `eval_case_*` | `content_creation/tests/angle_eval_cases/` (README + 3 de-branded cases) | Done |
+| `output_format_template`, `input_brief_template` | `templates/content_strategy.md`, `templates/content_brief.md`; process in `skills/content_strategy.md` | Done |
+| `meta_ads_safe_claims`, `finance_ads_safe_claims`, `sensitive_claims` | `shared/platform_rules/meta.md` (safe claims), `brand/_template/prohibited_claims.md` | Done |
+| `carousel_SKILL`, 3 `docs/_src_upt_*` | `skills/carousel_generation.md`, `carousel_recipes.md` | Done |
+| `ad_copywriter_SKILL`, `framework`, `snickc_checklist`, `style_guide` | `skills/ad_copy_longform.md`; CTA block in `shared/frameworks/cta.md`; style guide kept as a market example inside it | Done |
+| `viral_video_clone_SKILL`, `ugc_anti_slop_rules`, `seedance_prompt_formula`, `shot_list_template`, `higgsfield_script_to_video` | `skills/reel_generation.md`, `templates/reel.md` (1:1 mirror dropped, D10) | Done |
+| `sample_clone` | `skills/static_post_generation.md`, `templates/static_post.md` (nanobanana) | Done |
 
-Rule for each row when adapted: rewrite in English, remove references to tools we do not have (`/ugc-ad-ref`, `/creative-director`, `/course-setup-v2`, Lovart), then **delete the staged file** and log it in `memory/_system/changelog.md`. The 3 adapted files' staged originals are still in the repo; delete them once the first real run confirms the new methods.
+Still to do for the transformation: `brand_kit.py` (builds a carousel kit from `brand/[project]/`), filling the agent files (`content_strategist`, `campaign_planner`, `schedule_planner`, the three creators, `content_reviewer`) so they read these methods, and `content_reviewer`'s /100 rubric in `skills/content_review.md`. The English filler-phrase list and the Malaysian-Chinese style notes are examples; per-brand wording goes in `brand/[project]/brand_voice.md`.
 
-Two staged-source copies from earlier steps remain for Phase 2 and 3: `content_creation/skills/strategist_source/` and `scriptwriting/` (from the social-media-automation plugin).
+Two staged-source copies remain for Phase 2 and 3: `content_creation/skills/strategist_source/` and `scriptwriting/` (from the social-media-automation plugin).
 
 ## 7. Remaining steps
 | Step | Work | Done when | Needs |
@@ -163,4 +162,5 @@ Order: R1 → R2 → 10 → step 0 → 8a → 8b → 8c → 8d. R1 and R2 can ru
 - [ ] R2 small discovery test
 - [ ] Step 10 video transcription
 - [ ] Step 0 brand onboarding
+- [x] Skill transformation of the staged UPT methods (2026-11-01): methods written, agents, `brand_kit.py` and `content_review.md` still open
 - [ ] 8a strategy · [ ] 8b production · [ ] 8c performance · [ ] 8d publishing
